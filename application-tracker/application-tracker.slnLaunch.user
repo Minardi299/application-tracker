@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "application-tracker.Server\\application-tracker.Server.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "application-tracker.client\\application-tracker.client.esproj",
+        "Action": "Start",
+        "DebugTarget": "localhost (Chrome)"
+      }
+    ]
+  }
+]

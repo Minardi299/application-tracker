@@ -1,0 +1,25 @@
+@application-tracker.Server_HostAddress = https://localhost:7256
+@application_tracker.Server_HostAddress = http://localhost:5053
+
+GET {{application_tracker.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+POST {{application-tracker.Server_HostAddress}}/api/todoitems
+Content-Type: application/json
+
+{
+  "name": "walk dog",
+  "isComplete": true
+}
+
+###
+
+GET {{application-tracker.Server_HostAddress}}/weatherforecast
+
+###
+
+GET {{application-tracker.Server_HostAddress}}/weatherforecast
+
+###
