@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Button } from "./components/ui/button.jsx"
 import './App.css';
 
 function App() {
@@ -14,7 +15,7 @@ function App() {
                 <tr>
                     <th>name</th>
                     <th>Is completed</th>
-
+                    
                 </tr>
             </thead>
             <tbody>
@@ -29,9 +30,12 @@ function App() {
         </table>;
 
     return (
-        <div>
+        <div >
+            <div className="">
+                <Button>Click me</Button>
+            </div>
             <h1 id="tableLabel">Todo</h1>
-            <h2>what's up guys</h2>
+            <h2>what's up guys hi</h2>
             <p>This component demonstrates fetching data from the server.</p>
             {contents}
         </div>
