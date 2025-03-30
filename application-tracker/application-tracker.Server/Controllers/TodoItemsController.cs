@@ -13,9 +13,9 @@ namespace application_tracker.Server.Controllers
     [ApiController]
     public class TodoItemsController : ControllerBase
     {
-        private readonly TodoContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public TodoItemsController(TodoContext context)
+        public TodoItemsController(ApplicationDbContext context)
         {
             _context = context;
         }
