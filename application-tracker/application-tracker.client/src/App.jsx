@@ -3,7 +3,6 @@ import './App.css';
 
 function App() {
     const [forecasts, setForecasts] = useState();
-
     useEffect(() => {
         populateWeatherData();
     }, []);
@@ -13,27 +12,25 @@ function App() {
         : <table className="table table-striped" aria-labelledby="tableLabel">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
+                    <th>name</th>
+                    <th>Is completed</th>
+
                 </tr>
             </thead>
             <tbody>
                 {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
+                    <tr key={forecast.id}>
+                        <td>{forecast.name}</td>
+                        <td>{forecast.isComplete.toString()}</td>
                     </tr>
+                  
                 )}
             </tbody>
         </table>;
 
     return (
         <div>
-            <h1 id="tableLabel">Weather forecast</h1>
+            <h1 id="tableLabel">Todo</h1>
             <h2>what's up guys</h2>
             <p>This component demonstrates fetching data from the server.</p>
             {contents}
@@ -41,7 +38,12 @@ function App() {
     );
     
     async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
+        const response = await fetch('/api/todoitems', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
         if (response.ok) {
             const data = await response.json();
             setForecasts(data);
