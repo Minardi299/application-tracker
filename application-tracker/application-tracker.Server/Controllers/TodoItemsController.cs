@@ -79,7 +79,8 @@ namespace application_tracker.Server.Controllers
             var todoItem = new TodoItem
             {
                 IsComplete = todoDTO.IsComplete,
-                Name = todoDTO.Name
+                Name = todoDTO.Name,
+                Secret= "secret set on the server side, could be password hash?"
             };
 
             _context.TodoItems.Add(todoItem);
