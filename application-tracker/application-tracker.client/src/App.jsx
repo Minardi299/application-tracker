@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Button } from "./components/ui/button.jsx"
+import { Button } from "./components/ui/button.jsx";
+import { Checkbox } from "@/components/ui/checkbox";
 import './App.css';
+import {Layout} from "@/components/layout.jsx";
+import { ThemeProvider } from "@/components/theme-provider";
+import {ModeToggle} from "@/components/mode-toggle.jsx";
+
 
 function App() {
     const [forecasts, setForecasts] = useState();
@@ -8,37 +13,23 @@ function App() {
         populateWeatherData();
     }, []);
 
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tableLabel">
-            <thead>
-                <tr>
-                    <th>name</th>
-                    <th>Is completed</th>
-                    
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.id}>
-                        <td>{forecast.name}</td>
-                        <td>{forecast.isComplete.toString()}</td>
-                    </tr>
-                  
-                )}
-            </tbody>
-        </table>;
+    
 
     return (
-        <div >
-            <div className="">
-                <Button>Click me</Button>
-            </div>
-            <h1 id="tableLabel">Todo</h1>
-            <h2>what's up guys hi</h2>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
-        </div>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            <Layout>
+
+
+                <div className="">
+                    <ModeToggle/>
+                    <Button>Click me</Button>
+                </div>
+                <h1 id="tableLabel">The table</h1>
+                <h2>what's up guys hi</h2>
+                <p>This component demonstrates fetching data from the server.</p>
+
+            </Layout>
+        </ThemeProvider>
     );
     
     async function populateWeatherData() {
