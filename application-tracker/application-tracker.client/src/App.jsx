@@ -1,49 +1,34 @@
-import { useEffect, useState } from 'react';
-import { Button } from "./components/ui/button.jsx";
-import { Checkbox } from "@/components/ui/checkbox";
 import './App.css';
 import {Layout} from "@/components/layout.jsx";
+import { Routes, Route } from 'react-router-dom'; 
 import { ThemeProvider } from "@/components/theme-provider";
-import {ModeToggle} from "@/components/mode-toggle.jsx";
+import {SettingPage} from "@/pages/SettingPage.jsx";
+import {HomePage} from "@/pages/HomePage.jsx"
+import {DashboardPage } from "@/pages/DashboardPage.jsx";
 
 
 function App() {
-    const [forecasts, setForecasts] = useState();
-    useEffect(() => {
-        populateWeatherData();
-    }, []);
-
     
 
+    
     return (
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
             <Layout>
 
+            <Routes>
+                <Route path="/" element={<HomePage/>} />
+                <Route path="/dashboard" element={<DashboardPage/>} />
+                <Route path="/settings" element={<SettingPage/>} />
 
-                <div className="">
-                    <ModeToggle/>
-                    <Button>Click me</Button>
-                </div>
-                <h1 id="tableLabel">The table</h1>
-                <h2>what's up guys hi</h2>
-                <p>This component demonstrates fetching data from the server.</p>
-
+                {/* Add a catch-all or 404 route*/}
+                {/* <Route path="*" element={<NotFoundPage />} />  */}
+            </Routes>
+               
             </Layout>
         </ThemeProvider>
     );
     
-    async function populateWeatherData() {
-        const response = await fetch('/api/todoitems', {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        if (response.ok) {
-            const data = await response.json();
-            setForecasts(data);
-        }
-    }
+    
 }
 
 export default App;
