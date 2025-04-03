@@ -13,18 +13,18 @@ function App() {
     
     return (
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-            <Layout>
-
             <Routes>
-                <Route path="/" element={<HomePage/>} />
-                <Route path="/dashboard" element={<DashboardPage/>} />
-                <Route path="/settings" element={<SettingPage/>} />
-
-                {/* Add a catch-all or 404 route*/}
-                {/* <Route path="*" element={<NotFoundPage />} />  */}
+                {/* Define Layout as a parent route */}
+                <Route path="/" element={<Layout />}>
+                    {/* layout is parent and these routes are nested because I want to have the sidebar presented in these routes */}
+                    {/* note to self: check outlet react router dom in the future if confused */}
+                    <Route index element={<HomePage />} /> {/* Default child route */}
+                    <Route path="dashboard" element={<DashboardPage />} />
+                    <Route path="settings" element={<SettingPage />} />
+                </Route>
+                {/* TODO make a proper 404 route later */}
+                <Route path="*" element={<div>404 Not Found</div>} />
             </Routes>
-               
-            </Layout>
         </ThemeProvider>
     );
     
