@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 using System.Security.Policy;
+using Microsoft.AspNetCore.Identity;
 
 namespace application_tracker.Server.Models
 {
-    public class User
+    public class ApplicationUser : IdentityUser
     {
-        public int Id { get; set; }
-        public required string Username { get; set; }
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
         public ICollection<JobApplication> Applications { get; set; } = new List<JobApplication>();
 
