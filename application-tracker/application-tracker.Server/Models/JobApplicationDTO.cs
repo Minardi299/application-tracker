@@ -1,6 +1,6 @@
 namespace application_tracker.Server.Models
 {
-    public class JobApplicationDto
+    public class JobApplicationDTO
     {
         public int Id { get; set; }
         public string CompanyName { get; set; }
