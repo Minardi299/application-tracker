@@ -17,6 +17,7 @@ namespace application_tracker.Server.Models
         public DbSet<JobApplication> JobApplications { get; set; }
         public DbSet<ApplicationFolder> ApplicationFolders { get; set; }
 
+
         protected ApplicationDbContext()
         {
         }
@@ -26,13 +27,20 @@ namespace application_tracker.Server.Models
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<TodoItem>().ToTable("TodoItem");
+
             modelBuilder.Entity<JobApplication>()
             .HasMany(j => j.Folders)
             .WithMany(f => f.Applications)
             .UsingEntity<Dictionary<string, object>>(
                 "ApplicationFolderJobApplication",
-                j => j.HasOne<ApplicationFolder>().WithMany().HasForeignKey("FoldersId").OnDelete(DeleteBehavior.Restrict),
-                f => f.HasOne<JobApplication>().WithMany().HasForeignKey("ApplicationsId").OnDelete(DeleteBehavior.Restrict)
+                j => j.HasOne<ApplicationFolder>()
+                      .WithMany()
+                      .HasForeignKey("FoldersId")
+                      .OnDelete(DeleteBehavior.Restrict), 
+                f => f.HasOne<JobApplication>()
+                      .WithMany()
+                      .HasForeignKey("ApplicationsId")
+                      .OnDelete(DeleteBehavior.Restrict) 
             );
 
         }

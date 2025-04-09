@@ -6,14 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace application_tracker.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class UserTable : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "User");
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -52,6 +49,21 @@ namespace application_tracker.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TodoItem",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsComplete = table.Column<bool>(type: "bit", nullable: false),
+                    Secret = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TodoItem", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -222,13 +234,13 @@ namespace application_tracker.Server.Migrations
                         column: x => x.FoldersId,
                         principalTable: "ApplicationFolders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ApplicationFolderJobApplication_JobApplications_ApplicationsId",
                         column: x => x.ApplicationsId,
                         principalTable: "JobApplications",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -308,6 +320,9 @@ namespace application_tracker.Server.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "TodoItem");
+
+            migrationBuilder.DropTable(
                 name: "ApplicationFolders");
 
             migrationBuilder.DropTable(
@@ -318,19 +333,6 @@ namespace application_tracker.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.CreateTable(
-                name: "User",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User", x => x.ID);
-                });
         }
     }
 }

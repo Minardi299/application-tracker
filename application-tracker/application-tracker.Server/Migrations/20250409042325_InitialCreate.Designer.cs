@@ -12,8 +12,8 @@ using application_tracker.Server.Models;
 namespace application_tracker.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250409033820_FixCascadeIssue2")]
-    partial class FixCascadeIssue2
+    [Migration("20250409042325_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

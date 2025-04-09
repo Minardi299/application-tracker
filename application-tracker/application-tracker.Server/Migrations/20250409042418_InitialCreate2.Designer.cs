@@ -12,8 +12,8 @@ using application_tracker.Server.Models;
 namespace application_tracker.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250409033804_FixCascadeIssue")]
-    partial class FixCascadeIssue
+    [Migration("20250409042418_InitialCreate2")]
+    partial class InitialCreate2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -337,13 +337,13 @@ namespace application_tracker.Server.Migrations
                     b.HasOne("application_tracker.Server.Models.JobApplication", null)
                         .WithMany()
                         .HasForeignKey("ApplicationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("application_tracker.Server.Models.ApplicationFolder", null)
                         .WithMany()
                         .HasForeignKey("FoldersId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
