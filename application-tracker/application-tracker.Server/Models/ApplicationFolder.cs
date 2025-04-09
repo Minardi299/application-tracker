@@ -14,10 +14,10 @@ namespace application_tracker.Server.Models
         public required string Name { get; set; }
 
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
-        public int OwnerId { get; set; }
+        public required string OwnerId { get; set; }
 
         [ForeignKey("OwnerId")]
-        public required User Owner { get; set; }
+        public required ApplicationUser Owner { get; set; }
 
         [NotMapped]
         public int ApplicationCount => Applications?.Count ?? 0;

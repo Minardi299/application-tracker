@@ -13,15 +13,18 @@ namespace application_tracker.Server.Models
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
-        public DbSet<ApplicationUser> Users { get; set; } 
         public DbSet<TodoItem> TodoItems { get; set; }
+        public DbSet<JobApplication> JobApplications { get; set; }
+        public DbSet<ApplicationFolder> ApplicationFolders { get; set; }
 
         protected ApplicationDbContext()
         {
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            //including this because overide is required
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<TodoItem>().ToTable("TodoItem");
 
         }

@@ -25,10 +25,10 @@ namespace application_tracker.Server.Models
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
         public DateTime? UpdatedDate { get; set; }
 
-        public int OwnerId { get; set; }
+        public required string OwnerId { get; set; }
 
         [ForeignKey("OwnerId")]
-        public required User Owner { get; set; }
+        public required ApplicationUser Owner { get; set; }
         public ICollection<ApplicationFolder> Folders { get; set; } = new List<ApplicationFolder>();
     }
 
