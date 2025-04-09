@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using application_tracker.Server.Models;
 
 namespace application_tracker.Server.Controllers
@@ -11,58 +11,53 @@ namespace application_tracker.Server.Controllers
     [ApiController]
     public class ApplicationUserController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ApplicationUserController(ApplicationDbContext context)
+        public ApplicationUserController(UserManager<ApplicationUser> userManager)
         {
-            _context = context;
+            _userManager = userManager;
         }
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ApplicationUserDTO>>> GetUsers()
+        public ActionResult<IEnumerable<ApplicationUserDTO>> GetUsers()
         {
-            return await _context.Users
+            var users = _userManager.Users
                 .Select(u => UserToDTO(u))
-                .ToListAsync();
+                .ToList();
+
+            return Ok(users);
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ApplicationUserDTO>> GetUser(string id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
 
             if (user == null)
-            {
                 return NotFound();
-            }
 
-            return UserToDTO(user);
+            return Ok(UserToDTO(user));
         }
 
-        // PUT: api/Users/5 (update username/email only)
+        // PUT: api/Users/5 (Update username or email)
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(string id, ApplicationUserDTO dto)
         {
             if (id != dto.Id)
                 return BadRequest();
 
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
                 return NotFound();
 
             user.UserName = dto.UserName;
             user.Email = dto.Email;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException) when (!UserExists(id))
-            {
-                return NotFound();
-            }
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
 
             return NoContent();
         }
@@ -71,19 +66,15 @@ namespace application_tracker.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
                 return NotFound();
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
 
             return NoContent();
-        }
-
-        private bool UserExists(string id)
-        {
-            return _context.Users.Any(e => e.Id == id);
         }
 
         private static ApplicationUserDTO UserToDTO(ApplicationUser user) =>

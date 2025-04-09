@@ -1,2 +1,4 @@
 ﻿dotnet ef database drop to drop  database, use when there's a change to the primary key of the model for exmaple, very hard to run migration on that since it's the default value
 dotnet ef migrations remove to remove a migration
+dotnet ef database update
+dotnet ef migrations add {name}
