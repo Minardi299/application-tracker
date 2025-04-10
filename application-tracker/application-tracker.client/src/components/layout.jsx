@@ -1,11 +1,18 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar" //
-import { AppSidebar } from "@/components/app-sidebar" //
-import { Separator } from "@/components/ui/separator" //
+import { useAuth } from '@/context/auth-provider';
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar" 
+import { AppSidebar } from "@/components/app-sidebar" 
+import { Separator } from "@/components/ui/separator" 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
 import {Breadcrumb,BreadcrumbPage,BreadcrumbSeparator, BreadcrumbItem, BreadcrumbList, BreadcrumbLink} from "@/components/ui/breadcrumb"
 
-import { Outlet } from "react-router-dom"; // Import Outlet
+import { Outlet } from "react-router-dom"; 
 
-export  function Layout() { // Removed children prop
+export  function Layout() { 
+  const { user } = useAuth();
   return (
     <SidebarProvider>
       <AppSidebar /> 
@@ -18,12 +25,12 @@ export  function Layout() { // Removed children prop
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbLink href="#">
-                    Building Your Application
+                    example
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  <BreadcrumbPage>Example</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
