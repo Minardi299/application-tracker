@@ -2,11 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '@/components/theme-provider'; //
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label"; // requires `npx shadcn-ui@latest add label`
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // requires `npx shadcn-ui@latest add tabs`
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // requires `npx shadcn-ui@latest add select`
-import { Slider } from "@/components/ui/slider"; // requires `npx shadcn-ui@latest add slider`
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Label } from "@/components/ui/label"; 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; 
+import { Slider } from "@/components/ui/slider";
 const isClient = typeof window !== 'undefined';
 
 // Font options based on common web-safe fonts
@@ -49,26 +48,12 @@ function ColorPicker({ label, color, onChange }) {
       <div className="space-y-2">
         <Label className="text-sm font-medium">{label}</Label>
         <div className="flex items-center space-x-2">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-10 h-10 p-0 border"
-                style={{ backgroundColor: color }}
-                aria-label={`Pick ${label} color`}
-              />
-            </PopoverTrigger>
-            <PopoverContent className="p-0 w-auto">
-              {/* Using native color input for simplicity. Libraries like react-color offer more features */}
-              <input
+          <Input
                  type="color"
                  value={color}
                  onChange={handleColorInputChange}
-                 className="w-full h-auto border-0 cursor-pointer" // Basic styling
-                 style={{ width: '200px', height: '150px'}} // Adjust size as needed
-              />
-            </PopoverContent>
-          </Popover>
+                 className="w-10 h-10 p-0 border cursor-pointer" 
+          />
           <Input
             type="text"
             value={color}
@@ -81,7 +66,7 @@ function ColorPicker({ label, color, onChange }) {
     );
   }
 export  function SettingPage(){
-    const { theme, setTheme } = useTheme(); // For Light/Dark mode
+  const { theme, setTheme } = useTheme(); // For Light/Dark mode
   const [customSettings, setCustomSettings] = useState(DEFAULT_SETTINGS);
 
   // Load settings from localStorage on initial mount (client-side only)
@@ -119,9 +104,10 @@ export  function SettingPage(){
         // Convert camelCase key to kebab-case CSS variable name
         // e.g., primaryForeground -> --primary-foreground
         const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+        //TODO THIS IS IMPORTANT AND THIS IS WHERE YOU CHANGE THE CSS
         if (value) {
             root.style.setProperty(cssVarName, value);
-            // Note: Your index.css uses OKLCH. Setting hex directly overrides it.
+            // Note: index.css uses OKLCH. Setting hex directly overrides it.
             // For full consistency, you'd convert hex to OKLCH here.
         }
     });
@@ -199,6 +185,9 @@ export  function SettingPage(){
             onClick={() => setTheme('system')}
           >
             System
+          </Button>
+          <Button variant='outline' onClick={() => setTheme('system')} title="Reset mode to system default">
+            Reset
           </Button>
         </div>
       </section>
