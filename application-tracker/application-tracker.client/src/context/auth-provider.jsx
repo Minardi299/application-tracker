@@ -5,7 +5,7 @@ const AuthContext = createContext({
   isLogin: false,
   user: null,
   login: (userData) => {},  
-  logout: () => {},       // Placeholder function
+  logout: () => {},       
 });
 const GUEST_USER = {
   id: null,

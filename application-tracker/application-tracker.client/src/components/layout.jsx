@@ -1,4 +1,3 @@
-import { useAuth } from '@/context/auth-provider';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar" 
 import { AppSidebar } from "@/components/app-sidebar" 
 import { Separator } from "@/components/ui/separator" 
@@ -12,7 +11,6 @@ import {Breadcrumb,BreadcrumbPage,BreadcrumbSeparator, BreadcrumbItem, Breadcrum
 import { Outlet } from "react-router-dom"; 
 
 export  function Layout() { 
-  const { user } = useAuth();
   return (
     <SidebarProvider>
       <AppSidebar /> 
