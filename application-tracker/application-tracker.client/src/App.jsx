@@ -6,6 +6,7 @@ import {SettingPage} from "@/pages/SettingPage.jsx";
 import {HomePage} from "@/pages/HomePage.jsx"
 import {DashboardPage } from "@/pages/DashboardPage.jsx";
 import { AuthProvider } from '@/context/auth-provider'; 
+import { LoginPage } from '@/pages/LoginPage.jsx';
 
 
 
@@ -25,6 +26,7 @@ function App() {
                         <Route path="dashboard" element={<DashboardPage />} />
                         <Route path="settings" element={<SettingPage />} />
                     </Route>
+                    <Route path="/login" element={<LoginPage />} /> 
                     {/* TODO make a proper 404 route later */}
                     <Route path="*" element={<div>404 Not Found</div>} />
                 </Routes>

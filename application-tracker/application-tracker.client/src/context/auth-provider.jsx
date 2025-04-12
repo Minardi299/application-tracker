@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const AuthContext = createContext({
@@ -58,8 +57,24 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('authToken');
     // Add any cleanup logic, like redirecting to login page
   };
+  const register = async (userData) => {
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
 
+      if (!response.ok) {
+        throw new Error("Registration failed");
+      }
 
+      const data = await response.json();
+      login(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // context value
   const value = {
@@ -67,6 +82,7 @@ export function AuthProvider({ children }) {
     user,
     login,
     logout,
+    register,
   };
 
   return (
