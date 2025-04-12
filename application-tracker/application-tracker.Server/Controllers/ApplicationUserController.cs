@@ -4,27 +4,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using application_tracker.Server.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace application_tracker.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ApplicationUserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ApplicationUserController(UserManager<ApplicationUser> userManager)
+        public UsersController(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }
 
         // GET: api/Users
         [HttpGet]
-        public ActionResult<IEnumerable<ApplicationUserDTO>> GetUsers()
+        public async Task<ActionResult<IEnumerable<ApplicationUserDTO>>> GetUsers()
         {
-            var users = _userManager.Users
-                .Select(u => UserToDTO(u))
-                .ToList();
+            var users = await _userManager.Users.Select(u => UserToDTO(u)).ToListAsync();
 
             return Ok(users);
         }

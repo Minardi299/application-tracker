@@ -24,9 +24,7 @@ namespace application_tracker.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItems()
         {
-            return await _context.TodoItems
-            .Select(x => ItemToDTO(x))
-            .ToListAsync();
+            return await _context.TodoItems.Select(x => ItemToDTO(x)).ToListAsync();
         }
 
         // GET: api/TodoItems/5
