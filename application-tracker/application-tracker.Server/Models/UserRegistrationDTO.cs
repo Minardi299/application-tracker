@@ -5,14 +5,16 @@ namespace application_tracker.Server.Models
 {
     public class UserRegistrationDTO
     {
-        public string UserName { get; set; }
+        public required string UserName { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]
-        public string? Email { get; set; }
+        public required string Email { get; set; }
 
+        //this required makes sure it's not null at run time
         [Required(ErrorMessage = "Password is required")]
-        public string? Password { get; set; }
+        //meanwhile this required makes sure it's not null at compile time
+        public required string Password { get; set; }
 
         [Compare("Password", ErrorMessage = "Passwords do not match")]
         public string? ConfirmPassword { get; set; }

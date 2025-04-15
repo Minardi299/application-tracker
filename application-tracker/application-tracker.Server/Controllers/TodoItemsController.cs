@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using application_tracker.Server.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using application_tracker.Server.Models;
 
 namespace application_tracker.Server.Controllers
 {
@@ -78,7 +78,7 @@ namespace application_tracker.Server.Controllers
             {
                 IsComplete = todoDTO.IsComplete,
                 Name = todoDTO.Name,
-                Secret= "secret set on the server side, could be password hash?"
+                Secret = "secret set on the server side, could be password hash?"
             };
 
             _context.TodoItems.Add(todoItem);
@@ -87,7 +87,8 @@ namespace application_tracker.Server.Controllers
             return CreatedAtAction(
                 nameof(GetTodoItem),
                 new { id = todoItem.Id },
-                ItemToDTO(todoItem));
+                ItemToDTO(todoItem)
+            );
         }
 
         // DELETE: api/TodoItems/5
@@ -110,12 +111,13 @@ namespace application_tracker.Server.Controllers
         {
             return _context.TodoItems.Any(e => e.Id == id);
         }
+
         private static TodoItemDTO ItemToDTO(TodoItem todoItem) =>
-           new TodoItemDTO
-           {
-               Id = todoItem.Id,
-               Name = todoItem.Name,
-               IsComplete = todoItem.IsComplete
-           };
+            new TodoItemDTO
+            {
+                Id = todoItem.Id,
+                Name = todoItem.Name,
+                IsComplete = todoItem.IsComplete
+            };
     }
 }
