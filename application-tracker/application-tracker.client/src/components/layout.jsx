@@ -38,7 +38,7 @@ export  function Layout() {
           </Breadcrumb>
         </div>
 
-        {  
+        { !isLogin &&
           <div>
             <Button onClick={() => navigate('/login')}>
               Login
