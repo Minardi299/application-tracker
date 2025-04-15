@@ -4,11 +4,37 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link } from "react-router-dom";
+import { useAuth } from "@/context/auth-provider";  
+import { useState } from "react";
 
 export function SignupForm({ className, ...props }) {
-    async function handleSubmit(){
-        
+  const { register } = useAuth();
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  function handleChange(e) {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  }
+  async function handleSubmit(e) {
+    e.preventDefault();
+  
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
     }
+  
+    const userData = {
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+    };
+  
+    await register(userData);
+  }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <form onSubmit={handleSubmit}>
@@ -35,12 +61,20 @@ export function SignupForm({ className, ...props }) {
           <div className="flex flex-col gap-6">
             <div className="grid gap-2">
               <Label htmlFor="username">Username</Label>
-              <Input id="username" type="text" placeholder="minh" required />
+              <Input 
+                id="username" 
+                onChange={handleChange} 
+                value={formData.username} 
+                type="text" 
+                placeholder="minh" 
+                required />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
+                onChange={handleChange} 
+                value={formData.email}
                 type="email"
                 placeholder="m@example.com"
                 required
@@ -48,11 +82,22 @@ export function SignupForm({ className, ...props }) {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" placeholder="" required />
+              <Input 
+                id="password"  
+                onChange={handleChange} 
+                value={formData.password} 
+                type="password" 
+                placeholder="" 
+                required />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input id="confirmPassword" type="password" required />
+              <Input 
+                id="confirmPassword" 
+                onChange={handleChange} 
+                value={formData.confirmPassword}
+                type="password"
+                required />
             </div>
             <Button  type="submit" className="w-full">
               Sign Up

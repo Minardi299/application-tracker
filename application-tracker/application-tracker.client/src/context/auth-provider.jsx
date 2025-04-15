@@ -3,8 +3,9 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 const AuthContext = createContext({
   isLogin: false,
   user: null,
-  login: (userData) => {},  
-  logout: () => {},       
+  login: () => {throw new Error("login() called without AuthProvider!");},  
+  logout: () => {throw new Error("logout() called without AuthProvider!");},     
+  register:async()=> {throw new Error("register() called without AuthProvider!");}  
 });
 const GUEST_USER = {
   id: null,
@@ -59,7 +60,7 @@ export function AuthProvider({ children }) {
   };
   const register = async (userData) => {
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch("/api/users/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
