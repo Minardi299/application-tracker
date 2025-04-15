@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/auth-provider";  
 import { useState } from "react";
+import { toast } from "sonner"
 
 export function SignupForm({ className, ...props }) {
   const { register } = useAuth();
@@ -26,14 +27,17 @@ export function SignupForm({ className, ...props }) {
       alert("Passwords do not match.");
       return;
     }
-  
-    const userData = {
-      username: formData.username,
-      email: formData.email,
-      password: formData.password,
-    };
-  
-    await register(userData);
+    
+    try {
+      await register({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword});
+      toast.success("Account created successfully");
+    } catch (err) {
+      toast.error(`Registration failed. Try again. ${err}`);
+    }
   }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
