@@ -1,16 +1,19 @@
 using application_tracker.Server.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    options.UseSqlServer(connectionString)
+);
+builder.Services.AddAuthorization();
+builder
+    .Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
@@ -32,7 +35,7 @@ if (app.Environment.IsDevelopment())
 }
 //TODO add this back when have certificate
 //app.UseHttpsRedirection();
- 
+
 app.UseAuthorization();
 
 app.MapControllers();
