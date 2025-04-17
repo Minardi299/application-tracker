@@ -11,7 +11,7 @@ import { toast } from "sonner"
 export function SignupForm({ className, ...props }) {
   const { register } = useAuth();
   const [formData, setFormData] = useState({
-    username: "",
+    userName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -29,13 +29,16 @@ export function SignupForm({ className, ...props }) {
     }
     
     try {
-      await register({
-        username: formData.username,
+        const response = await register({
+        userName: formData.userName,
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.confirmPassword});
-      toast.success("Account created successfully");
+        if (!response.ok) throw new Error("Registration failed");
+        toast.success("Account created successfully");
+      console.log("Account created successfully");
     } catch (err) {
+        console.error("Registration failed", err);
       toast.error(`Registration failed. Try again. ${err}`);
     }
   }
