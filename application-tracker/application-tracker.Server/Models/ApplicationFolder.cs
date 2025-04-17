@@ -13,7 +13,7 @@ namespace application_tracker.Server.Models
         [StringLength(50)]
         public required string Name { get; set; }
 
-        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+        public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.UtcNow;
         public required string OwnerId { get; set; }
 
         [ForeignKey("OwnerId")]

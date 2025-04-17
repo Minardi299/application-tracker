@@ -22,8 +22,8 @@ namespace application_tracker.Server.Models
 
         public required ApplicationStatus Status { get; set; }
 
-        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
-        public DateTime? UpdatedDate { get; set; }
+        public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset? UpdatedDate { get; set; }
 
         public required string OwnerId { get; set; }
 

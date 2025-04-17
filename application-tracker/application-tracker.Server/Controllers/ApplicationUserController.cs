@@ -55,7 +55,7 @@ namespace application_tracker.Server.Controllers
                 var errors = result.Errors.Select(e => e.Description);
                 return BadRequest(new RegistrationResponseDTO { Success = false, Errors = errors });
             }
-            return StatusCode(201);
+            return Created("", UserToDTO(user));
         }
 
         // PUT: api/Users/5 (Update username or email)
