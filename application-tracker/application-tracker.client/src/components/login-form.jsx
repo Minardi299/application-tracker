@@ -5,11 +5,40 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link } from "react-router-dom";
+import { GoogleLogin } from '@react-oauth/google';
 
 export function LoginForm({
   className,
   ...props
 }) {
+  const handleLogin = async (googleData) => {
+    let data;
+    try {
+      const res = await fetch("/api/auth/google", {
+        method: "POST",
+        body: JSON.stringify({
+          token: googleData.credential,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to connect - HTTP status " + res.status);
+      }
+
+      data = await res.json();
+
+      console.log(data);
+    } catch (e) {
+      alert("Failed to login " + e);
+      return;
+    }
+  };
+  const handleError = (error) => {
+    alert("Error logging in", error);
+  };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <form>
@@ -84,6 +113,7 @@ export function LoginForm({
               Continue with Google
             </Button>
             </a>
+            <GoogleLogin onSuccess={handleLogin} onError={handleError}/>;
           </div>
         </div>
       </form>
