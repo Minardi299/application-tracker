@@ -1,6 +1,7 @@
 using System.Text;
 using application_tracker.Server.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -15,16 +16,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString)
 );
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.WithOrigins("http://localhost:49600") // Allow requests from the frontend
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials(); // Allow cookies for authentication
-    });
-});
+
 builder
     .Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -32,9 +24,14 @@ builder
 builder
     .Services.AddAuthentication(options =>
     {
-        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
     })
-    .AddCookie()
+    .AddCookie(options =>
+    {
+        options.Cookie.SameSite = SameSiteMode.Lax; // Ensure cookies are sent with cross-site requests
+    })
     .AddGoogle(options =>
     {
         options.ClientId =
@@ -43,7 +40,6 @@ builder
         options.ClientSecret =
             builder.Configuration["Authentication:Google:ClientSecret"]
             ?? throw new InvalidOperationException("Google ClientSecret not configured.");
-        options.CallbackPath = "/api/auth/google-callback";
     })
     .AddJwtBearer(options =>
     {
@@ -63,6 +59,20 @@ builder
             ) // Define in appsettings.json
         };
     });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "AllowFrontend",
+        policy =>
+        {
+            policy
+                .WithOrigins("https://localhost:49600") // <-- use your React frontend URL
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        }
+    );
+});
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
@@ -72,8 +82,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
-app.UseCors(); // Add this before UseRouting()
+app.UseCors();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
