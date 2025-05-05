@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
+using DotNetEnv;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -82,6 +83,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+Env.Load();
+
+// Access the environment variables
 app.UseCors();
 app.UseDefaultFiles();
 app.UseStaticFiles();

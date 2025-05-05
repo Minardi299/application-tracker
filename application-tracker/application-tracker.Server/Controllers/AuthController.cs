@@ -20,8 +20,9 @@ namespace application_tracker.Server.Controllers
                     {
                         Audience = new[]
                         {
-                            "1090504147883-0s69urr57u33u9105cl438or1lh21ihp.apps.googleusercontent.com"
-                        } // Replace with your actual Client ID
+                            Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID") ?? throw new InvalidOperationException("Google ClientId not configured.")
+
+                        }
                     }
                 );
 
@@ -33,7 +34,8 @@ namespace application_tracker.Server.Controllers
                     {
                         email = payload.Email,
                         name = payload.Name,
-                        sub = payload.Subject
+                        sub = payload.Subject,
+                        picture = payload.Picture,
                     }
                 );
             }
