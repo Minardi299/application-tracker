@@ -59,33 +59,18 @@ namespace application_tracker.Server.Controllers
                     redirectUri: redirectUri,
                     taskCancellationToken: CancellationToken.None
                 );
+                GoogleJsonWebSignature.Payload googleUserPayload;
 
-                // tokenResponse contains:
-                // - AccessToken
-                // - IdToken
-                // - RefreshToken (if 'access_type=offline' was requested by client and it's the first exchange)
-                // - ExpiresInSeconds
-                // - TokenType
-
-                // OPTIONAL: Validate ID Token and get user info
                 try
                 {
                     var validationSettings = new GoogleJsonWebSignature.ValidationSettings
                     {
                         Audience = new List<string> { clientId }
                     };
-                    GoogleJsonWebSignature.Payload googleUserPayload =
-                        await GoogleJsonWebSignature.ValidateAsync(
-                            tokenResponse.IdToken,
-                            validationSettings
-                        );
-                    Console.WriteLine(
-                        $"Google User ID: {googleUserPayload}, Email: {googleUserPayload.Email}, Name: {googleUserPayload.Name}"
+                    googleUserPayload = await GoogleJsonWebSignature.ValidateAsync(
+                        tokenResponse.IdToken,
+                        validationSettings
                     );
-                    // Now you have user's Google profile info:
-                    // googleUserPayload.Email, googleUserPayload.Name, googleUserPayload.Subject (Google User ID), etc.
-                    // You can use this to find or create a user in your database (ApplicationUser)
-                    // and then perhaps issue your own JWT or session cookie.
                 }
                 catch (InvalidJwtException ex)
                 {
@@ -94,19 +79,32 @@ namespace application_tracker.Server.Controllers
                         new { error = "Invalid Google ID token.", details = ex.Message }
                     );
                 }
-
+                var userProfile = new
+                {
+                    googleId = googleUserPayload.Subject, // The unique Google User ID
+                    email = googleUserPayload.Email,
+                    emailVerified = googleUserPayload.EmailVerified,
+                    name = googleUserPayload.Name,
+                    givenName = googleUserPayload.GivenName,
+                    familyName = googleUserPayload.FamilyName,
+                    picture = googleUserPayload.Picture,
+                    locale = googleUserPayload.Locale
+                };
                 // For simplicity, like the Express example, we return the tokens.
                 // In a real app, you'd likely use the ID token to sign in the user
                 // to your system (e.g., create a local account, issue your own JWT).
                 return Ok(
                     new
                     {
-                        //googlePayload = googleUserPayload, // Optional: include Google user info
-                        accessToken = tokenResponse.AccessToken,
-                        idToken = tokenResponse.IdToken,
-                        refreshToken = tokenResponse.RefreshToken, // Handle refresh token carefully
-                        expiresIn = tokenResponse.ExpiresInSeconds,
-                        tokenType = tokenResponse.TokenType
+                        tokens = new
+                        {
+                            accessToken = tokenResponse.AccessToken,
+                            idToken = tokenResponse.IdToken, 
+                            refreshToken = tokenResponse.RefreshToken,
+                            expiresIn = tokenResponse.ExpiresInSeconds,
+                            tokenType = tokenResponse.TokenType
+                        },
+                        user = userProfile
                     }
                 );
             }
