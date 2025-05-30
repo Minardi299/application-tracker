@@ -1,7 +1,9 @@
+using System.Text.Json.Serialization;
 namespace application_tracker.Server.Models
 {
-    public class TokenRequest
+    public class GoogleAuthRequest
     {
-        public string Token { get; set; }
+        [JsonPropertyName("code")]
+        public string? Code { get; set; }
     }
 }

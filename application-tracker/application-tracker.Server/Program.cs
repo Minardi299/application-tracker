@@ -8,12 +8,14 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
 using DotNetEnv;
+
 var builder = WebApplication.CreateBuilder(args);
+Env.Load();
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine($"client id: {builder.Configuration["Authentication:Google:ClientId"]}");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString)
 );
@@ -83,10 +85,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-Env.Load();
+
 
 // Access the environment variables
-app.UseCors();
+app.UseCors("AllowFrontend");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
