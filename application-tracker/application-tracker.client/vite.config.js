@@ -33,12 +33,11 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
         throw new Error("Could not create certificate.");
     }
 }
-//TODO reenable when https is configure
-//const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-//    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7256';
 
-//TODO also redo the target proxy line to have https
-//just keep it as target, the above lines will take care of it
+const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
+    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7256';
+
+
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [plugin(), tailwindcss()],
@@ -50,7 +49,7 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': {
-                target: "http://localhost:5053",
+                target,
                 secure: false
             }
         },
