@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using DotNetEnv;
+using application_tracker.Server.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 Env.Load();
@@ -44,24 +45,25 @@ builder
             builder.Configuration["Authentication:Google:ClientSecret"]
             ?? throw new InvalidOperationException("Google ClientSecret not configured.");
     })
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"], // Define in appsettings.json
-            ValidAudience = builder.Configuration["Jwt:Audience"], // Define in appsettings.json
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(
-                    builder.Configuration["Jwt:Key"]
-                        ?? throw new InvalidOperationException("JWT Key not configured.")
-                )
-            ) // Define in appsettings.json
-        };
-    });
+    // .AddJwtBearer(options =>
+    // {
+    //     options.TokenValidationParameters = new TokenValidationParameters
+    //     {
+    //         ValidateIssuer = true,
+    //         ValidateAudience = true,
+    //         ValidateLifetime = true,
+    //         ValidateIssuerSigningKey = true,
+    //         ValidIssuer = builder.Configuration["Jwt:Issuer"], // Define in appsettings.json
+    //         ValidAudience = builder.Configuration["Jwt:Audience"], // Define in appsettings.json
+    //         IssuerSigningKey = new SymmetricSecurityKey(
+    //             Encoding.UTF8.GetBytes(
+    //                 builder.Configuration["Jwt:Key"]
+    //                     ?? throw new InvalidOperationException("JWT Key not configured.")
+    //             )
+    //         ) // Define in appsettings.json
+    //     };
+    // })
+    ;
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -83,7 +85,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddSingleton<JwtTokenGenerator>();
 var app = builder.Build();
 
 

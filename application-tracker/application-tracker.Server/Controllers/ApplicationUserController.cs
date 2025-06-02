@@ -58,7 +58,7 @@ namespace application_tracker.Server.Controllers
             return Created("", UserToDTO(user));
         }
 
-        // PUT: api/Users/5 (Update username or email)
+        // PUT: api/Users/5 (Update  email)
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(string id, ApplicationUserDTO dto)
         {
@@ -69,7 +69,6 @@ namespace application_tracker.Server.Controllers
             if (user == null)
                 return NotFound();
 
-            user.UserName = dto.UserName;
             user.Email = dto.Email;
 
             var result = await _userManager.UpdateAsync(user);
@@ -98,7 +97,8 @@ namespace application_tracker.Server.Controllers
             new ApplicationUserDTO
             {
                 Id = user.Id,
-                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Email = user.Email,
                 CreatedAt = user.CreatedAt
             };
