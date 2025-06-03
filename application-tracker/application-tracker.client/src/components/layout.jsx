@@ -46,31 +46,33 @@ export function Layout() {
                   </BreadcrumbLink>{" "}
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
-                {pathnames.length > 0  }
-                {pathnames.map((name, index) => {
-                  const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
-                  const isLast = index === pathnames.length - 1;
-                  // Replace hyphens with spaces and capitalize for display
-                  const displayName = name
-                    .split("-")
-                    .map(capitalizeFirstLetter)
-                    .join(" ");
+                {pathnames.length > 0 &&
+                  pathnames.map((name, index) => {
+                    const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
+                    const isLast = index === pathnames.length - 1;
+                    // Replace hyphens with spaces and capitalize for display
+                    const displayName = name
+                      .split("-")
+                      .map(capitalizeFirstLetter)
+                      .join(" ");
 
-                  return (
-                    <Fragment key={name + index}>
-                      <BreadcrumbItem>
-                        {isLast ? (
-                          <BreadcrumbPage>{displayName}</BreadcrumbPage>
-                        ) : (
-                          <BreadcrumbLink asChild>
-                            <RouterLink to={routeTo}>{displayName}</RouterLink>
-                          </BreadcrumbLink>
-                        )}
-                      </BreadcrumbItem>
-                      {!isLast && <BreadcrumbSeparator />}
-                    </Fragment>
-                  );
-                })}
+                    return (
+                      <Fragment key={name + index}>
+                        <BreadcrumbItem>
+                          {isLast ? (
+                            <BreadcrumbPage>{displayName}</BreadcrumbPage>
+                          ) : (
+                            <BreadcrumbLink asChild>
+                              <RouterLink to={routeTo}>{displayName}</RouterLink>
+                            </BreadcrumbLink>
+                          )}
+                        </BreadcrumbItem>
+                        {!isLast && <BreadcrumbSeparator />}
+                      </Fragment>
+                    );
+                  })
+}
+
               </BreadcrumbList>
             </Breadcrumb>
           </div>
@@ -81,7 +83,7 @@ export function Layout() {
                 {/* For now, just showing the avatar as an example */}
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={user.profilePictureUrl || "/default-avatar.png"} alt={user.firstName} />
-                  <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
+                  <AvatarFallback>{user.firstName?.charAt(0)}</AvatarFallback>
                 </Avatar>
               </>
             ) : (

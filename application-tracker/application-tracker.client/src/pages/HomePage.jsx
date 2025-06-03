@@ -10,8 +10,6 @@ export  function HomePage(){
     //     populateTodosData();
     // }, []);
     async function populateTodosData() {
-        console.log("Attempting to fetch todos. Token:", token);
-
         if (!token) {
             console.warn("No auth token found in context. User might not be logged in.");
             

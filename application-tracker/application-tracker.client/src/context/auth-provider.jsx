@@ -87,7 +87,7 @@ export function AuthProvider({ children }) {
       }
 
       const data = await response.json();
-      login(data);
+      login(data.user, data.token);
     } catch (err) {
       console.error(err);
     }
