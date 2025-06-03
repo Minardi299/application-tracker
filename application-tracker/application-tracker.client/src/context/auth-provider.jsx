@@ -3,14 +3,17 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 const AuthContext = createContext({
   isLogin: false,
   user: null,
+  token: null,
   login: () => {throw new Error("login() called without AuthProvider!");},  
   logout: () => {throw new Error("logout() called without AuthProvider!");},     
   register:async()=> {throw new Error("register() called without AuthProvider!");}  
 });
 const GUEST_USER = {
   id: null,
-  name: 'Guest',
-  email: 'guest@gmail.com',
+  email: 'guest@example.com',
+  firstName: 'Guest',
+  lastName: '',
+  picture: null,
   
 };
 
@@ -18,44 +21,57 @@ const GUEST_USER = {
 export function AuthProvider({ children }) {
   const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState(GUEST_USER);
+  const [token, setToken] = useState(null); 
   //check from local storagge if the user is already logged in before
   useEffect(() => {
     const storedUser = localStorage.getItem('authUser');
-    if (storedUser) {
+    const storedToken = localStorage.getItem('token');
+    if (storedUser && storedToken) {
       try {
         setUser(JSON.parse(storedUser));
+        setToken(storedToken);
         setIsLogin(true);
       } catch (e) {
         console.error("Failed to parse stored user", e);
         // Clear invalid stored data in case of error
         localStorage.removeItem('authUser');
+        localStorage.removeItem('token');
         setUser(GUEST_USER);
+        setToken(null);
         setIsLogin(false);
       }
     }else {
       setUser(GUEST_USER); 
+      setToken(null);
       setIsLogin(false);
+      if (!storedUser) localStorage.removeItem('authUser');
+      if (!storedToken) localStorage.removeItem('token');
     }
   }, []);
 
 
 
   // TODO: replace these with your actual API calls or authentication logic
-  const login = (userData) => {
+  const login = (userData, token) => {
     // Example: Assume userData is the user object, token is a JWT
+    if (!userData || !token) {
+        console.error("Login called without proper user data or auth token");
+        return;
+    }
     setUser(userData);
+    setToken(token); 
     setIsLogin(true);
     localStorage.setItem('authUser', JSON.stringify(userData));
-    //jwt token for later
-    //if (token) localStorage.setItem('authToken', token);
+    localStorage.setItem('token', token);
   };
 
   const logout = () => {
     setUser(GUEST_USER);
     setIsLogin(false);
+    setToken(null);
     // Clear persisted state
     localStorage.removeItem('authUser');
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
     // Add any cleanup logic, like redirecting to login page
   };
   const register = async (userData) => {
@@ -80,7 +96,8 @@ export function AuthProvider({ children }) {
   // context value
   const value = {
     isLogin,
-    user,
+    user, 
+    token,
     login,
     logout,
     register,

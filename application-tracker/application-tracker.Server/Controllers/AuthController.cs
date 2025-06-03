@@ -214,7 +214,7 @@ namespace application_tracker.Server.Controllers
                 // For simplicity, like the Express example, we return the tokens.
                 // In a real app, you'd likely use the ID token to sign in the user
                 // to your system (e.g., create a local account, issue your own JWT).
-                return Ok(new { tokens = accessToken, user = UserDTO });
+                return Ok(new { token = accessToken, user = UserDTO });
             }
             catch (TokenResponseException ex)
             {

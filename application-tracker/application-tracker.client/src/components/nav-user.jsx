@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/auth-provider"
+import { useNavigate } from "react-router-dom"; 
 import {
   BellIcon,
   CreditCardIcon,
@@ -30,7 +31,13 @@ import {
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const userDisplayName = user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'User';
+  function handleLogout(){
+      logout();
+      navigate('/login'); 
+    };
 
   return (
     <SidebarMenu>
@@ -41,11 +48,12 @@ export function NavUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+              <Avatar className="h-8 w-8">
+                  <AvatarImage src={user.profilePictureUrl || "/default-avatar.png"} alt={user.firstName} />
+                  <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{userDisplayName}</span>
                 <span className="truncate text-xs text-muted-foreground">
                   {user.email}
                 </span>
@@ -61,11 +69,12 @@ export function NavUser() {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user.profilePictureUrl || "/default-avatar.png"} alt={user.firstName} />
+                  <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate font-medium">{userDisplayName}</span>
                   <span className="truncate text-xs text-muted-foreground">
                     {user.email}
                   </span>
@@ -74,7 +83,7 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/dashboard')}>
                 <UserCircleIcon />
                 Account
               </DropdownMenuItem>
@@ -88,7 +97,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem variant="destructive" onClick={handleLogout}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>

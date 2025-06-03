@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using DotNetEnv;
 using application_tracker.Server.Helper;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 Env.Load();
@@ -28,9 +29,8 @@ builder
 builder
     .Services.AddAuthentication(options =>
     {
-        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddCookie(options =>
     {
@@ -45,25 +45,33 @@ builder
             builder.Configuration["Authentication:Google:ClientSecret"]
             ?? throw new InvalidOperationException("Google ClientSecret not configured.");
     })
-    // .AddJwtBearer(options =>
-    // {
-    //     options.TokenValidationParameters = new TokenValidationParameters
-    //     {
-    //         ValidateIssuer = true,
-    //         ValidateAudience = true,
-    //         ValidateLifetime = true,
-    //         ValidateIssuerSigningKey = true,
-    //         ValidIssuer = builder.Configuration["Jwt:Issuer"], // Define in appsettings.json
-    //         ValidAudience = builder.Configuration["Jwt:Audience"], // Define in appsettings.json
-    //         IssuerSigningKey = new SymmetricSecurityKey(
-    //             Encoding.UTF8.GetBytes(
-    //                 builder.Configuration["Jwt:Key"]
-    //                     ?? throw new InvalidOperationException("JWT Key not configured.")
-    //             )
-    //         ) // Define in appsettings.json
-    //     };
-    // })
-    ;
+    .AddJwtBearer(options => 
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer =
+                builder.Configuration["Jwt:Issuer"] // From your appsettings/env
+                ?? throw new InvalidOperationException("JWT Issuer not configured."),
+            ValidAudience =
+                builder.Configuration["Jwt:Audience"] // From your appsettings/env
+                ?? throw new InvalidOperationException("JWT Audience not configured."),
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    builder.Configuration["Jwt:Key"]
+                        ?? throw new InvalidOperationException("JWT Key not configured.")
+                )
+            ),
+            ClockSkew = TimeSpan.Zero // Optional: useful for precise expiration checks
+        };
+        // If your API is being called from an SPA on a different origin (even different port)
+        // and the request is not being handled by the SPA's dev server proxy,
+        // you might need to handle events if the default 401 challenge is not working as expected for fetch.
+        // However, the default behavior for JwtBearer should be to return 401.
+    });
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(

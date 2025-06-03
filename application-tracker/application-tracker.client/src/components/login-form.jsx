@@ -1,10 +1,11 @@
 import { GalleryVerticalEnd } from "lucide-react"
-import { useEffect } from "react";
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/auth-provider"
+
 import { useGoogleLogin } from '@react-oauth/google';
 
 "You have created a new client application that uses libraries for user authentication or authorization that are deprecated. New clients must use the new libraries instead. See the [Migration Guide](https://developers.google.com/identity/gsi/web/guides/gis-migration) for more information."
@@ -13,6 +14,8 @@ export function LoginForm({
   className,
   ...props
 }) {
+  const {login} = useAuth();
+  const navigate = useNavigate(); 
   const handleLogin = async (tokenResponse) => { 
 
     if (tokenResponse.code) { 
@@ -35,11 +38,16 @@ export function LoginForm({
         }
 
         const data = await res.json();
-        console.log(data); // These will be the tokens from your backend
-        // TODO: Handle successful login (e.g., store tokens, redirect)
+
+        if (data && data.user && data.token) {
+          login(data.user, data.token); 
+          navigate("/"); 
+        } else {
+          console.error("Login failed: Response did not include user and token.", data);
+          alert("Login failed. Please try again. " + (data.message || ""));
+        }
       } catch (e) {
         console.error("Failed to login " + e);
-        // TODO: Show error to user
       }
     } else {
       console.log("No authorization code received from Google");
@@ -47,18 +55,15 @@ export function LoginForm({
     }
   };
 
-  const login = useGoogleLogin({
+  const GoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      console.log("Google Auth Code Response:", tokenResponse);
       try {
         handleLogin(tokenResponse);
       } catch (error) {
-        console.error("Error fetching user info:", error);
         handleError(error);
       }
     },
     onError: (error) => {
-      console.error("Login error:", error);
       handleError(error);
     },
     flow: 'auth-code',
@@ -134,7 +139,7 @@ export function LoginForm({
             <Button 
               variant="outline" 
               className="w-full cursor-pointer" 
-              onClick={() => login()}
+              onClick={() => GoogleLogin()}
               type="button" // Important: prevent form submission
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="mr-2 h-4 w-4">
