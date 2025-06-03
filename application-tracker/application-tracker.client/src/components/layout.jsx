@@ -43,9 +43,11 @@ export function Layout() {
                       <Home className="h-4 w-4" />
                       <span className="sr-only">Home</span>
                     </Link>
-                  </BreadcrumbLink>{" "}
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
+
+
                 {pathnames.length > 0 &&
                   pathnames.map((name, index) => {
                     const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
@@ -63,7 +65,7 @@ export function Layout() {
                             <BreadcrumbPage>{displayName}</BreadcrumbPage>
                           ) : (
                             <BreadcrumbLink asChild>
-                              <RouterLink to={routeTo}>{displayName}</RouterLink>
+                              <Link to={routeTo}>{displayName}</Link>
                             </BreadcrumbLink>
                           )}
                         </BreadcrumbItem>
