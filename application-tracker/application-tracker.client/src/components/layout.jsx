@@ -45,35 +45,22 @@ export function Layout() {
                     </Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
+                {pathnames.map((name, index) => {
+                  const routeTo = `/${pathnames.slice(0, index + 1).join('/')}`;
+                  const displayName = name.split('-').map(capitalizeFirstLetter).join(' ');
+                  const isCurrentPage = location.pathname === routeTo; 
+                  return (
+                    <Fragment key={name + index}>
+                       <BreadcrumbSeparator /> 
+                      <BreadcrumbItem>
+                        <BreadcrumbLink asChild className={isCurrentPage ? "font-semibold text-foreground" : ""}>
+                          <Link to={routeTo}>{displayName}</Link>
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                    </Fragment>
+                  );
+                })}
 
-
-                {pathnames.length > 0 &&
-                  pathnames.map((name, index) => {
-                    const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
-                    const isLast = index === pathnames.length - 1;
-                    // Replace hyphens with spaces and capitalize for display
-                    const displayName = name
-                      .split("-")
-                      .map(capitalizeFirstLetter)
-                      .join(" ");
-
-                    return (
-                      <Fragment key={name + index}>
-                        <BreadcrumbItem>
-                          {isLast ? (
-                            <BreadcrumbPage>{displayName}</BreadcrumbPage>
-                          ) : (
-                            <BreadcrumbLink asChild>
-                              <Link to={routeTo}>{displayName}</Link>
-                            </BreadcrumbLink>
-                          )}
-                        </BreadcrumbItem>
-                        {!isLast && <BreadcrumbSeparator />}
-                      </Fragment>
-                    );
-                  })
-}
 
               </BreadcrumbList>
             </Breadcrumb>
@@ -81,8 +68,6 @@ export function Layout() {
           <div className="flex items-center gap-4">
             {isLogin && user ? (
               <>
-                {/* You can add a user dropdown menu here if needed */}
-                {/* For now, just showing the avatar as an example */}
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={user.profilePictureUrl || "/default-avatar.png"} alt={user.firstName} />
                   <AvatarFallback>{user.firstName?.charAt(0)}</AvatarFallback>
