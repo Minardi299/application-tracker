@@ -1,4 +1,4 @@
-import { Calendar, Home, LayoutDashboard, ChevronUp, Settings } from "lucide-react"
+import { Calendar, Home, LayoutDashboard, Folder, Settings } from "lucide-react"
 import { Link } from "react-router";
 import { NavUser } from "@/components/nav-user"
 import {
@@ -13,6 +13,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"; 
+import { useAuth } from '@/context/auth-provider'; // To get token and login state
 
 // Menu items.
 const data = {
@@ -38,9 +44,22 @@ const items = [
     url: "/settings",
     icon: Settings,
   },
+  {
+    title: "Folder",
+    icon: Folder,
+    items: [
+      {
+        title: "All",
+        url: "/folder/all",
+        icon: Calendar,
+      },
+    ],
+  },
 ]
 
 export function AppSidebar() {
+    const { isLogin, user } = useAuth(); 
+
   return (
     <Sidebar variant="floating" collapsible="icon">
       <SidebarContent>

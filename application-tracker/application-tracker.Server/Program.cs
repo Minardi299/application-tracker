@@ -35,7 +35,6 @@ builder
     .AddCookie(options =>
     {
         options.Cookie.Name = "accessToken";
-        options.Cookie.SameSite = SameSiteMode.Lax;
     })
     .AddGoogle(options =>
     {

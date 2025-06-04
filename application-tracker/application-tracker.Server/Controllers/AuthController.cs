@@ -211,9 +211,8 @@ namespace application_tracker.Server.Controllers
                         HttpOnly = true,
                         Secure = true,
                         IsEssential = true,
-                        SameSite = SameSiteMode.Lax,
-                        // SameSite = SameSiteMode.Strict,
-                        // Path = "/",
+                        SameSite = SameSiteMode.Strict,
+                        Path = "/",
                     }
                 );
                 ApplicationUserDTO UserDTO = new ApplicationUserDTO
@@ -256,7 +255,7 @@ namespace application_tracker.Server.Controllers
                 );
             }
         }
-        
+
         [HttpPost("logout")]
         public IActionResult Logout()
         {
@@ -265,9 +264,9 @@ namespace application_tracker.Server.Controllers
                 new CookieOptions
                 {
                     HttpOnly = true,
-                    SameSite = SameSiteMode.Lax,
+                    SameSite = SameSiteMode.Strict,
                     Secure = true,
-                    // Path = "/"
+                    Path = "/"
                 }
             );
 

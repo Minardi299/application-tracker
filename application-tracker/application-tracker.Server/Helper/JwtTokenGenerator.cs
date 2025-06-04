@@ -33,9 +33,7 @@ namespace application_tracker.Server.Helper
                 Issuer = _configuration["Jwt:Issuer"],
                 Audience = _configuration["Jwt:Audience"],
                 SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])
-                    ),
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
                     SecurityAlgorithms.HmacSha256Signature
                 )
             };
@@ -44,17 +42,17 @@ namespace application_tracker.Server.Helper
 
             return tokenHandler.WriteToken(token);
         }
+
         public string GenerateToken(string userId, string email)
         {
-
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, userId),
-                new Claim(JwtRegisteredClaimNames.Email, email),
-            };
+                {
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Sub, userId),
+                    new Claim(JwtRegisteredClaimNames.Email, email),
+                };
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(claims),
@@ -64,9 +62,7 @@ namespace application_tracker.Server.Helper
                     Issuer = _configuration["Jwt:Issuer"],
                     Audience = _configuration["Jwt:Audience"],
                     SigningCredentials = new SigningCredentials(
-                        new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])
-                        ),
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
                         SecurityAlgorithms.HmacSha256Signature
                     )
                 };
