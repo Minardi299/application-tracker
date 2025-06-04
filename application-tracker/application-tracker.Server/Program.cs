@@ -34,6 +34,7 @@ builder
     })
     .AddCookie(options =>
     {
+        options.Cookie.Name = "accesToken";
         options.Cookie.SameSite = SameSiteMode.Lax; // Ensure cookies are sent with cross-site requests
     })
     .AddGoogle(options =>
@@ -54,10 +55,10 @@ builder
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer =
-                builder.Configuration["Jwt:Issuer"] // From your appsettings/env
+                builder.Configuration["Jwt:Issuer"] 
                 ?? throw new InvalidOperationException("JWT Issuer not configured."),
             ValidAudience =
-                builder.Configuration["Jwt:Audience"] // From your appsettings/env
+                builder.Configuration["Jwt:Audience"] 
                 ?? throw new InvalidOperationException("JWT Audience not configured."),
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(
@@ -67,10 +68,14 @@ builder
             ),
             ClockSkew = TimeSpan.Zero // Optional: useful for precise expiration checks
         };
-        // If your API is being called from an SPA on a different origin (even different port)
-        // and the request is not being handled by the SPA's dev server proxy,
-        // you might need to handle events if the default 401 challenge is not working as expected for fetch.
-        // However, the default behavior for JwtBearer should be to return 401.
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["accesToken"];
+                return Task.CompletedTask;
+            }
+        };
     });
 builder.Services.AddCors(options =>
 {
@@ -79,7 +84,7 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
-                .WithOrigins("https://localhost:49600") // <-- use your React frontend URL
+                .WithOrigins("https://localhost:49600") 
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();

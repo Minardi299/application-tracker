@@ -39,11 +39,11 @@ export function LoginForm({
 
         const data = await res.json();
 
-        if (data && data.user && data.token) {
-          login(data.user, data.token); 
+        if (data && data.user) {
+          login(data.user); 
           navigate("/"); 
         } else {
-          console.error("Login failed: Response did not include user and token.", data);
+          console.error("Login failed: Response did not include user data.", data);
           alert("Login failed. Please try again. " + (data.message || ""));
         }
       } catch (e) {

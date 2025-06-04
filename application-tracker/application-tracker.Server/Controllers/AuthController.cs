@@ -199,8 +199,21 @@ namespace application_tracker.Server.Controllers
                         // }
                     }
                 }
-                var accessToken = _jwtTokenGenerator.GenerateToken(user.Id, user.Email);
-
+                var accessToken = _jwtTokenGenerator.GenerateToken(user.Id, user?.Email);
+                HttpContext.Response.Cookies.Append(
+                    "accesToken",
+                    accessToken,
+                    new CookieOptions
+                    {
+                        Expires = DateTime.UtcNow.AddMinutes(
+                            Convert.ToInt16(_configuration["Jwt:AccessTokenExpirationMinutes"])
+                        ),
+                        HttpOnly = true,
+                        Secure = true,
+                        IsEssential = true,
+                        SameSite = SameSiteMode.None
+                    }
+                );
                 ApplicationUserDTO UserDTO = new ApplicationUserDTO
                 {
                     Id = user.Id,
@@ -214,7 +227,7 @@ namespace application_tracker.Server.Controllers
                 // For simplicity, like the Express example, we return the tokens.
                 // In a real app, you'd likely use the ID token to sign in the user
                 // to your system (e.g., create a local account, issue your own JWT).
-                return Ok(new { token = accessToken, user = UserDTO });
+                return Ok(new { user = UserDTO });
             }
             catch (TokenResponseException ex)
             {
