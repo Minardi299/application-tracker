@@ -34,8 +34,8 @@ builder
     })
     .AddCookie(options =>
     {
-        options.Cookie.Name = "accesToken";
-        options.Cookie.SameSite = SameSiteMode.Lax; // Ensure cookies are sent with cross-site requests
+        options.Cookie.Name = "accessToken";
+        options.Cookie.SameSite = SameSiteMode.Lax;
     })
     .AddGoogle(options =>
     {
@@ -72,7 +72,7 @@ builder
         {
             OnMessageReceived = context =>
             {
-                context.Token = context.Request.Cookies["accesToken"];
+                context.Token = context.Request.Cookies["accessToken"];
                 return Task.CompletedTask;
             }
         };

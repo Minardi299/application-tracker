@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using application_tracker.Server.Helper;
 using application_tracker.Server.Helper;
@@ -201,7 +201,7 @@ namespace application_tracker.Server.Controllers
                 }
                 var accessToken = _jwtTokenGenerator.GenerateToken(user.Id, user?.Email);
                 HttpContext.Response.Cookies.Append(
-                    "accesToken",
+                    "accessToken",
                     accessToken,
                     new CookieOptions
                     {
