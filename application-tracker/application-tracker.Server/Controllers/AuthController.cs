@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using application_tracker.Server.Helper;
 using application_tracker.Server.Models;
+using ApplicationTracker.Server.Helper;
 using Google.Apis.Auth;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
@@ -19,24 +20,28 @@ namespace application_tracker.Server.Controllers
         private readonly IConfiguration _configuration;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly JwtTokenGenerator _jwtTokenGenerator;
+        private readonly ApplicationDbContext _dbContext;
 
         public AuthController(
             JwtTokenGenerator jwtTokenGenerator,
             IConfiguration configuration,
-            UserManager<ApplicationUser> userManager
+            UserManager<ApplicationUser> userManager,
+            ApplicationDbContext dbContext
         )
         {
             _configuration = configuration;
             _userManager = userManager;
             _jwtTokenGenerator = jwtTokenGenerator;
+            _dbContext = dbContext;
         }
+        
         private async Task<(ApplicationUser? User, IActionResult? ErrorResult)> GetUserFromExternalLoginAsync(
             ApplicationUser user,
             string loginProvider,
             string providerKey,
             string providerDisplayName
         )
-        { 
+        {
             IList<UserLoginInfo> userLogins = await _userManager.GetLoginsAsync(user);
             UserLoginInfo? existingLogin = userLogins.FirstOrDefault(l =>
                 l.LoginProvider == loginProvider && l.ProviderKey == providerKey
@@ -121,6 +126,7 @@ namespace application_tracker.Server.Controllers
                     )
                 );
             }
+            UserHelper.populateNewUser(user, _dbContext).Wait();
             return (user, null);
         }
 
