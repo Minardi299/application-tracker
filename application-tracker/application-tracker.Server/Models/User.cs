@@ -6,6 +6,7 @@ namespace application_tracker.Server.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        //consider adding fluent validation for properties
         public new string Email
         {
             get => base.Email!;

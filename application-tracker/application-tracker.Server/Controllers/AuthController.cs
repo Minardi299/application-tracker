@@ -102,8 +102,13 @@ namespace application_tracker.Server.Controllers
             );
             if (!addLoginResult.Succeeded)
             {
+                await _userManager.DeleteAsync(user);
+                // _logger?.LogWarning(
+                //     "Failed to link external login for new user {Email}. User deleted. Errors: {Errors}",
+                //     user.Email,
+                //     string.Join(", ", addLoginResult.Errors.Select(e => e.Description))
+                // );
                 // _logger?.LogError("Failed to add {LoginProvider} login to new user {Email}. Errors: {Errors}", loginProvider, user.Email, string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
-                // Consider if user should be deleted here if linking fails, or how to handle this scenario.
                 return (
                     null,
                     StatusCode(
