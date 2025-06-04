@@ -24,6 +24,9 @@ namespace application_tracker.Server.Models
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<TodoItem>().ToTable("TodoItem");
+            modelBuilder.Entity<ApplicationUser>()
+                .Property(u => u.Email)
+                .IsRequired();
 
             modelBuilder
                 .Entity<JobApplication>()

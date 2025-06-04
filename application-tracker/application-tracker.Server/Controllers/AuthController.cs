@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using application_tracker.Server.Helper;
-using application_tracker.Server.Helper;
 using application_tracker.Server.Models;
 using Google.Apis.Auth;
 using Google.Apis.Auth.OAuth2;
@@ -30,6 +29,94 @@ namespace application_tracker.Server.Controllers
             _configuration = configuration;
             _userManager = userManager;
             _jwtTokenGenerator = jwtTokenGenerator;
+        }
+        private async Task<(ApplicationUser? User, IActionResult? ErrorResult)> GetUserFromExternalLoginAsync(
+            ApplicationUser user,
+            string loginProvider,
+            string providerKey,
+            string providerDisplayName
+        )
+        { 
+            IList<UserLoginInfo> userLogins = await _userManager.GetLoginsAsync(user);
+            UserLoginInfo? existingLogin = userLogins.FirstOrDefault(l =>
+                l.LoginProvider == loginProvider && l.ProviderKey == providerKey
+            );
+
+            if (existingLogin == null)
+            {
+                IdentityResult addLoginResult = await _userManager.AddLoginAsync(
+                    user,
+                    new UserLoginInfo(loginProvider, providerKey, providerDisplayName)
+                );
+                if (!addLoginResult.Succeeded)
+                {
+                    // _logger?.LogError("Failed to add {LoginProvider} login to user {Email}. Errors: {Errors}", loginProvider, user.Email, string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
+                    return (
+                        null,
+                        StatusCode(
+                            StatusCodes.Status500InternalServerError,
+                            new
+                            {
+                                error = $"Failed to link {loginProvider} account to existing user.",
+                                details = addLoginResult.Errors.Select(e => e.Description)
+                            }
+                        )
+                    );
+                }
+            }
+            return (user, null);
+        }
+        private async Task<(ApplicationUser? User, IActionResult? ErrorResult)> CreateUserFromExternalLoginAsync(
+            string email,
+            string? givenName,
+            string? familyName,
+            bool emailVerified,
+            string loginProvider,
+            string providerKey,
+            string providerDisplayName
+        )
+        {
+            ApplicationUser user = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                FirstName = givenName,
+                LastName = familyName,
+                EmailConfirmed = emailVerified
+            };
+            IdentityResult createUserResult = await _userManager.CreateAsync(user);
+            if (!createUserResult.Succeeded)
+            {
+                // _logger?.LogError("Failed to create new user from {LoginProvider} login. Errors: {Errors}", loginProvider, string.Join(", ", createUserResult.Errors.Select(e => e.Description)));
+                return (
+                    null,
+                    StatusCode(
+                        StatusCodes.Status500InternalServerError,
+                        new { error = "Failed to create user.", details = createUserResult.Errors }
+                    )
+                );
+            }
+            IdentityResult addLoginResult = await _userManager.AddLoginAsync(
+                user,
+                new UserLoginInfo(loginProvider, providerKey, providerDisplayName)
+            );
+            if (!addLoginResult.Succeeded)
+            {
+                // _logger?.LogError("Failed to add {LoginProvider} login to new user {Email}. Errors: {Errors}", loginProvider, user.Email, string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
+                // Consider if user should be deleted here if linking fails, or how to handle this scenario.
+                return (
+                    null,
+                    StatusCode(
+                        StatusCodes.Status500InternalServerError,
+                        new
+                        {
+                            error = $"Failed to link {loginProvider} account to new user.",
+                            details = addLoginResult.Errors.Select(e => e.Description)
+                        }
+                    )
+                );
+            }
+            return (user, null);
         }
 
         [HttpPost("google")]
@@ -96,110 +183,61 @@ namespace application_tracker.Server.Controllers
                 string loginProvider = "Google";
                 string providerKey = googleUserPayload.Subject;
                 string providerDisplayName = "Google";
-                ApplicationUser? user = await _userManager.FindByEmailAsync(
+                ApplicationUser? existingUser  = await _userManager.FindByEmailAsync(
                     googleUserPayload.Email
                 );
-                if (user == null)
+                (ApplicationUser? user, IActionResult? error) = existingUser == null
+                    ? await CreateUserFromExternalLoginAsync(
+                        googleUserPayload.Email,
+                        googleUserPayload.GivenName,
+                        googleUserPayload.FamilyName,
+                        googleUserPayload.EmailVerified,
+                        loginProvider,
+                        providerKey,
+                        providerDisplayName)
+                    : await GetUserFromExternalLoginAsync(
+                        existingUser,
+                        loginProvider,
+                        providerKey,
+                        providerDisplayName);
+                // user should only be null if error is not null, but check both to be safe
+                if (error != null || user == null)
+                    return error ?? StatusCode(500, new { error = "Unknown error." });
+                
+                
+                // _logger?.LogInformation("Successfully linked Google account to existing user {Email}.", user.Email);
+
+                bool updated = false;
+                if (user.FirstName != googleUserPayload.GivenName)
                 {
-                    // Create a new user if they don't exist
-                    user = new ApplicationUser
-                    {
-                        UserName = googleUserPayload.Email,
-                        Email = googleUserPayload.Email,
-                        FirstName = googleUserPayload.GivenName,
-                        LastName = googleUserPayload.FamilyName,
-                        EmailConfirmed = googleUserPayload.EmailVerified,
-
-                        // You can set other properties like FirstName, LastName, etc. if needed
-                    };
-                    IdentityResult createUserResult = await _userManager.CreateAsync(user);
-                    if (!createUserResult.Succeeded)
-                    {
-                        return StatusCode(
-                            StatusCodes.Status500InternalServerError,
-                            new
-                            {
-                                error = "Failed to create user.",
-                                details = createUserResult.Errors
-                            }
-                        );
-                    }
-                    IdentityResult addLoginResult = await _userManager.AddLoginAsync(
-                        user,
-                        new UserLoginInfo(loginProvider, providerKey, providerDisplayName)
-                    );
-                    if (!addLoginResult.Succeeded)
-                    {
-                        // _logger?.LogError("Failed to add Google login to new user {Email}. Errors: {Errors}", user.Email, string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
-                        return StatusCode(
-                            StatusCodes.Status500InternalServerError,
-                            new
-                            {
-                                error = "Failed to link Google account to new user.",
-                                details = addLoginResult.Errors.Select(e => e.Description)
-                            }
-                        );
-                    }
+                    user.FirstName = googleUserPayload.GivenName;
+                    updated = true;
                 }
-                else
+                if (user.LastName != googleUserPayload.FamilyName)
                 {
-                    IList<UserLoginInfo> userLogins = await _userManager.GetLoginsAsync(user);
-                    UserLoginInfo? googleLogin = userLogins.FirstOrDefault(l =>
-                        l.LoginProvider == loginProvider && l.ProviderKey == providerKey
-                    );
-
-                    if (googleLogin == null)
-                    {
-                        IdentityResult addLoginResult = await _userManager.AddLoginAsync(
-                            user,
-                            new UserLoginInfo(loginProvider, providerKey, providerDisplayName)
-                        );
-                        if (!addLoginResult.Succeeded)
-                        {
-                            // _logger?.LogError("Failed to add Google login to existing user {Email}. Errors: {Errors}", user.Email, string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
-                            return StatusCode(
-                                StatusCodes.Status500InternalServerError,
-                                new
-                                {
-                                    error = "Failed to link Google account to existing user.",
-                                    details = addLoginResult.Errors.Select(e => e.Description)
-                                }
-                            );
-                        }
-                        // _logger?.LogInformation("Successfully linked Google account to existing user {Email}.", user.Email);
-                    }
-
-                    bool updated = false;
-                    if (user.FirstName != googleUserPayload.GivenName)
-                    {
-                        user.FirstName = googleUserPayload.GivenName;
-                        updated = true;
-                    }
-                    if (user.LastName != googleUserPayload.FamilyName)
-                    {
-                        user.LastName = googleUserPayload.FamilyName;
-                        updated = true;
-                    }
-                    if (!user.EmailConfirmed && googleUserPayload.EmailVerified)
-                    {
-                        user.EmailConfirmed = googleUserPayload.EmailVerified;
-                        updated = true;
-                    }
-
-                    if (updated)
-                    {
-                        IdentityResult updateResult = await _userManager.UpdateAsync(user);
-                        // if (!updateResult.Succeeded)
-                        // {
-                        //    _logger?.LogWarning("Could not update user {UserId} details from Google Sign In. Errors: {Errors}", user.Id, string.Join(", ", updateResult.Errors.Select(e=> e.Description)));
-                        // }
-                        // else
-                        // {
-                        //    _logger?.LogInformation("Updated user {UserId} details from Google Sign In.", user.Id);
-                        // }
-                    }
+                    user.LastName = googleUserPayload.FamilyName;
+                    updated = true;
                 }
-                var accessToken = _jwtTokenGenerator.GenerateToken(user.Id, user?.Email);
+                if (!user.EmailConfirmed && googleUserPayload.EmailVerified)
+                {
+                    user.EmailConfirmed = googleUserPayload.EmailVerified;
+                    updated = true;
+                }
+                if (updated)
+                {
+                    IdentityResult updateResult = await _userManager.UpdateAsync(user);
+                }
+                // if (!updateResult.Succeeded)
+                // {
+                //    _logger?.LogWarning("Could not update user {UserId} details from Google Sign In. Errors: {Errors}", user.Id, string.Join(", ", updateResult.Errors.Select(e=> e.Description)));
+                // }
+                // else
+                // {
+                //    _logger?.LogInformation("Updated user {UserId} details from Google Sign In.", user.Id);
+                // }
+
+
+                var accessToken = _jwtTokenGenerator.GenerateToken(user.Id, user.Email);
                 HttpContext.Response.Cookies.Append(
                     "accessToken",
                     accessToken,
