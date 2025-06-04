@@ -1,4 +1,4 @@
-﻿﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using application_tracker.Server.Helper;
 using application_tracker.Server.Helper;
@@ -211,7 +211,9 @@ namespace application_tracker.Server.Controllers
                         HttpOnly = true,
                         Secure = true,
                         IsEssential = true,
-                        SameSite = SameSiteMode.None
+                        SameSite = SameSiteMode.Lax,
+                        // SameSite = SameSiteMode.Strict,
+                        // Path = "/",
                     }
                 );
                 ApplicationUserDTO UserDTO = new ApplicationUserDTO
@@ -253,6 +255,23 @@ namespace application_tracker.Server.Controllers
                     }
                 );
             }
+        }
+        
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Response.Cookies.Delete(
+                "accessToken",
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.Lax,
+                    Secure = true,
+                    // Path = "/"
+                }
+            );
+
+            return Ok(new { message = "Logout successful" });
         }
     }
 }

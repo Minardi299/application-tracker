@@ -55,7 +55,21 @@ export function AuthProvider({ children }) {
     localStorage.setItem('authUser', JSON.stringify(userData));
   };
 
-  const logout = () => {
+  async function logout  () {
+    const res = await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.text(); 
+        throw new Error(
+          `Failed to connect - HTTP status ${res.status}. Response: ${errorData}`
+        );
+      }
     setUser(GUEST_USER);
     setIsLogin(false);
     // Clear persisted state

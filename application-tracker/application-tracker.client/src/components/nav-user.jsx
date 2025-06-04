@@ -34,9 +34,15 @@ export function NavUser() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const userDisplayName = user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'User';
-  function handleLogout(){
-      logout();
-      navigate('/login'); 
+  async function handleLogout(){
+      try {
+        await logout(); 
+        //use hard reload to ensure the session is cleared
+        //only use navigate causes the whole login page to freeze, probably something wrong when managing the Login and user state
+        window.location.href = "/login";
+    } catch (error) {
+        console.error("Error during logout process:", error);
+    }
     };
 
   return (
