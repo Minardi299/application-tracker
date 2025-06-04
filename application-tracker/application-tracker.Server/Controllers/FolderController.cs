@@ -14,7 +14,7 @@ namespace application_tracker.Server.Controllers
         {
             _context = context;
         }
-        [HttpGet]
+        [HttpGet("{ownerId}")]
         public async Task<ActionResult<IEnumerable<FolderDTO>>> GetFoldersFromUser(string ownerId)
         {
             var folders = await _context
