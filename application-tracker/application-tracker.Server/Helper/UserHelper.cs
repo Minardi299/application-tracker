@@ -1,12 +1,13 @@
 namespace ApplicationTracker.Server.Helper;
 
-using System.Threading.Tasks;
-using application_tracker.Server.Models;
-using Microsoft.EntityFrameworkCore;
+ using System.Threading.Tasks;
+using System.Collections.Generic;
+ using application_tracker.Server.Models;
+ using Microsoft.EntityFrameworkCore;
 
 public static class UserHelper
 {
-    public static async Task populateNewUser(ApplicationUser user, ApplicationDbContext dbContext)
+    public static async Task PopulateNewUserAsync(ApplicationUser user, ApplicationDbContext dbContext)
     {
         ApplicationFolder defaultFolder = new ApplicationFolder
         {

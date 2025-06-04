@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿﻿﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using application_tracker.Server.Helper;
 using application_tracker.Server.Models;
@@ -126,7 +126,15 @@ namespace application_tracker.Server.Controllers
                     )
                 );
             }
-            UserHelper.populateNewUser(user, _dbContext).Wait();
+            try
+                {
+                    await UserHelper.PopulateNewUserAsync(user, _dbContext);
+                }
+                catch (Exception ex)
+                {
+                    // Log the error but don't fail user creation
+                    // _logger?.LogError(ex, "Failed to populate default data for user {Email}", user.Email);
+                }
             return (user, null);
         }
 
