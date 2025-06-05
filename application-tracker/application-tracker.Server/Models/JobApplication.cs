@@ -7,7 +7,7 @@ namespace application_tracker.Server.Models
 {
     public class JobApplication
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [StringLength(100)]
         public string? CompanyName { get; set; }

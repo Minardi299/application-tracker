@@ -7,7 +7,7 @@ namespace application_tracker.Server.Models
     public class ApplicationFolder
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         [StringLength(50)]

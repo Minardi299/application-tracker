@@ -33,9 +33,9 @@ namespace application_tracker.Server.Controllers
             .ToListAsync();
         }
 
-        // GET: api/JobApplications/5
+        // GET: api/JobApplications/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<JobApplicationDTO>> GetJobApplication(long id)
+        public async Task<ActionResult<JobApplicationDTO>> GetJobApplication(Guid id)
         {
           if (_context.JobApplications == null)
           {
@@ -51,10 +51,10 @@ namespace application_tracker.Server.Controllers
             return JobApplicationToDTO(jobApplication);
         }
 
-        // PUT: api/JobApplications/5
+        // PUT: api/JobApplications/{id}
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutJobApplication(long id, JobApplicationDTO jobApplicationDTO)
+        public async Task<IActionResult> PutJobApplication(Guid id, JobApplicationDTO jobApplicationDTO)
         {
             if (id != jobApplicationDTO.Id)
             {
@@ -87,7 +87,7 @@ namespace application_tracker.Server.Controllers
         // POST: api/JobApplications
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<JobApplicationDTO>> PostJobApplication(long userId, JobApplicationDTO jobApplicationDTO)
+        public async Task<ActionResult<JobApplicationDTO>> PostJobApplication(string userId, JobApplicationDTO jobApplicationDTO)
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
@@ -113,7 +113,7 @@ namespace application_tracker.Server.Controllers
 
         // DELETE: api/JobApplications/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteJobApplication(long id)
+        public async Task<IActionResult> DeleteJobApplication(Guid id)
         {
             if (_context.JobApplications == null)
             {
@@ -131,7 +131,7 @@ namespace application_tracker.Server.Controllers
             return NoContent();
         }
 
-        private bool JobApplicationExists(long id)
+        private bool JobApplicationExists(Guid id)
         {
             return (_context.JobApplications?.Any(e => e.Id == id)).GetValueOrDefault();
         }

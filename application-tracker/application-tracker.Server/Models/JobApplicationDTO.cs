@@ -2,7 +2,7 @@ namespace application_tracker.Server.Models
 {
     public class JobApplicationDTO
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string CompanyName { get; set; }
         public string Position { get; set; }
         public string JobPostingUrl { get; set; }
