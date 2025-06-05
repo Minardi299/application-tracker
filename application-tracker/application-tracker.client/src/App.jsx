@@ -25,6 +25,7 @@ function App() {
                         <Route index element={<HomePage />} /> {/* Default child route */}
                         <Route path="dashboard" element={<DashboardPage />} />
                         <Route path="settings" element={<SettingPage />} />
+                        <Route path="folder/:folderId" element={<div>Folder Page</div>} />
                     </Route>
                     <Route path="/login" element={<LoginPage />} /> 
                     <Route path="/signup" element={<SignUpPage />} />
