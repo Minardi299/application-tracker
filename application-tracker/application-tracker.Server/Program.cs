@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using DotNetEnv;
 using application_tracker.Server.Helper;
 using Microsoft.IdentityModel.Tokens;
@@ -18,7 +17,6 @@ Env.Load();
 // Add services to the container.
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"]
     ?? throw new InvalidOperationException("DefaultConnection not configured.");
-Console.WriteLine($"connection string: {connectionString}");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString)
 );

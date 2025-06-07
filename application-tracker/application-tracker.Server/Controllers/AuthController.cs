@@ -1,8 +1,5 @@
-﻿﻿﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using application_tracker.Server.Helper;
+﻿using application_tracker.Server.Helper;
 using application_tracker.Server.Models;
-using ApplicationTracker.Server.Helper;
 using Google.Apis.Auth;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
@@ -127,14 +124,15 @@ namespace application_tracker.Server.Controllers
                 );
             }
             try
-                {
+            {
+                //await Helper.PopulateNewUserAsync(user, _dbContext);
                     await UserHelper.PopulateNewUserAsync(user, _dbContext);
                 }
-                catch (Exception ex)
-                {
-                    // Log the error but don't fail user creation
-                    // _logger?.LogError(ex, "Failed to populate default data for user {Email}", user.Email);
-                }
+            catch (Exception ex)
+            {
+                // Log the error but don't fail user creation
+                // _logger?.LogError(ex, "Failed to populate default data for user {Email}", user.Email);
+            }
             return (user, null);
         }
 
@@ -281,10 +279,6 @@ namespace application_tracker.Server.Controllers
                     ProfilePictureUrl = googleUserPayload.Picture,
                     CreatedAt = user.CreatedAt
                 };
-
-                // For simplicity, like the Express example, we return the tokens.
-                // In a real app, you'd likely use the ID token to sign in the user
-                // to your system (e.g., create a local account, issue your own JWT).
                 return Ok(new { user = UserDTO });
             }
             catch (TokenResponseException ex)

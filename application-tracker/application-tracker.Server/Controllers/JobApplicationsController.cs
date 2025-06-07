@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using application_tracker.Server.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace application_tracker.Server.Controllers
 {
@@ -21,36 +23,39 @@ namespace application_tracker.Server.Controllers
         }
 
         // GET: api/JobApplications
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<JobApplicationDTO>>> GetJobApplications()
         {
-          if (_context.JobApplications == null)
-          {
-              return NotFound();
-          }
-            return await _context.JobApplications
-            .Select(x => JobApplicationToDTO(x))
-            .ToListAsync();
+            var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (ownerId == null)
+                return Unauthorized();
+            JobApplication[] jobApplications = await _context
+                .JobApplications
+                .Where(x => x.OwnerId == ownerId)
+                .OrderByDescending(x => x.CreatedAt)
+                .ToArrayAsync();
+            
+
+            return Ok(jobApplications.Select(JobApplicationToDTO));
         }
 
         // GET: api/JobApplications/{id}
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<JobApplicationDTO>> GetJobApplication(Guid id)
         {
-          if (_context.JobApplications == null)
-          {
-              return NotFound();
-          }
-            var jobApplication = await _context.JobApplications.FindAsync(id);
-
+            var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            JobApplication jobApplication = await _context.JobApplications.FindAsync(id);
             if (jobApplication == null)
             {
                 return NotFound();
             }
-
+            if (ownerId != jobApplication.OwnerId)
+                return Unauthorized();
             return JobApplicationToDTO(jobApplication);
         }
-
+        //TODO implement the rest of authorization
         // PUT: api/JobApplications/{id}
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

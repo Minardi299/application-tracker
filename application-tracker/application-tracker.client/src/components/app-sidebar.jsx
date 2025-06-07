@@ -59,9 +59,9 @@ const items = [
   //   ],
   // },
 ]
-const fetchUserFolders = async (userId) => {
+const fetchUserFolders = async () => {
   
-  const response = await fetch(`/api/folder/${userId}`, {
+  const response = await fetch(`/api/folder`, {
     headers: {
       'Content-Type': 'application/json',
     },
@@ -89,12 +89,9 @@ export function AppSidebar() {
     isError: isErrorFolders,
     error: foldersError
   } = useQuery({
-    queryKey: ['userFolders', ], 
-    queryFn: () => fetchUserFolders(user.id), // The function that will fetch data
-    enabled: !!isLogin, // Only run the query if user is logged in and token exists
-    // Optional: Add other react-query options like staleTime, cacheTime, refetchOnWindowFocus, etc.
-    // staleTime: 5 * 60 * 1000, // 5 minutes
-    // placeholderData: [], // Can provide initial empty array or cached data
+    queryKey: ['userFolders', user.id], 
+    queryFn: () => fetchUserFolders(user.id),
+    enabled: !!isLogin, 
   });
 
   return (
@@ -118,7 +115,7 @@ export function AppSidebar() {
               { isLogin && (
                 <Collapsible defaultOpen className="group/collapsible">
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuItem active={location.pathname.startsWith('/folders')}>
+                    <SidebarMenuItem>
                       <SidebarMenuButton className="justify-between w-full">
                         <div className="flex items-center">
                           <Folder className="h-5 w-5 mr-2" />

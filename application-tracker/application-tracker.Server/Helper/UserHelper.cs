@@ -1,10 +1,9 @@
-namespace ApplicationTracker.Server.Helper;
-
- using System.Threading.Tasks;
+using System.Threading.Tasks;
 using System.Collections.Generic;
- using application_tracker.Server.Models;
- using Microsoft.EntityFrameworkCore;
+using application_tracker.Server.Models;
+using Microsoft.EntityFrameworkCore;
 
+namespace application_tracker.Server.Helper;
 public static class UserHelper
 {
     public static async Task PopulateNewUserAsync(ApplicationUser user, ApplicationDbContext dbContext)
@@ -15,19 +14,19 @@ public static class UserHelper
             Owner = user,
             OwnerId = user.Id,
         };
-        var defaultJob = new JobApplication
-    {
-        CompanyName = "FDM Group",
-        Position = "Social Media Intern.",
-        Notes = "",
-        Status = ApplicationStatus.Wishlist,
-        Owner = user,
-        OwnerId = user.Id,
-        JobPostingUrl = "",
-        Folders = new List<ApplicationFolder> { defaultFolder } 
-    };
+        JobApplication defaultJob = new JobApplication
+        {
+            CompanyName = "FDM Group",
+            Position = "Social Media Intern.",
+            Notes = "",
+            Status = ApplicationStatus.Wishlist,
+            Owner = user,
+            OwnerId = user.Id,
+            JobPostingUrl = "",
+        };
 
-        defaultFolder.Applications = new List<JobApplication> { defaultJob };
+        defaultFolder.Applications.Add(defaultJob);
+        defaultJob.Folders.Add(defaultFolder);
         await dbContext.ApplicationFolders.AddAsync(defaultFolder);
         await dbContext.JobApplications.AddAsync(defaultJob);
 

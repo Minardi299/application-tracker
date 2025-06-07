@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using application_tracker.Server.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,14 +16,19 @@ namespace application_tracker.Server.Controllers
         {
             _context = context;
         }
-        [HttpGet("{ownerId}")]
-        public async Task<ActionResult<IEnumerable<FolderDTO>>> GetFoldersFromUser(string ownerId)
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<FolderDTO>>> GetFoldersFromUser()
         {
+            var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (ownerId == null)
+                return Unauthorized();
+
             var folders = await _context
                 .ApplicationFolders.Where(f => f.OwnerId == ownerId)
                 .OrderByDescending(f => f.CreatedAt)
                 .Include(f => f.Owner)
-                .ToListAsync();
+                .ToArrayAsync();
 
             return Ok(folders.Select(FolderToDTO));
         }
