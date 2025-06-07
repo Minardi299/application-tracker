@@ -90,7 +90,7 @@ export function AppSidebar() {
     error: foldersError
   } = useQuery({
     queryKey: ['userFolders', user.id], 
-    queryFn: () => fetchUserFolders(user.id),
+    queryFn: () => fetchUserFolders(),
     enabled: !!isLogin, 
   });
 

@@ -12,8 +12,8 @@ namespace application_tracker.Server.Models
         [Required]
         [StringLength(50)]
         public required string Name { get; set; }
-        // [Required]
-        // public string Slug { get; set; } = "";
+        [Required]
+        public string Slug { get; set; } = "";
 
         public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.UtcNow;
         public required string OwnerId { get; set; }
