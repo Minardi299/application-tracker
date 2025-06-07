@@ -32,6 +32,28 @@ namespace application_tracker.Server.Controllers
 
             return Ok(folders.Select(FolderToDTO));
         }
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult<FolderDTO>> CreateFolder(FolderDTO folderDto)
+        {
+            var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (ownerId == null)
+                return Unauthorized();
+            ApplicationUser? owner = await _context.Users.FindAsync(ownerId);
+            if (owner == null)
+                return NotFound("Owner not found.");
+            var folder = new ApplicationFolder
+            {
+                Name = folderDto.Name,
+                Owner = owner,
+                OwnerId = ownerId
+            };
+
+            _context.ApplicationFolders.Add(folder);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetFoldersFromUser), FolderToDTO(folder));
+        }
 
         private static FolderDTO FolderToDTO(ApplicationFolder folder) =>
             new FolderDTO
