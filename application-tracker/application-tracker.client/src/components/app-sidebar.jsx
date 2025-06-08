@@ -1,8 +1,16 @@
-import { Calendar, Home, LayoutDashboard, Folder, Settings, ChevronsUpDown } from "lucide-react"
+import {
+  Plus,
+  Home,
+  LayoutDashboard,
+  Folder,
+  Settings,
+  ChevronsUpDown,
+} from "lucide-react";
 import { Link } from "react-router";
-import { Button } from "@/components/ui/button"
-import { NavUser } from "@/components/nav-user"
-import { useQuery } from '@tanstack/react-query'; 
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner"
+import { NavUser } from "@/components/nav-user";
+import { useQuery } from "@tanstack/react-query";
 import {
   Sidebar,
   SidebarContent,
@@ -14,14 +22,21 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuAction,
-} from "@/components/ui/sidebar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+  SidebarMenuBadge,
+  SidebarGroupAction,
+} from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"; 
-import { useAuth } from '@/context/auth-provider'; // To get token and login state
+} from "@/components/ui/collapsible";
+import { useAuth } from "@/context/auth-provider"; // To get token and login state
 
 // Menu items.
 const data = {
@@ -29,8 +44,8 @@ const data = {
     name: "shadcn",
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
-  }
-}
+  },
+};
 const items = [
   {
     title: "Home",
@@ -58,40 +73,42 @@ const items = [
   //     },
   //   ],
   // },
-]
+];
 const fetchUserFolders = async () => {
-  
   const response = await fetch(`/api/folder`, {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     credentials: "include",
   });
   if (!response.ok) {
     if (response.status === 401) {
-        throw new Error("Unauthorized: Please log in again.");
+      throw new Error("Unauthorized: Please log in again.");
     }
-    throw new Error(`Failed to fetch folders: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Failed to fetch folders: ${response.status} ${response.statusText}`
+    );
   }
   const data = await response.json();
-  return data.map(folder => ({
+  return data.map((folder) => ({
     id: folder.id,
     title: folder.name,
     url: `/folder/${folder.id}`,
-    icon: Folder, 
+    icon: Folder,
+    applicationCount: folder.applicationCount || 0, 
   }));
 };
 export function AppSidebar() {
-    const { isLogin, user } = useAuth(); 
-    const {
-    data: userFolders = [], 
+  const { isLogin, user } = useAuth();
+  const {
+    data: userFolders = [],
     isLoading: isLoadingFolders,
     isError: isErrorFolders,
-    error: foldersError
+    error: foldersError,
   } = useQuery({
-    queryKey: ['userFolders', user.id], 
+    queryKey: ["userFolders", user.id],
     queryFn: () => fetchUserFolders(),
-    enabled: !!isLogin, 
+    enabled: !!isLogin,
   });
 
   return (
@@ -104,47 +121,42 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link to={{pathname: item.url}}>
+                    <Link to={{ pathname: item.url }}>
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-
-              { isLogin && (
-                <Collapsible defaultOpen className="group/collapsible">
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton>
-                        <div className="flex items-center">
-                          <Folder className="mr-2 h-4 w-4" />
-                          <span>Folders</span>
-                        </div>
-                        <SidebarMenuAction asChild>
-                            <Button variant="ghost" size="icon" className="h-6 w-6 group-[[data-state=open]]/collapsible:rotate-180 transition-transform">
-                               <ChevronsUpDown className="h-4 w-4"/>
-                            </Button>
-                        </SidebarMenuAction>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                      {!isLoadingFolders && !isErrorFolders && userFolders.length > 0 && (
-                        userFolders.map((folder) => (
-                          <SidebarMenuItem key={folder.id || folder.title} active={location.pathname === folder.url} className="pl-3">
-                            <SidebarMenuButton asChild>
-                              <Link to={folder.url}>
-                                <folder.icon className="mr-2 h-4 w-4" />
-                                <span>{folder.title}</span>
-                              </Link>
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        ))
-                      )}
-                  </CollapsibleContent>
-                </Collapsible>
-              )}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Folder</SidebarGroupLabel>
+          <SidebarGroupAction onClick={() => {toast("implement create new folder.")}}>
+            <Plus /> <span className="sr-only">Add Project</span>
+          </SidebarGroupAction>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {!isLoadingFolders &&
+                !isErrorFolders &&
+                userFolders.length > 0 &&
+                userFolders.map((folder) => (
+                  <SidebarMenuItem
+                    key={folder.id || folder.title}
+                    active={location.pathname === folder.url}
+                  >
+                    <SidebarMenuButton asChild>
+                      <Link to={folder.url}>
+                        <folder.icon className="" />
+                        <span>{folder.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                    <SidebarMenuBadge>
+                      {folder.applicationCount}
+                    </SidebarMenuBadge>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -153,5 +165,5 @@ export function AppSidebar() {
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

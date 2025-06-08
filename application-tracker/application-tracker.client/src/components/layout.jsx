@@ -15,6 +15,7 @@ import {
   BreadcrumbLink,
 } from "@/components/ui/breadcrumb";
 import { Home } from "lucide-react";
+import { Toaster } from "@/components/ui/sonner"
 import { Outlet } from "react-router-dom";
 
 const capitalizeFirstLetter = (string) => {
@@ -83,6 +84,7 @@ export function Layout() {
         </header>
         <main>
           <Outlet />
+          <Toaster richColors closeButton/>
         </main>
       </div>
     </SidebarProvider>
