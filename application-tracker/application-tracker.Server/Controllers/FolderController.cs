@@ -24,13 +24,18 @@ namespace application_tracker.Server.Controllers
             if (ownerId == null)
                 return Unauthorized();
 
-            var folders = await _context
-                .ApplicationFolders.Where(f => f.OwnerId == ownerId)
+            var folders = await _context.ApplicationFolders
+                .Where(f => f.OwnerId == ownerId)
                 .OrderByDescending(f => f.CreatedAt)
-                .Include(f => f.Owner)
+                .Select(f => new FolderDTO {
+                    Id = f.Id,
+                    Name = f.Name,
+                    CreatedAt = f.CreatedAt,
+                    ApplicationCount = f.Applications.Count
+                })
                 .ToArrayAsync();
 
-            return Ok(folders.Select(FolderToDTO));
+            return Ok(folders);
         }
         [Authorize]
         [HttpPost]
