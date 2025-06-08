@@ -7,10 +7,11 @@ import {
   ChevronsUpDown,
 } from "lucide-react";
 import { Link } from "react-router";
-import { Button } from "@/components/ui/button";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner"
 import { NavUser } from "@/components/nav-user";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -25,18 +26,8 @@ import {
   SidebarMenuBadge,
   SidebarGroupAction,
 } from "@/components/ui/sidebar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { useAuth } from "@/context/auth-provider"; // To get token and login state
+import { useAuth } from "@/context/auth-provider"; 
+import { prefetchFolder } from "@/hooks/use-folder";
 
 // Menu items.
 const data = {
@@ -99,6 +90,8 @@ const fetchUserFolders = async () => {
   }));
 };
 export function AppSidebar() {
+    const queryClient = useQueryClient();
+
   const { isLogin, user } = useAuth();
   const {
     data: userFolders = [],
@@ -106,8 +99,8 @@ export function AppSidebar() {
     isError: isErrorFolders,
     error: foldersError,
   } = useQuery({
-    queryKey: ["userFolders", user.id],
-    queryFn: () => fetchUserFolders(),
+    queryKey: ["userFolders", user?.id],
+    queryFn: fetchUserFolders,
     enabled: !!isLogin,
   });
 
@@ -145,6 +138,7 @@ export function AppSidebar() {
                   <SidebarMenuItem
                     key={folder.id || folder.title}
                     active={location.pathname === folder.url}
+                    onMouseEnter={() => prefetchFolder(queryClient, folder.id)}
                   >
                     <SidebarMenuButton asChild>
                       <Link to={folder.url}>

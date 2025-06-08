@@ -8,6 +8,7 @@ import {DashboardPage } from "@/pages/DashboardPage.jsx";
 import { AuthProvider } from '@/context/auth-provider'; 
 import { LoginPage } from '@/pages/LoginPage.jsx';
 import { SignUpPage } from '@/pages/SignUpPage';
+import { FolderPage } from '@/pages/FolderPage';
 
 
 function App() {
@@ -25,7 +26,7 @@ function App() {
                         <Route index element={<HomePage />} /> {/* Default child route */}
                         <Route path="dashboard" element={<DashboardPage />} />
                         <Route path="settings" element={<SettingPage />} />
-                        <Route path="folder/:folderId" element={<div>Folder Page</div>} />
+                        <Route path="folder/:folderId" element={<FolderPage/>} />
                     </Route>
                     <Route path="/login" element={<LoginPage />} /> 
                     <Route path="/signup" element={<SignUpPage />} />

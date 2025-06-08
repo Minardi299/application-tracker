@@ -147,6 +147,7 @@ namespace application_tracker.Server.Controllers
                 Id = jobApplication.Id,
                 Position = jobApplication.Position,
                 CompanyName = jobApplication.CompanyName,
+                JobPostingUrl = jobApplication.JobPostingUrl,
                 Notes = jobApplication.Notes,
                 Status = jobApplication.Status,
             };

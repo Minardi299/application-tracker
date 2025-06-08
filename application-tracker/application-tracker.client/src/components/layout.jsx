@@ -2,9 +2,9 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Fragment } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
-import { useAuth } from "@/context/auth-provider";
+// import { useAuth } from "@/context/auth-provider";
 import { Button } from "@/components/ui/button";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+// import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Breadcrumb,
@@ -18,16 +18,16 @@ import { Home } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner"
 import { Outlet } from "react-router-dom";
 
-const capitalizeFirstLetter = (string) => {
-  if (!string) return "";
-  return string.charAt(0).toUpperCase() + string.slice(1);
-};
+// const capitalizeFirstLetter = (string) => {
+//   if (!string) return "";
+//   return string.charAt(0).toUpperCase() + string.slice(1);
+// };
 
 export function Layout() {
-  const navigate = useNavigate();
-  const { isLogin, user } = useAuth();
-  const location = useLocation();
-  const pathnames = location.pathname.split("/").filter((x) => x);
+  // const navigate = useNavigate();
+  // const { isLogin, user } = useAuth();
+  // const location = useLocation();
+  // const pathnames = location.pathname.split("/").filter((x) => x);
   return (
     <SidebarProvider>
       <AppSidebar />

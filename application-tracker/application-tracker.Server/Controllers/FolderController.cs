@@ -38,6 +38,42 @@ namespace application_tracker.Server.Controllers
             return Ok(folders);
         }
         [Authorize]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<FolderDTO>> GetFolderById(Guid id)
+        {
+            var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (ownerId == null)
+                return Unauthorized();
+
+            var folder = await _context.ApplicationFolders
+                .Where(f => f.Id == id && f.OwnerId == ownerId)
+                .Include(f => f.Applications) 
+                .FirstOrDefaultAsync();
+            Console.WriteLine(folder?.Name);
+            if (folder == null)
+                return NotFound("Folder not found.");
+
+            // Map manually or use AutoMapper
+            var folderDto = new FolderDTO
+            {
+                Id = folder.Id,
+                Name = folder.Name,
+                CreatedAt = folder.CreatedAt,
+                ApplicationCount = folder.Applications.Count,
+                Applications = folder.Applications.Select(app => new JobApplicationDTO
+                {
+                    Id = app.Id,
+                    CompanyName = app.CompanyName,
+                    Position = app.Position,
+                    Status = app.Status,
+                    Notes = app.Notes,
+                    JobPostingUrl = app.JobPostingUrl,
+                }).ToList()
+            };
+
+            return Ok(folderDto);
+        }
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<FolderDTO>> CreateFolder(FolderDTO folderDto)
         {
