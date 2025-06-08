@@ -32,8 +32,8 @@ export function Layout() {
       <AppSidebar />
       <div className="flex flex-col flex-grow">
         <header className="flex h-16 shrink-0 items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <SidebarTrigger className="-ml-1" />
+          <SidebarTrigger className="-ml-1" />
+          {/* <div className="flex items-center gap-2">
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
@@ -64,8 +64,8 @@ export function Layout() {
 
               </BreadcrumbList>
             </Breadcrumb>
-          </div>
-          <div className="flex items-center gap-4">
+          </div> */}
+          {/* <div className="flex items-center gap-4">
             {isLogin && user ? (
               <>
                 <Avatar className="h-8 w-8">
@@ -79,7 +79,7 @@ export function Layout() {
               </Button>
             )}
              
-          </div>
+          </div> */}
         </header>
         <main>
           <Outlet />

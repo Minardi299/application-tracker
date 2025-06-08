@@ -116,10 +116,10 @@ export function AppSidebar() {
                 <Collapsible defaultOpen className="group/collapsible">
                   <CollapsibleTrigger asChild>
                     <SidebarMenuItem>
-                      <SidebarMenuButton className="justify-between w-full">
+                      <SidebarMenuButton>
                         <div className="flex items-center">
-                          <Folder className="h-5 w-5 mr-2" />
-                          <span>My Folders</span>
+                          <Folder className="mr-2 h-4 w-4" />
+                          <span>Folders</span>
                         </div>
                         <SidebarMenuAction asChild>
                             <Button variant="ghost" size="icon" className="h-6 w-6 group-[[data-state=open]]/collapsible:rotate-180 transition-transform">
@@ -135,7 +135,7 @@ export function AppSidebar() {
                           <SidebarMenuItem key={folder.id || folder.title} active={location.pathname === folder.url} className="pl-3">
                             <SidebarMenuButton asChild>
                               <Link to={folder.url}>
-                                <folder.icon className="h-5 w-5 mr-2" />
+                                <folder.icon className="mr-2 h-4 w-4" />
                                 <span>{folder.title}</span>
                               </Link>
                             </SidebarMenuButton>
