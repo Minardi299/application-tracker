@@ -32,6 +32,7 @@ export const useFolder = (id) => {
   return useQuery({
     queryKey: ["folder", id],
     queryFn: () => fetchFolderById(id),
+    enabled: !!id, 
   });
 };
 

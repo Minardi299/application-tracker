@@ -1,4 +1,3 @@
-
 import {
   ChevronLeft,
   ChevronRight,
@@ -21,7 +20,7 @@ export function DataTablePagination({table,}) {
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">
-        <span>There are {" "}{table.getFilteredRowModel().rows.length} row(s).</span>
+        <span>There are {" "}{table.getFilteredRowModel().rows.length} application(s).</span>
         
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">

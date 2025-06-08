@@ -30,7 +30,7 @@ import { useDataTableFilters } from '@/components/data-table-filter'
 import exportToCsv from "tanstack-table-export-to-csv";
 
 
-export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExportToCSV, defaultColumnVisibility}) {
+export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExportToCSV}) {
   const { columns, filters, actions, strategy } = useDataTableFilters({
     strategy: 'client',       
     data: data ?? [], 
@@ -46,7 +46,7 @@ export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExpor
   ) 
   const tstFilters = useMemo(() => createTSTFilters(filters), [filters]) ;
   const [sorting, setSorting] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useState(defaultColumnVisibility || {});
+  const [columnVisibility, setColumnVisibility] = useState();
   const table = useReactTable({
     data: data,
     columns : tstColumns,
