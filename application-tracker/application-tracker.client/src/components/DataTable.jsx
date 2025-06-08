@@ -28,8 +28,6 @@ import {
 import  {  DataTableFilter  } from "@/components/data-table-filter/components/data-table-filter"
 import { useDataTableFilters } from '@/components/data-table-filter'
 import exportToCsv from "tanstack-table-export-to-csv";
-import { Input } from "@/components/ui/input";
-import { useDebounce } from "@uidotdev/usehooks";
 
 
 export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExportToCSV, defaultColumnVisibility}) {
@@ -41,14 +39,14 @@ export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExpor
   const tstColumns = useMemo( 
     () =>
       createTSTColumns({  
-        columns: columnDef, // your TanStack Table column definitions
-        configs: columns, // Your column configurations
+        columns: columnDef,
+        configs: columns,
       }), 
     [columns], 
   ) 
   const tstFilters = useMemo(() => createTSTFilters(filters), [filters]) ;
   const [sorting, setSorting] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useState(defaultColumnVisibility || {});;
+  const [columnVisibility, setColumnVisibility] = useState(defaultColumnVisibility || {});
   const table = useReactTable({
     data: data,
     columns : tstColumns,
@@ -82,9 +80,6 @@ export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExpor
   const randomString = Math.random().toString(36).substring(8);
   exportToCsv(`filtered-data-${randomString}`, headers, rows);
   };
-
-  const [searchValue, setSearchValue] = useState();
-  const debouncedSearchValue = useDebounce(searchValue, 200);
   return (
     <div>
       <div className="rounded-md border">
@@ -111,38 +106,8 @@ export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExpor
               <ChevronDownIcon />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-            {/* Hack to prevent input from auto focusing on a drop down item */}
-            <div onKeyDown={(e) => e.stopPropagation()}>
-            <Input
-              value={searchValue}
-              onChange={(e) => {setSearchValue(e.target.value)}}
-              placeholder="Search columns..."
-            >
-            </Input>
-            </div>
-              {table
-                .getAllColumns()
-                .filter(
-                  (column) => column.getCanHide()
-                )
-                .filter((column) => column.id.toLowerCase().includes(debouncedSearchValue?.toLowerCase() || ''))
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                      // Prevents the menu from closing after clicking a checkbox
-                      onSelect={(e) => e.preventDefault()}
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  )
-                })}
+            <DropdownMenuContent align="end">           
+              
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -189,7 +154,7 @@ export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExpor
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                    <TableCell colSpan={tstColumns.length} className="h-24 text-center">
                       No results.
                     </TableCell>
                   </TableRow>

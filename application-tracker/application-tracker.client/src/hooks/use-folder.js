@@ -1,14 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/context/auth-provider"; 
+
 
 export const useFolders = () => {
+    const { isLogin, user } = useAuth();
+    
   return useQuery({
-    queryKey: ["userFolders"],
+    queryKey: ["userFolders", user?.id],
     queryFn: fetchFolders,
+    enabled: !!isLogin,
+
   });
 };
 
 async function fetchFolders() {
-  const response = await fetch('/api/folders', {
+  const response = await fetch('/api/folder', {
     headers: {
       'Content-Type': 'application/json',
     },

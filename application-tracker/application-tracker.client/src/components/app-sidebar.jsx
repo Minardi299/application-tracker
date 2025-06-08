@@ -10,8 +10,6 @@ import { Link } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner"
 import { NavUser } from "@/components/nav-user";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -26,8 +24,7 @@ import {
   SidebarMenuBadge,
   SidebarGroupAction,
 } from "@/components/ui/sidebar";
-import { useAuth } from "@/context/auth-provider"; 
-import { prefetchFolder } from "@/hooks/use-folder";
+import { prefetchFolder,useFolders  } from "@/hooks/use-folder";
 
 // Menu items.
 const data = {
@@ -65,44 +62,18 @@ const items = [
   //   ],
   // },
 ];
-const fetchUserFolders = async () => {
-  const response = await fetch(`/api/folder`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-  if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error("Unauthorized: Please log in again.");
-    }
-    throw new Error(
-      `Failed to fetch folders: ${response.status} ${response.statusText}`
-    );
-  }
-  const data = await response.json();
-  return data.map((folder) => ({
-    id: folder.id,
-    title: folder.name,
-    url: `/folder/${folder.id}`,
-    icon: Folder,
-    applicationCount: folder.applicationCount || 0, 
-  }));
-};
+
 export function AppSidebar() {
     const queryClient = useQueryClient();
-
-  const { isLogin, user } = useAuth();
-  const {
-    data: userFolders = [],
-    isLoading: isLoadingFolders,
-    isError: isErrorFolders,
-    error: foldersError,
-  } = useQuery({
-    queryKey: ["userFolders", user?.id],
-    queryFn: fetchUserFolders,
-    enabled: !!isLogin,
-  });
+  const { data: rawFolders = [], isLoading: isLoadingFolders, isError: isErrorFolders,error:foldersError } = useFolders();
+  const userFolders = rawFolders.map(folder => ({
+      id: folder.id,
+      title: folder.name,
+      url: `/folder/${folder.id}`,
+      icon: Folder,
+      applicationCount: folder.applicationCount || 0,
+    }));
+  
 
   return (
     <Sidebar variant="floating" collapsible="icon">

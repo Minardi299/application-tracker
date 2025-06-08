@@ -49,7 +49,6 @@ namespace application_tracker.Server.Controllers
                 .Where(f => f.Id == id && f.OwnerId == ownerId)
                 .Include(f => f.Applications) 
                 .FirstOrDefaultAsync();
-            Console.WriteLine(folder?.Name);
             if (folder == null)
                 return NotFound("Folder not found.");
 
@@ -60,15 +59,16 @@ namespace application_tracker.Server.Controllers
                 Name = folder.Name,
                 CreatedAt = folder.CreatedAt,
                 ApplicationCount = folder.Applications.Count,
-                Applications = folder.Applications.Select(app => new JobApplicationDTO
-                {
-                    Id = app.Id,
-                    CompanyName = app.CompanyName,
-                    Position = app.Position,
-                    Status = app.Status,
-                    Notes = app.Notes,
-                    JobPostingUrl = app.JobPostingUrl,
-                }).ToList()
+Applications = folder.Applications.Select(app => new JobApplicationDTO
+                 {
+                     Id = app.Id,
+                     CompanyName = app.CompanyName,
+                     Position = app.Position,
+                     Status = app.Status,
+                     Notes = app.Notes,
+                     JobPostingUrl = app.JobPostingUrl,
+                    CreatedAt = app.CreatedAt,
+                 }).ToList()
             };
 
             return Ok(folderDto);
