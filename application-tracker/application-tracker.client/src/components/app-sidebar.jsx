@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner"
+import { FolderForm } from "@/components/forms/folder-form";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -25,6 +25,7 @@ import {
   SidebarGroupAction,
 } from "@/components/ui/sidebar";
 import { prefetchFolder,useFolders  } from "@/hooks/use-folder";
+import { useGlobalSheet } from "@/context/sheet-provider";
 
 // Menu items.
 const data = {
@@ -64,7 +65,9 @@ const items = [
 ];
 
 export function AppSidebar() {
-    const queryClient = useQueryClient();
+  const { openSheet } = useGlobalSheet();
+
+  const queryClient = useQueryClient();
   const { data: rawFolders = [], isLoading: isLoadingFolders, isError: isErrorFolders,error:foldersError } = useFolders();
   const userFolders = rawFolders.map(folder => ({
       id: folder.id,
@@ -97,7 +100,11 @@ export function AppSidebar() {
         </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupLabel>Folder</SidebarGroupLabel>
-          <SidebarGroupAction onClick={() => {toast("implement create new folder.")}}>
+          <SidebarGroupAction onClick={() => openSheet({
+                      render: () => <FolderForm mode="create" />,
+                      title: "New Folder",
+                      description: "Create a new folder for your applications.",
+                    })}>
             <Plus /> <span className="sr-only">Add Project</span>
           </SidebarGroupAction>
           <SidebarGroupContent>
@@ -108,7 +115,6 @@ export function AppSidebar() {
                 userFolders.map((folder) => (
                   <SidebarMenuItem
                     key={folder.id || folder.title}
-                    active={location.pathname === folder.url}
                     onMouseEnter={() => prefetchFolder(queryClient, folder.id)}
                   >
                     <SidebarMenuButton asChild>

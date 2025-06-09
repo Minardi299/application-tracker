@@ -3,9 +3,7 @@ import { Button } from "@/components/ui/button.jsx";
 import {ModeToggle} from "@/components/mode-toggle.jsx";
 export  function HomePage(){
     const [code, setCode] = useState("");
-    // useEffect(() => {
-    //     populateTodosData();
-    // }, []);
+    
     async function populateTodosData() {
         
         const response = await fetch('/api/test', {

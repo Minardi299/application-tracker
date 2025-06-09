@@ -1,7 +1,6 @@
 import {useState, useMemo}  from "react"
 import { Button } from "@/components/ui/button"
 import { DataTablePagination } from "@/components/ui/datatable-pagination"
-import { toast } from "sonner"
  import { createTSTFilters, createTSTColumns} from "@/components/data-table-filter/integrations/tanstack-table/index"
 import {
   Table,
@@ -29,8 +28,11 @@ import {
 import  {  DataTableFilter  } from "@/components/data-table-filter/components/data-table-filter"
 import { useDataTableFilters } from '@/components/data-table-filter'
 import exportToCsv from "tanstack-table-export-to-csv";
-
-export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExportToCSV}) {
+import { useGlobalSheet } from "@/context/sheet-provider";
+import { ApplicationForm } from "@/components/forms/application-form"
+export function DataTable({columnDef, filterColumnConfig, data, canExportToCSV}) {
+    const { openSheet } = useGlobalSheet();
+  
   const { columns, filters, actions, strategy } = useDataTableFilters({
     strategy: 'client',       
     data: data ?? [], 
@@ -126,7 +128,11 @@ export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExpor
             </DropdownMenuContent>
         </DropdownMenu>
         <Button
-          onClick={()=>toast.info("to implement")}>Add +</Button>
+          onClick={() => openSheet({
+                                render: () => <ApplicationForm mode="create" />,
+                                title: "New Application",
+                                description: "Track a new job application.",
+                              })}>Add +</Button>
         </div>
         <div  className="max-w-full overflow-x-auto">
           
@@ -152,14 +158,15 @@ export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExpor
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow className={`border-accent-foreground/50  data-[state=selected]:bg-accent-foreground/20
-                      ${onEdit ? 'cursor-pointer hover:bg-accent/100' : ''}`}
+                    <TableRow className={`border-accent-foreground/50  data-[state=selected]:bg-accent-foreground/20 cursor-pointer hover:bg-accent/100`}
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
                       onClick={() => {
-                        if (onEdit) {
-                          onEdit(row.original);
-                        }
+                        openSheet({
+                                render: () => <ApplicationForm mode="edit" data={row.original} />,
+                                title: `Editing ${row.original.companyName}`,
+                                description: "Track a new job application.",
+                              })
                       }}
                     >
                       {row.getVisibleCells().map((cell) => (

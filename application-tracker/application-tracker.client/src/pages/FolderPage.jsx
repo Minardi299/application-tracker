@@ -14,7 +14,7 @@ export function FolderPage() {
 
   return (
     <div>
-      <h1>{folder.name}</h1>
+      <h1>{folder?.name || 'Loading...'}</h1>
       <p>Folder ID: {folderId}</p>
       <DataTable
         data={folder?.applications || []}
