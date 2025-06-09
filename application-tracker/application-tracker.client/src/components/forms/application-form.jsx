@@ -7,11 +7,11 @@ export function ApplicationForm({ mode = "create", data = {} }) {
   const { closeSheet } = useGlobalSheet();
   
   const [formData, setFormData] = useState({
+    ...data,
     company: data.company || "",
     position: data.position || "",
     location: data.location || "",
     title: data.title || "",
-    ...data,
     
   });
   
@@ -56,7 +56,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
     <form onSubmit={handleSubmit}>
         <label>Job Title</label>
         <Input className="input" value={formData.title} onChange={handleChange} />
-        <Button type="submit" className="btn btn-primary mt-4" onClick={closeSheet}>Cancel</Button>
+        <Button  className="btn btn-primary mt-4" onClick={closeSheet}>Cancel</Button>
         <Button type="submit" disabled={isSubmitting} className="btn btn-primary mt-4">Save Changes</Button>
 
     </form>

@@ -7,10 +7,10 @@ import { useGlobalSheet } from "@/context/sheet-provider";
 export function FolderForm({ mode = "create", data = {} }) {
   const { closeSheet } = useGlobalSheet();
   const [formData, setFormData] = useState({
-    name: data.name || "",
-    ...data,
-    
+   ...data,
+    name: data?.name || "",
   });
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
@@ -41,7 +41,7 @@ export function FolderForm({ mode = "create", data = {} }) {
     <form onSubmit={handleSubmit}>
       <label>Folder Name</label>
       <Input className="input" value={formData.name} onChange={handleChange} />
-        <Button type="submit" className="btn btn-primary mt-4" onClick={closeSheet}>Cancel</Button>
+        <Button className="btn btn-primary mt-4" onClick={closeSheet}>Cancel</Button>
         <Button type="submit" disabled={isSubmitting} className="btn btn-primary mt-4">Save Changes</Button>
     </form>
 
