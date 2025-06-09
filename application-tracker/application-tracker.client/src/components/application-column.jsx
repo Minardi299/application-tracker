@@ -4,7 +4,7 @@ import { BookOpenText }from "lucide-react"
 export const ApplicationColumn = [
 
     {
-    id: "companyName",
+    id: "company",
     accessorKey: "companyName",
     header: "Company",
     },
@@ -24,7 +24,7 @@ export const ApplicationColumn = [
     header: "Notes",
     },
     {
-        id: "jobPostingUrl",
+        id: "link",
         accessorKey: "jobPostingUrl",   
         header: "Link",
     },
@@ -32,7 +32,7 @@ export const ApplicationColumn = [
 const dtf = createColumnConfigHelper();
 export const ApplicationColumnConfig = [
     dtf.text()
-        .id('companyName')
+        .id('company')
         .accessor(row => row.companyName)
         .displayName('Company')
         .icon(BookOpenText)
@@ -56,7 +56,7 @@ export const ApplicationColumnConfig = [
         .icon(BookOpenText)
         .build(),
     dtf.text()
-        .id('jobPostingUrl')
+        .id('link')
         .accessor(row => row.jobPostingUrl)
         .displayName('Link')
         .icon(BookOpenText)

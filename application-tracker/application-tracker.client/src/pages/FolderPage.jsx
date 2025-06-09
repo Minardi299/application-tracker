@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "@/components/DataTable";
 import { useFolder } from "@/hooks/use-folder";
 import {ApplicationColumn, ApplicationColumnConfig } from "@/components/application-column";
@@ -15,7 +14,7 @@ export function FolderPage() {
 
   return (
     <div>
-      <h1>Folder Page</h1>
+      <h1>{folder.name}</h1>
       <p>Folder ID: {folderId}</p>
       <DataTable
         data={folder?.applications || []}

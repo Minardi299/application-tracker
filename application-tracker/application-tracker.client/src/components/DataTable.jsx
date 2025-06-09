@@ -1,6 +1,7 @@
 import {useState, useMemo}  from "react"
 import { Button } from "@/components/ui/button"
 import { DataTablePagination } from "@/components/ui/datatable-pagination"
+import { toast } from "sonner"
  import { createTSTFilters, createTSTColumns} from "@/components/data-table-filter/integrations/tanstack-table/index"
 import {
   Table,
@@ -29,7 +30,6 @@ import  {  DataTableFilter  } from "@/components/data-table-filter/components/da
 import { useDataTableFilters } from '@/components/data-table-filter'
 import exportToCsv from "tanstack-table-export-to-csv";
 
-
 export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExportToCSV}) {
   const { columns, filters, actions, strategy } = useDataTableFilters({
     strategy: 'client',       
@@ -46,7 +46,7 @@ export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExpor
   ) 
   const tstFilters = useMemo(() => createTSTFilters(filters), [filters]) ;
   const [sorting, setSorting] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useState();
+  const [columnVisibility, setColumnVisibility] = useState({});
   const table = useReactTable({
     data: data,
     columns : tstColumns,
@@ -66,7 +66,6 @@ export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExpor
         pageSize: 20,
       },
     },
-    
   });
 
   const handleExportToCSV = () => {
@@ -81,9 +80,7 @@ export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExpor
   exportToCsv(`filtered-data-${randomString}`, headers, rows);
   };
   return (
-    <div>
-      <div className="rounded-md border">
-      
+    <div>      
         <div className="flex items-center py-4 px-4 gap-4">
         
           <DataTableFilter
@@ -107,16 +104,36 @@ export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExpor
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">           
-              
+              {table
+              .getAllColumns()
+              .filter(
+                (column) => column.getCanHide()
+              )
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                )
+              })}
             </DropdownMenuContent>
-          </DropdownMenu>
+        </DropdownMenu>
+        <Button
+          onClick={()=>toast.info("to implement")}>Add +</Button>
         </div>
         <div  className="max-w-full overflow-x-auto">
           
-            <Table className="">
-              <TableHeader className="">
+            <Table>
+              <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow  key={headerGroup.id}>
+                  <TableRow  key={headerGroup.id} className="bg-background hover:bg-transparent cursor-default">
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead key={header.id} className="px-4 py-2 text-center">
@@ -163,7 +180,7 @@ export function DataTable({columnDef, filterColumnConfig, data, onEdit, canExpor
             </Table>
           
         </div>
-      </div>
+ 
       
       <DataTablePagination table={table} />
     </div>

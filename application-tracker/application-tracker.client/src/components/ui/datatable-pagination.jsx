@@ -13,19 +13,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
+import { Separator } from "@/components/ui/separator"
 
 
 export function DataTablePagination({table,}) {
+  const totalItems = table.getFilteredRowModel().rows.length;
+  const pageSize = table.getState().pagination.pageSize;
+  const pageIndex = table.getState().pagination.pageIndex;
+  const start = pageIndex * pageSize + 1;
+  const end = Math.min(start + pageSize - 1, totalItems);
   return (
-    <div className="flex items-center justify-between px-2">
-      <div className="flex-1 text-sm text-muted-foreground">
-        <span>There are {" "}{table.getFilteredRowModel().rows.length} application(s).</span>
-        
-      </div>
-      <div className="flex items-center space-x-6 lg:space-x-8">
+    <div className="flex items-center justify-between px-2 mt-4">
+      <div className="flex-1 flex-row text-sm text-muted-foreground">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+          <span>Showing {totalItems === 0 ? 0 : `${start}-${end}`} of {totalItems} </span>
+          <Separator orientation="vertical"/>
+          <p className="text-sm font-medium">Results per page</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
@@ -44,6 +47,8 @@ export function DataTablePagination({table,}) {
             </SelectContent>
           </Select>
         </div>
+      </div>
+      <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
           Page {table.getState().pagination.pageIndex + 1} of{" "}
           {table.getPageCount()}
