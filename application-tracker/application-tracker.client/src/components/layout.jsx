@@ -6,7 +6,6 @@ import { EditingSheetShortcuts } from "@/components/sheet-shortcuts";
 import { Button } from "@/components/ui/button";
 import { useNavigate, Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Toaster } from "@/components/ui/sonner"
 import { Outlet } from "react-router-dom";
 import { GlobalSheetProvider } from "@/context/sheet-provider";
 
@@ -42,7 +41,6 @@ export function Layout() {
           <Outlet />
           <EditingSheet/>
           <EditingSheetShortcuts />
-          <Toaster richColors closeButton/>
         </main>
       </div>
     </SidebarProvider>

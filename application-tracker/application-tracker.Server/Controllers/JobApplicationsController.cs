@@ -55,15 +55,24 @@ namespace application_tracker.Server.Controllers
                 return Unauthorized();
             return JobApplicationToDTO(jobApplication);
         }
-        //TODO implement the rest of authorization
         // PUT: api/JobApplications/{id}
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutJobApplication(Guid id, JobApplicationDTO jobApplicationDTO)
         {
+            var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (ownerId == null)
+                return Unauthorized();
             if (id != jobApplicationDTO.Id)
             {
                 return BadRequest();
+            }
+            ApplicationUser? user = await _context.Users.FindAsync(ownerId);
+            if (user == null)
+            {
+                return NotFound("User not found");
             }
 
             var jobApplication = await _context.JobApplications.FindAsync(id);
@@ -91,16 +100,21 @@ namespace application_tracker.Server.Controllers
 
         // POST: api/JobApplications
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost]
-        public async Task<ActionResult<JobApplicationDTO>> PostJobApplication(string userId, JobApplicationDTO jobApplicationDTO)
+        public async Task<ActionResult<JobApplicationDTO>> PostJobApplication( JobApplicationDTO jobApplicationDTO)
         {
-            var user = await _context.Users.FindAsync(userId);
+            var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (ownerId == null)
+                return Unauthorized();
+            ApplicationUser? user = await _context.Users.FindAsync(ownerId);
             if (user == null)
             {
                 return NotFound("User not found");
             }
             
-            var jobApplication = new JobApplication
+            JobApplication jobApplication = new JobApplication
             {
                 Position = jobApplicationDTO.Position,
                 CompanyName = jobApplicationDTO.CompanyName,

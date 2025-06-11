@@ -9,6 +9,8 @@ import { AuthProvider } from '@/context/auth-provider';
 import { LoginPage } from '@/pages/LoginPage.jsx';
 import { SignUpPage } from '@/pages/SignUpPage';
 import { FolderPage } from '@/pages/FolderPage';
+import { Toaster } from "@/components/ui/sonner"
+
 
 
 function App() {
@@ -34,7 +36,8 @@ function App() {
                     <Route path="*" element={<div>404 Not Found</div>} />
                 </Routes>
             </AuthProvider>
-           
+            <Toaster richColors closeButton/>
+
         </ThemeProvider>
     );
     

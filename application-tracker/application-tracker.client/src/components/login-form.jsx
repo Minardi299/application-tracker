@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth-provider"
+import { toast } from "sonner"
 
 import { useGoogleLogin } from '@react-oauth/google';
 
@@ -43,11 +44,13 @@ export function LoginForm({
           login(data.user); 
           navigate("/"); 
         } else {
+          toast.error("Login failed: Response did not include user data.", data);
           console.error("Login failed: Response did not include user data.", data);
           alert("Login failed. Please try again. " + (data.message || ""));
         }
       } catch (e) {
         console.error("Failed to login " + e);
+        toast.error("Login failed: " + e);
       }
     } else {
       console.log("No authorization code received from Google");

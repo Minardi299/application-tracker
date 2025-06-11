@@ -6,7 +6,7 @@ export const useFolders = () => {
     const { isLogin, user } = useAuth();
     
   return useQuery({
-    queryKey: ["userFolders", user?.id],
+    queryKey: ["userFolders"],
     queryFn: fetchFolders,
     enabled: !!isLogin,
 
