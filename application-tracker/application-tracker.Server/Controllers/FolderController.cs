@@ -47,31 +47,13 @@ namespace application_tracker.Server.Controllers
 
             var folder = await _context.ApplicationFolders
                 .Where(f => f.Id == id && f.OwnerId == ownerId)
-                .Include(f => f.Applications) 
                 .FirstOrDefaultAsync();
             if (folder == null)
                 return NotFound("Folder not found.");
 
-            // Map manually or use AutoMapper
-            var folderDto = new FolderDTO
-            {
-                Id = folder.Id,
-                Name = folder.Name,
-                CreatedAt = folder.CreatedAt,
-                ApplicationCount = folder.Applications.Count,
-Applications = folder.Applications.Select(app => new JobApplicationDTO
-                 {
-                     Id = app.Id,
-                     CompanyName = app.CompanyName,
-                     Position = app.Position,
-                     Status = app.Status,
-                     Notes = app.Notes,
-                     JobPostingUrl = app.JobPostingUrl,
-                    CreatedAt = app.CreatedAt,
-                 }).ToList()
-            };
 
-            return Ok(folderDto);
+
+            return Ok(FolderToDTO(folder));       
         }
         [Authorize]
         [HttpPost]

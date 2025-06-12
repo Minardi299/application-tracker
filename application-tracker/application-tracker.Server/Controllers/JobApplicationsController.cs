@@ -39,7 +39,22 @@ namespace application_tracker.Server.Controllers
 
             return Ok(jobApplications.Select(JobApplicationToDTO));
         }
+        [Authorize]
+        [HttpGet("folder/{folderId}")]
+        public async Task<ActionResult<IEnumerable<JobApplicationDTO>>> GetJobApplicationsByFolder(Guid folderId)
+        {
+            var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (ownerId == null)
+                return Unauthorized();
+            JobApplication[] jobApplications = await _context
+                .JobApplications
+                .Where(x => x.OwnerId == ownerId && x.Folders.Any(f => f.Id == folderId))
+                .Include(x => x.Folders)
+                .OrderByDescending(x => x.CreatedAt)
+                .ToArrayAsync();
 
+            return Ok(jobApplications.Select(JobApplicationToDTO));
+        }
         // GET: api/JobApplications/{id}
         [Authorize]
         [HttpGet("{id}")]
@@ -70,21 +85,26 @@ namespace application_tracker.Server.Controllers
                 return BadRequest();
             }
             ApplicationUser? user = await _context.Users.FindAsync(ownerId);
-            if (user == null)
-            {
-                return NotFound("User not found");
-            }
+            if (user == null) return NotFound("User not found");
+           
 
-            var jobApplication = await _context.JobApplications.FindAsync(id);
-            if (jobApplication == null)
-            {
-                return NotFound();
-            }
+            var jobApplication = await _context.JobApplications
+            .Include(j => j.Folders)
+            .FirstOrDefaultAsync(j => j.Id == id && j.OwnerId == ownerId);
+                if (jobApplication == null) return NotFound();
 
-            jobApplication.Position = jobApplicationDTO.Position;
+
             jobApplication.CompanyName = jobApplicationDTO.CompanyName;
+            jobApplication.Position = jobApplicationDTO.Position;
+            jobApplication.JobPostingUrl = jobApplicationDTO.JobPostingUrl;
             jobApplication.Notes = jobApplicationDTO.Notes;
             jobApplication.Status = jobApplicationDTO.Status;
+                var folderIds = jobApplicationDTO.Folders.Select(f => f.Id).ToList();
+
+            List<ApplicationFolder> folders = await _context.ApplicationFolders
+                .Where(f => folderIds.Contains(f.Id) && f.OwnerId == ownerId)
+                .ToListAsync();
+            jobApplication.Folders = folders;
             
             try
             {
@@ -95,14 +115,14 @@ namespace application_tracker.Server.Controllers
                 return NotFound();
             }
 
-            return NoContent();
+            return CreatedAtAction(nameof(GetJobApplication), new { id = jobApplication.Id }, JobApplicationToDTO(jobApplication));
         }
 
         // POST: api/JobApplications
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<JobApplicationDTO>> PostJobApplication( JobApplicationDTO jobApplicationDTO)
+        public async Task<ActionResult<JobApplicationDTO>> PostJobApplication(JobApplicationDTO jobApplicationDTO)
         {
             var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -113,6 +133,11 @@ namespace application_tracker.Server.Controllers
             {
                 return NotFound("User not found");
             }
+            var folderIds = jobApplicationDTO.Folders.Select(f => f.Id).ToList();
+
+            var folders = await _context.ApplicationFolders
+                .Where(f => folderIds.Contains(f.Id) && f.OwnerId == ownerId)
+                .ToListAsync();
             
             JobApplication jobApplication = new JobApplication
             {
@@ -121,7 +146,9 @@ namespace application_tracker.Server.Controllers
                 Notes = jobApplicationDTO.Notes,
                 Status = jobApplicationDTO.Status,
                 Owner = user,
-                OwnerId = user.Id
+                OwnerId = user.Id,
+                JobPostingUrl = jobApplicationDTO.JobPostingUrl,
+                Folders = folders
             };
 
             _context.JobApplications.Add(jobApplication);
@@ -131,13 +158,21 @@ namespace application_tracker.Server.Controllers
         }
 
         // DELETE: api/JobApplications/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteJobApplication(Guid id)
         {
-            if (_context.JobApplications == null)
+            var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (ownerId == null)
+                return Unauthorized();
+            ApplicationUser? user = await _context.Users.FindAsync(ownerId);
+            if (user == null)
             {
-                return NotFound();
+                return NotFound("User not found");
             }
+
+
             var jobApplication = await _context.JobApplications.FindAsync(id);
             if (jobApplication == null)
             {
@@ -164,6 +199,11 @@ namespace application_tracker.Server.Controllers
                 JobPostingUrl = jobApplication.JobPostingUrl,
                 Notes = jobApplication.Notes,
                 Status = jobApplication.Status,
+                Folders = jobApplication.Folders?.Select(f => new FolderDTO
+                {
+                    Id = f.Id,
+                    Name = f.Name,
+                }).ToList(),
             };
     }
 }

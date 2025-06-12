@@ -1,9 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/auth-provider"; 
 
-
 export const useFolders = () => {
-    const { isLogin, user } = useAuth();
+    const { isLogin } = useAuth();
     
   return useQuery({
     queryKey: ["userFolders"],
@@ -29,24 +28,29 @@ async function fetchFolders() {
 }
 
 export const useFolder = (id) => {
+  const queryClient = useQueryClient();
   return useQuery({
-    queryKey: ["folder", id],
+    queryKey: ["userFolder", id],
     queryFn: () => fetchFolderById(id),
     enabled: !!id, 
+    initialData: () => {
+        const allFolders = queryClient.getQueryData(["userFolders"]);
+        return allFolders?.find((f) => f.id === id);
+    },
   });
 };
 
 export const prefetchFolder = async (queryClient, id) => {
-    const existing = queryClient.getQueryData(["folder", id]);
+    const existing = queryClient.getQueryData(["userFolder", id]);
   if (!existing) {
     await queryClient.prefetchQuery({
-        queryKey: ["folder", id],
+        queryKey: ["userFolder", id],
         queryFn: () => fetchFolderById(id),
     });
 }
 };
 
-async function fetchFolderById(folderId) {
+export async function fetchFolderById(folderId) {
     const response = await fetch(`/api/folder/${folderId}`, {
         headers: {
         'Content-Type': 'application/json',

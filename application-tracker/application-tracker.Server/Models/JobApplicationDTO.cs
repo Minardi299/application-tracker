@@ -9,6 +9,6 @@ namespace application_tracker.Server.Models
         public required string Notes { get; set; }
         public ApplicationStatus Status { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
-        public List<ApplicationFolder> Folders { get; set; } = new();
+        public List<FolderDTO> Folders { get; set; } = new();
     }
 }

@@ -1,34 +1,42 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { InlineInput } from "@/components/ui/inline-input"
 import {toast} from "sonner"
 import { useState } from "react";
 import { useGlobalSheet } from "@/context/sheet-provider";
-import { useQuery } from "@tanstack/react-query";
+import { useFolders } from "@/hooks/use-folder";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 export function ApplicationForm({ mode = "create", data = {} }) {
+  const queryClient = useQueryClient();
   const { closeSheet } = useGlobalSheet();
   const applicationStatuses = ["Wishlist","Applied","Interviewing","OfferReceived","Rejected","Accepted","Withdrawn",];
   const [formData, setFormData] = useState({
     ...data,
-    company: data.company || "",
+    companyName: data.companyName || "",
     position: data.position || "",
     location: data.location || "",
-    title: data.title || "",
-    
+    jobPostingUrl: data.jobPostingUrl || "",
+    notes: data.notes || "",
+    status: data.status || "Applied",
+    folders: data.folders ? data.folders.map(f => f.id) : [],    
   });
-  const { data: folders = [] } = useQuery({
-    queryKey: ["userFolders"],
-    queryFn: async () => {
-      const res = await fetch("/api/folders");
-      if (!res.ok) throw new Error("Failed to fetch folders");
-      return res.json();
-    }
-  });
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  async function updateApplication(payload) {
+    const url = mode === "edit" ? `/api/jobapplications/${payload.id}` : "/api/jobapplications";
+    const res = await fetch(url, {
+      method: mode === "edit" ? "PUT" : "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      credentials: "include",
+    });
+    if (!res.ok) throw new Error("Failed to save application");
+    return res.json();
+  };
+  const { data: folders } = useFolders();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,42 +56,42 @@ export function ApplicationForm({ mode = "create", data = {} }) {
       };
     });
   };
-  const handleSubmit = async (e) => {
+  const mutation = useMutation({
+    mutationFn: updateApplication,
+    onSuccess: (_, variables) => {
+      console.log("Application saved:", variables);
+    const appId = variables.id;
+    const folderIds = variables.folders.map(f => f.id);
+    toast.success(mode === "edit" ? "Application updated!" : "Application created!");
+    queryClient.invalidateQueries(["application", appId]); 
+    folderIds.forEach(folderId => {
+      queryClient.invalidateQueries(["applications", folderId]);
+    });
+    closeSheet(); 
+  },
+  onError: (error) => {
+    toast.error("Something went wrong");
+    console.error(error);
+  }
+  });
+  async function handleSubmit(e) {
     e.preventDefault();
-    setIsSubmitting(true);
+    const fullFolders = folders.filter((folder) =>
+      formData.folders.includes(folder.id)
+    );
 
-    try {
-      if(mode === "edit"){
-        toast("editing application");
-      }
-      else{
-        toast("creating application");
-      }
-      // const response = await fetch(
-      //   mode === "edit"
-      //     ? `/api/applications/${initialData.id}`
-      //     : "/api/applications",
-      //   {
-      //     method: mode === "edit" ? "PUT" : "POST",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify(formData),
-      //   }
-      // );
-
-      // if (!response.ok) throw new Error("Failed to save application");
-
-    } catch (err) {
-      console.error(err);
-      // handle error (toast, error UI, etc)
-    } finally {
-      setIsSubmitting(false);
-    }
+    const payload = {
+      ...formData,
+      folders: fullFolders,
+    };
+    mutation.mutate(payload);
   };
    return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <Label>Company Name</Label>
-        <Input
+        <InlineInput
+          header 
           name="companyName"
           value={formData.companyName}
           onChange={handleChange}
@@ -91,7 +99,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
       </div>
       <div>
         <Label>Position</Label>
-        <Input
+        <InlineInput
           name="position"
           value={formData.position}
           onChange={handleChange}
@@ -99,7 +107,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
       </div>
       <div>
         <Label>Job Posting URL</Label>
-        <Input
+        <InlineInput
           name="jobPostingUrl"
           value={formData.jobPostingUrl}
           onChange={handleChange}
@@ -149,8 +157,8 @@ export function ApplicationForm({ mode = "create", data = {} }) {
         <Button type="button" variant="outline" onClick={closeSheet}>
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save Application"}
+        <Button type="submit" disabled={mutation.isLoading}>
+          {mutation.isLoading ? "Saving..." : "Save Application"}
         </Button>
       </div>
     </form>
