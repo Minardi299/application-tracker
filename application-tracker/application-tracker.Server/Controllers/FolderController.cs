@@ -27,7 +27,8 @@ namespace application_tracker.Server.Controllers
             var folders = await _context.ApplicationFolders
                 .Where(f => f.OwnerId == ownerId)
                 .OrderByDescending(f => f.CreatedAt)
-                .Select(f => new FolderDTO {
+                .Select(f => new FolderDTO
+                {
                     Id = f.Id,
                     Name = f.Name,
                     CreatedAt = f.CreatedAt,
@@ -46,14 +47,17 @@ namespace application_tracker.Server.Controllers
                 return Unauthorized();
 
             var folder = await _context.ApplicationFolders
-                .Where(f => f.Id == id && f.OwnerId == ownerId)
-                .FirstOrDefaultAsync();
-            if (folder == null)
-                return NotFound("Folder not found.");
+            .Where(f => f.Id == id && f.OwnerId == ownerId)
+            .Select(f => new FolderDTO
+            {
+                Id = f.Id,
+                Name = f.Name,
+                CreatedAt = f.CreatedAt,
+                ApplicationCount = f.Applications.Count
+            })
+            .FirstOrDefaultAsync();
 
-
-
-            return Ok(FolderToDTO(folder));       
+            return Ok(folder);
         }
         [Authorize]
         [HttpPost]

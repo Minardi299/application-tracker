@@ -59,7 +59,6 @@ export function ApplicationForm({ mode = "create", data = {} }) {
   const mutation = useMutation({
     mutationFn: updateApplication,
     onSuccess: (_, variables) => {
-      console.log("Application saved:", variables);
     const appId = variables.id;
     const folderIds = variables.folders.map(f => f.id);
     toast.success(mode === "edit" ? "Application updated!" : "Application created!");

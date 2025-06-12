@@ -20,14 +20,7 @@ namespace application_tracker.Server.Controllers
             _userManager = userManager;
         }
 
-        // GET: api/Users
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ApplicationUserDTO>>> GetUsers()
-        {
-            var users = await _userManager.Users.Select(u => UserToDTO(u)).ToListAsync();
-
-            return Ok(users);
-        }
+        
 
         // GET: api/Users/5
         [HttpGet("{id}")]
@@ -55,7 +48,7 @@ namespace application_tracker.Server.Controllers
                 var errors = result.Errors.Select(e => e.Description);
                 return BadRequest(new RegistrationResponseDTO { Success = false, Errors = errors });
             }
-            return Created("", UserToDTO(user));
+            return Ok(UserToDTO(user));
         }
 
         // PUT: api/Users/5 (Update  email)

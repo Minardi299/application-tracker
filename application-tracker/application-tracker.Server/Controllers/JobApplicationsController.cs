@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -84,10 +84,6 @@ namespace application_tracker.Server.Controllers
             {
                 return BadRequest();
             }
-            ApplicationUser? user = await _context.Users.FindAsync(ownerId);
-            if (user == null) return NotFound("User not found");
-           
-
             var jobApplication = await _context.JobApplications
             .Include(j => j.Folders)
             .FirstOrDefaultAsync(j => j.Id == id && j.OwnerId == ownerId);
@@ -115,7 +111,7 @@ namespace application_tracker.Server.Controllers
                 return NotFound();
             }
 
-            return CreatedAtAction(nameof(GetJobApplication), new { id = jobApplication.Id }, JobApplicationToDTO(jobApplication));
+            return Ok(JobApplicationToDTO(jobApplication));
         }
 
         // POST: api/JobApplications
@@ -154,7 +150,7 @@ namespace application_tracker.Server.Controllers
             _context.JobApplications.Add(jobApplication);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetJobApplication), new { id = jobApplication.Id }, JobApplicationToDTO(jobApplication));
+            return Ok(JobApplicationToDTO(jobApplication));
         }
 
         // DELETE: api/JobApplications/5
@@ -177,6 +173,10 @@ namespace application_tracker.Server.Controllers
             if (jobApplication == null)
             {
                 return NotFound();
+            }
+            if (jobApplication.OwnerId != ownerId)
+            {
+                return Unauthorized("You do not have permission to delete this job application.");
             }
 
             _context.JobApplications.Remove(jobApplication);
