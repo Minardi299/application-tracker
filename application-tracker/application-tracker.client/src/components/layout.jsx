@@ -2,17 +2,21 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { EditingSheet } from "@/components/editing-sheet";
 import { AppSidebar } from "@/components/app-sidebar";
 import { useAuth } from "@/context/auth-provider";
-import { EditingSheetShortcuts } from "@/components/sheet-shortcuts";
+import { AppShortcuts } from "@/components/shortcuts";
 import { Button } from "@/components/ui/button";
 import { useNavigate, Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Outlet } from "react-router-dom";
 import { GlobalSheetProvider } from "@/context/sheet-provider";
+import { CommandDialogProvider } from "@/context/command-provider";
+import { GlobalCommandDialog } from "@/components/command-dialog";
 
 export function Layout() {
   const navigate = useNavigate();
   const { isLogin, user } = useAuth();
   return (
+    <CommandDialogProvider>
+      <GlobalCommandDialog />
     <GlobalSheetProvider>
     <SidebarProvider>
       <AppSidebar />
@@ -40,10 +44,11 @@ export function Layout() {
           
           <Outlet />
           <EditingSheet/>
-          <EditingSheetShortcuts />
+          <AppShortcuts />
         </main>
       </div>
     </SidebarProvider>
-          </GlobalSheetProvider>
+      </GlobalSheetProvider>
+    </CommandDialogProvider>
   );
 }

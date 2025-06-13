@@ -10,6 +10,7 @@ import { LoginPage } from '@/pages/LoginPage.jsx';
 import { SignUpPage } from '@/pages/SignUpPage';
 import { FolderPage } from '@/pages/FolderPage';
 import { Toaster } from "@/components/ui/sonner"
+import { NavigationShortcuts } from '@/components/navigation-shortcuts';
 
 
 
@@ -20,6 +21,7 @@ function App() {
     return (
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
             <AuthProvider>
+                <NavigationShortcuts />
                 <Routes>
                     {/* Define Layout as a parent route */}
                     <Route path="/" element={<Layout />}>

@@ -1,6 +1,7 @@
 import {  useState } from 'react';
 import { Button } from "@/components/ui/button.jsx";
 import {ModeToggle} from "@/components/mode-toggle.jsx";
+import { CommandMenu } from '@/components/command-menu';
 export  function HomePage(){
     const [code, setCode] = useState("");
     
@@ -18,6 +19,7 @@ export  function HomePage(){
     }
     return(
         <>
+            <CommandMenu class/>
             <div className="">
                 <ModeToggle/>
                 <Button onClick={populateTodosData}>Click me</Button>
