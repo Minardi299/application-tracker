@@ -4,7 +4,8 @@ import {
   LayoutDashboard,
   Folder,
   Settings,
-  ChevronsUpDown,
+  CloudDownload,
+  ChevronRight,
 } from "lucide-react";
 import { Link } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
@@ -26,6 +27,12 @@ import {
 } from "@/components/ui/sidebar";
 import { prefetchFolder,useFolders  } from "@/hooks/use-folder";
 import { useGlobalSheet } from "@/context/sheet-provider";
+import { toast } from "sonner";
+import { 
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+ } from "@/components/ui/collapsible";
 
 // Menu items.
 const data = {
@@ -51,17 +58,19 @@ const items = [
     url: "/settings",
     icon: Settings,
   },
-  // {
-  //   title: "Folder",
-  //   icon: Folder,
-  //   items: [
-  //     {
-  //       title: "All",
-  //       url: "/folder/all",
-  //       icon: Calendar,
-  //     },
-  //   ],
-  // },
+  
+];
+const resources = [
+  {
+    title: "Resume Templates",
+    url: "/resume-templates",
+    icon: CloudDownload,
+  },
+  {
+    title: "Resources",
+    url: "/resources",
+    icon: CloudDownload,
+  },
 ];
 
 export function AppSidebar() {
@@ -69,6 +78,11 @@ export function AppSidebar() {
 
   const queryClient = useQueryClient();
   const { data: rawFolders = [], isLoading: isLoadingFolders, isError: isErrorFolders,error:foldersError } = useFolders();
+  if (isErrorFolders) {
+    toast.error(
+      `Error loading folders: ${foldersError.message || "Unknown error"}`
+    );
+  }
   const userFolders = rawFolders.map(folder => ({
       id: folder.id,
       title: folder.name,
@@ -97,7 +111,38 @@ export function AppSidebar() {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
+
+
         </SidebarGroup>
+        <Collapsible defaultOpen className="group/collapsible">
+          <SidebarGroup>
+            <SidebarGroupLabel asChild>
+              <CollapsibleTrigger>
+                Resources
+                <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+              </CollapsibleTrigger>
+            </SidebarGroupLabel>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {resources.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <Link to={{ pathname: item.url }}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
+
+
+
         <SidebarGroup>
           <SidebarGroupLabel>Folder</SidebarGroupLabel>
           <SidebarGroupAction onClick={() => openSheet({

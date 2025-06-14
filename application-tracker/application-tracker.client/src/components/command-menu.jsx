@@ -38,7 +38,7 @@ export function CommandMenu() {
                 <CommandItem onSelect={() => triggerShortcut("k")}>
                     <FileUser />
                     <span>Open Command Menu</span>
-                    <CommandShortcut>⌘K</CommandShortcut>
+                    <CommandShortcut>Ctrl/⌘K</CommandShortcut>
                 </CommandItem>
                 <CommandItem onSelect={() => triggerShortcut("f")}>
                     <Folder />
