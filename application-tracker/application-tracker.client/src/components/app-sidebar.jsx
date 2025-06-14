@@ -7,7 +7,7 @@ import {
   CloudDownload,
   ChevronRight,
 } from "lucide-react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { FolderForm } from "@/components/forms/folder-form";
 import { NavUser } from "@/components/nav-user";
@@ -33,7 +33,7 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
  } from "@/components/ui/collapsible";
-
+import { useEffect } from "react";
 // Menu items.
 const data = {
   user: {
@@ -78,11 +78,13 @@ export function AppSidebar() {
 
   const queryClient = useQueryClient();
   const { data: rawFolders = [], isLoading: isLoadingFolders, isError: isErrorFolders,error:foldersError } = useFolders();
-  if (isErrorFolders) {
-    toast.error(
-      `Error loading folders: ${foldersError.message || "Unknown error"}`
-    );
-  }
+  useEffect(() => {
+    if (isErrorFolders) {
+      toast.error(
+        `Error loading folders: ${foldersError?.message || "Unknown error"}`
+      );
+    }
+  }, [isErrorFolders, foldersError]);
   const userFolders = rawFolders.map(folder => ({
       id: folder.id,
       title: folder.name,

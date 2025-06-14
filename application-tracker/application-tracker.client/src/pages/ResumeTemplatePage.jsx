@@ -32,14 +32,11 @@ export function ResumeTemplatePage() {
             />
           </div>
           <div className="flex justify-end px-4 py-3 border-t">
-            <Button>
-              <a
-                href={file.file}
-                download
-              >
-                Download
-              </a>
-            </Button>
+          <Button asChild>
+            <a href={file.file} download>
+              Download
+            </a>
+          </Button>
           </div>
         </div>
       ))}
