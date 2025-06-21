@@ -169,15 +169,14 @@ namespace application_tracker.Server.Controllers
             }
 
 
-            var jobApplication = await _context.JobApplications.FindAsync(id);
-            if (jobApplication == null)
-            {
-                return NotFound();
-            }
-            if (jobApplication.OwnerId != ownerId)
-            {
-                return Unauthorized("You do not have permission to delete this job application.");
-            }
+            JobApplication jobApplication = await _context.JobApplications
+                .Include(j => j.Folders) 
+                .FirstOrDefaultAsync(j => j.Id == id);
+            if (jobApplication == null) return NotFound();
+
+            if (jobApplication.OwnerId != ownerId) return Unauthorized("You do not have permission to delete this job application.");
+           jobApplication.Folders.Clear(); 
+            await _context.SaveChangesAsync();
 
             _context.JobApplications.Remove(jobApplication);
             await _context.SaveChangesAsync();

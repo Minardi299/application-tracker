@@ -20,6 +20,7 @@ export  function HomePage(){
     return(
         <>
             <CommandMenu/>
+            
             <div className="">
                 <ModeToggle/>
                 <Button onClick={populateTodosData}>Click me</Button>

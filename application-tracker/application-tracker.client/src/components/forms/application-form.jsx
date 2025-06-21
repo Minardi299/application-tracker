@@ -1,18 +1,79 @@
 import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { InlineInput } from "@/components/ui/inline-input"
-import {toast} from "sonner"
+import { InlineInput } from "@/components/ui/inline-input";
+import { toast } from "sonner";
 import { useState } from "react";
 import { useGlobalSheet } from "@/context/sheet-provider";
 import { useFolders } from "@/hooks/use-folder";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  RichTextEditor,
+  RichTextEditorContent,
+  RichTextEditorToolbar,
+} from "@/components/ui/rich-text-editor";
+
 export function ApplicationForm({ mode = "create", data = {} }) {
   const queryClient = useQueryClient();
   const { closeSheet } = useGlobalSheet();
-  const applicationStatuses = ["Wishlist","Applied","Interviewing","OfferReceived","Rejected","Accepted","Withdrawn",];
+  async function deleteApplication({id}) {
+    const res = await fetch(`/api/jobapplications/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (!res.ok) {
+      throw new Error("Failed to delete application");
+    }
+    return true;
+  }
+  const deleteMutation = useMutation({
+    mutationFn: deleteApplication,
+    onSuccess: () => {
+      toast.success("Application deleted successfully");
+    },
+    onError: () => {
+      toast.error("Failed to delete application");
+    },
+  });
+  async function handleDelete(e) {
+    e.preventDefault();
+    if (!formData.id) return;
+
+    deleteMutation.mutate({ id: formData.id, folders: data.folders || [] }, {
+      onSuccess: (_, variables) => {
+        const appId = variables.id;
+
+        const folderIds = variables.folders.map(f => f.id);
+        toast.success("Application deleted successfully");
+        queryClient.invalidateQueries(["application", appId]); 
+
+        folderIds.forEach(folderId => {
+            queryClient.invalidateQueries(["applications", folderId]);
+        });
+        closeSheet();
+      },
+      onError: () => {
+      toast.error("Failed to delete application");
+      },
+    });
+  }
+  const applicationStatuses = [
+    "Wishlist",
+    "Applied",
+    "Interviewing",
+    "OfferReceived",
+    "Rejected",
+    "Accepted",
+    "Withdrawn",
+  ];
   const [formData, setFormData] = useState({
     ...data,
     companyName: data.companyName || "",
@@ -21,10 +82,13 @@ export function ApplicationForm({ mode = "create", data = {} }) {
     jobPostingUrl: data.jobPostingUrl || "",
     notes: data.notes || "",
     status: data.status || "Applied",
-    folders: data.folders ? data.folders.map(f => f.id) : [],    
+    folders: data.folders ? data.folders.map((f) => f.id) : [],
   });
   async function updateApplication(payload) {
-    const url = mode === "edit" ? `/api/jobapplications/${payload.id}` : "/api/jobapplications";
+    const url =
+      mode === "edit"
+        ? `/api/jobapplications/${payload.id}`
+        : "/api/jobapplications";
     const res = await fetch(url, {
       method: mode === "edit" ? "PUT" : "POST",
       headers: {
@@ -35,7 +99,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
     });
     if (!res.ok) throw new Error("Failed to save application");
     return res.json();
-  };
+  }
   const { data: folders } = useFolders();
 
   const handleChange = (e) => {
@@ -44,6 +108,9 @@ export function ApplicationForm({ mode = "create", data = {} }) {
   };
   const handleStatusChange = (value) => {
     setFormData((prev) => ({ ...prev, status: value }));
+  };
+  const handleRichTextChange = (value) => {
+    setFormData((prev) => ({ ...prev, notes: value }));
   };
   const handleFolderToggle = (folderId) => {
     setFormData((prev) => {
@@ -56,22 +123,25 @@ export function ApplicationForm({ mode = "create", data = {} }) {
       };
     });
   };
+  
   const mutation = useMutation({
     mutationFn: updateApplication,
     onSuccess: (_, variables) => {
-    const appId = variables.id;
-    const folderIds = variables.folders.map(f => f.id);
-    toast.success(mode === "edit" ? "Application updated!" : "Application created!");
-    queryClient.invalidateQueries(["application", appId]); 
-    folderIds.forEach(folderId => {
-      queryClient.invalidateQueries(["applications", folderId]);
-    });
-    closeSheet(); 
-  },
-  onError: (error) => {
-    toast.error("Something went wrong");
-    console.error(error);
-  }
+      const appId = variables.id;
+      const folderIds = variables.folders.map((f) => f.id);
+      toast.success(
+        mode === "edit" ? "Application updated!" : "Application created!"
+      );
+      queryClient.invalidateQueries(["application", appId]);
+      folderIds.forEach((folderId) => {
+        queryClient.invalidateQueries(["applications", folderId]);
+      });
+      closeSheet();
+    },
+    onError: (error) => {
+      toast.error("Something went wrong");
+      console.error(error);
+    },
   });
   async function handleSubmit(e) {
     e.preventDefault();
@@ -84,13 +154,14 @@ export function ApplicationForm({ mode = "create", data = {} }) {
       folders: fullFolders,
     };
     mutation.mutate(payload);
-  };
-   return (
+  }
+
+  return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <Label>Company Name</Label>
         <InlineInput
-          header 
+          header
           name="companyName"
           value={formData.companyName}
           onChange={handleChange}
@@ -114,11 +185,14 @@ export function ApplicationForm({ mode = "create", data = {} }) {
       </div>
       <div>
         <Label>Notes</Label>
-        <Textarea
+        <RichTextEditor
           name="notes"
           value={formData.notes}
-          onChange={handleChange}
-        />
+          onChange={(value) => handleRichTextChange(value)}
+        >
+          <RichTextEditorToolbar />
+          <RichTextEditorContent />
+        </RichTextEditor>
       </div>
       <div>
         <Label>Status</Label>
@@ -137,24 +211,33 @@ export function ApplicationForm({ mode = "create", data = {} }) {
       </div>
       <div>
         <Label>Folders</Label>
-        <div className="space-y-2 max-h-40 overflow-y-auto border rounded-md p-2">
-          {folders.map((folder) => (
-            <div key={folder.id} className="flex items-center gap-2">
-              <Checkbox
-                id={`folder-${folder.id}`}
-                checked={formData.folders.includes(folder.id)}
-                onCheckedChange={() => handleFolderToggle(folder.id)}
-              />
-              <label htmlFor={`folder-${folder.id}`} className="text-sm">
-                {folder.name}
-              </label>
-            </div>
-          ))}
-        </div>
+        {folders.map((folder) => (
+          <div
+            key={folder.id}
+            className="border-b py-2 flex items-center gap-2"
+          >
+            <Checkbox
+              id={`folder-${folder.id}`}
+              checked={formData.folders.includes(folder.id)}
+              onCheckedChange={() => handleFolderToggle(folder.id)}
+            />
+            <label
+              htmlFor={`folder-${folder.id}`}
+              className="w-full cursor-pointer select-none"
+            >
+              {folder.name}
+            </label>
+          </div>
+        ))}
       </div>
       <div className="flex justify-end gap-2 pt-4">
-        <Button type="button" variant="outline" onClick={closeSheet}>
-          Cancel
+        <Button
+          type="button"
+          variant="destructive"
+          disabled={deleteMutation.isLoading}
+          onClick={handleDelete}
+        >
+          {deleteMutation.isLoading ? "Deleting..." : "Delete"}
         </Button>
         <Button type="submit" disabled={mutation.isLoading}>
           {mutation.isLoading ? "Saving..." : "Save Application"}
