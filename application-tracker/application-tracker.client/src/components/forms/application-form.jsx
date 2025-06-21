@@ -36,34 +36,28 @@ export function ApplicationForm({ mode = "create", data = {} }) {
   }
   const deleteMutation = useMutation({
     mutationFn: deleteApplication,
-    onSuccess: () => {
+      onSuccess: (_, variables) => {
+      const appId = variables.id;
+
+      const folderIds = variables.folders.map(f => f.id);
       toast.success("Application deleted successfully");
+      queryClient.invalidateQueries(["application", appId]); 
+
+      folderIds.forEach(folderId => {
+          queryClient.invalidateQueries(["applications", folderId]);
+      });
+      closeSheet();
     },
     onError: () => {
-      toast.error("Failed to delete application");
+    toast.error("Failed to delete application");
     },
-  });
+    
+    });
   async function handleDelete(e) {
     e.preventDefault();
     if (!formData.id) return;
 
-    deleteMutation.mutate({ id: formData.id, folders: data.folders || [] }, {
-      onSuccess: (_, variables) => {
-        const appId = variables.id;
-
-        const folderIds = variables.folders.map(f => f.id);
-        toast.success("Application deleted successfully");
-        queryClient.invalidateQueries(["application", appId]); 
-
-        folderIds.forEach(folderId => {
-            queryClient.invalidateQueries(["applications", folderId]);
-        });
-        closeSheet();
-      },
-      onError: () => {
-      toast.error("Failed to delete application");
-      },
-    });
+    deleteMutation.mutate({ id: formData.id, folders: data.folders || [] });
   }
   const applicationStatuses = [
     "Wishlist",
@@ -231,6 +225,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
         ))}
       </div>
       <div className="flex justify-end gap-2 pt-4">
+        {mode === "edit" && (
         <Button
           type="button"
           variant="destructive"
@@ -239,6 +234,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
         >
           {deleteMutation.isLoading ? "Deleting..." : "Delete"}
         </Button>
+        )}
         <Button type="submit" disabled={mutation.isLoading}>
           {mutation.isLoading ? "Saving..." : "Save Application"}
         </Button>
