@@ -369,7 +369,7 @@ const OptionItem = memo(function OptionItem({
       className="group flex items-center justify-between gap-1.5">
       <div className="flex items-center gap-1.5">
         <Checkbox
-          checked={selected}
+          checked={!!selected}
           className="opacity-0 data-[state=checked]:opacity-100 group-data-[selected=true]:opacity-100 dark:border-ring mr-1" />
         {Icon &&
           (isValidElement(Icon) ? (

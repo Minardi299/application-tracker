@@ -1,27 +1,30 @@
 import { createColumnConfigHelper } from '@/components/data-table-filter/core/filters'
-import { BookOpenText }from "lucide-react"
+import { Book, BookOpenText }from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Link as Link2,CalendarDays, CircleCheck } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 
 const Statuses = [
+    { value: 'Wishlist', label: 'Wishlist', icon: CircleCheck },
+    { value: 'Applied', label: "Applied", icon: CircleCheck },
+    { value: 'Interviewing', label: 'Interviewing', icon: CircleCheck },
     { value: 'Accepted', label: 'Accepted', icon: CircleCheck },
     { value: 'Rejected', label: 'Rejected', icon: CircleCheck },
-    { value: 'Applied', label: "Applied", icon: CircleCheck },
-    { value: 'Wishlist', label: 'Wishlist', icon: CircleCheck },
-    { value: 'Interview', label: 'Interview', icon: CircleCheck },
     { value: 'Offered', label: 'Offered', icon: CircleCheck },
-    { value: 'WithDrawn', label: 'WithDrawn', icon: CircleCheck },
+    { value: 'Withdrawn', label: 'Withdrawn', icon: CircleCheck },
 ]
+
 const statusStyles = {
   Accepted: "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/50 dark:text-green-300",
   Rejected: "bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/50 dark:text-red-300",
   Applied: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300",
   Wishlist: "bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300",
-  Interview: "bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300",
+  Interviewing: "bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300",
+  Withdrawn:"bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300",
+  Offered: "bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-300"
 };
 function formatUrl  (url) {
-  if (!url) return "#"; // Return a safe fallback
+  if (!url) return "#"; 
   if (url.startsWith("http://") || url.startsWith("https://")) {
     return url;
   }
@@ -53,6 +56,7 @@ export const ApplicationColumn = [
     ),
     },
     {
+    id: "status",
     accessorKey: "status",
     size: 30,
     header: "Status",
@@ -99,23 +103,29 @@ export const ApplicationColumn = [
     cell: ({ row }) => {
       const dateString = row.getValue('createdAt');
       
-      //Handle null, undefined, or the "zero value" date from the backend
-    //   if (!dateString || dateString.startsWith('0001-01-01')) {
-    //     return <div className="text-center text-muted-foreground">-</div>;
-    //   }
-      
-      const date = new Date(dateString);
-      
-      const fullDate = format(date, 'MMM d, yyyy');
-      const relativeTime = formatDistanceToNow(date, { addSuffix: true });
-      
-      return (
-        <div className="text-center text-muted-foreground" title={fullDate}>
-          {relativeTime}
-        </div>
-      );
-    }
-  },
+        //Handle null, undefined, or the "zero value" date from the backend
+        if (!dateString ) {
+          return <div className="text-center text-muted-foreground">-</div>;
+        }
+        
+        const date = new Date(dateString);
+        
+        const fullDate = format(date, 'MMM d, yyyy');
+        const relativeTime = formatDistanceToNow(date, { addSuffix: true });
+        
+        return (
+          <div className="text-center text-muted-foreground" title={fullDate}>
+            {relativeTime}
+          </div>
+        );
+      }
+    },
+    {
+      id:'notes',
+      accessorKey:'notes',
+      header:()=> <div className="w-0 h-0"></div>,
+      cell: ()=> <div className="w-0 h-0"></div>,
+    },
 ];
 const dtf = createColumnConfigHelper();
 export const ApplicationColumnConfig = [
@@ -135,8 +145,8 @@ export const ApplicationColumnConfig = [
         .id('status')
         .accessor(row => row.status)
         .displayName('Status')
-        .options(Statuses)
         .icon(BookOpenText)
+        .options(Statuses)
         .build(),
     dtf.text()
         .id('notes')

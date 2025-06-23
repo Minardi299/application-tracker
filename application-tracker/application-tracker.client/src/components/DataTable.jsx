@@ -33,7 +33,6 @@ import { useGlobalSheet } from "@/context/sheet-provider";
 import { ApplicationForm } from "@/components/forms/application-form"
 export function DataTable({columnDef, filterColumnConfig, data, canExportToCSV}) {
   const { openSheet } = useGlobalSheet();
-  console.log(data);
   const { columns, filters, actions, strategy } = useDataTableFilters({
     strategy: 'client',       
     data: data ?? [], 
@@ -165,8 +164,8 @@ export function DataTable({columnDef, filterColumnConfig, data, canExportToCSV})
                       onClick={() => {
                         openSheet({
                                 render: () => <ApplicationForm mode="edit" data={row.original} />,
-                                title: `Editing ${row.original.companyName}`,
-                                description: "Track a new job application.",
+                                title: `${row.original.position} at ${row.original.companyName}`,
+                                description: `Editing ${row.original.id}.`,
                               })
                       }}
                     >

@@ -9,7 +9,7 @@ export function EditingSheet( ){
         <Sheet open={isOpen} onOpenChange={closeSheet} modal={false} >
         <SheetContent className="p-4 overflow-y-auto w-[33vw] min-w-[33vw]">
           <SheetHeader>
-            <SheetTitle>{title}</SheetTitle>
+            <SheetTitle className="truncate leading-normal">{title}</SheetTitle>
             <SheetDescription>{description}</SheetDescription>
           </SheetHeader>
           {render  ? render(): null}

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useGlobalSheet } from "@/context/sheet-provider";
 import { useFolders } from "@/hooks/use-folder";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Select,
   SelectContent,
@@ -180,7 +181,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
       ...formData,
       folders: fullFolders,
     };
-    mutation.mutate(payload);
+    await mutation.mutateAsync(payload);  
   }
 
   return (
@@ -293,14 +294,14 @@ export function ApplicationForm({ mode = "create", data = {} }) {
         <Button
           type="button"
           variant="destructive"
-          disabled={deleteMutation.isLoading}
+          disabled={deleteMutation.isPending}
           onClick={handleDelete}
         >
-          {deleteMutation.isLoading ? "Deleting..." : "Delete"}
+          {deleteMutation.isPending  ? <Spinner/> : "Delete"}
         </Button>
         )}
-        <Button type="submit" disabled={mutation.isLoading}>
-          {mutation.isLoading ? "Saving..." : "Save Application"}
+        <Button type="submit" disabled={mutation.isPending}>
+          {mutation.isPending  ? <Spinner/>: "Save Application"}
         </Button>
       </div>
     </form>
