@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Link as Link2 ,BriefcaseBusiness ,Building} from 'lucide-react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   RichTextEditor,
@@ -21,9 +22,26 @@ import {
   RichTextEditorToolbar,
 } from "@/components/ui/rich-text-editor";
 
+const applicationStatuses = [
+  "Wishlist",
+  "Applied",
+  "Interviewing",
+  "Offered",
+  "Rejected",
+  "Accepted",
+  "Withdrawn",
+];
 export function ApplicationForm({ mode = "create", data = {} }) {
   const queryClient = useQueryClient();
   const { closeSheet } = useGlobalSheet();
+  const [errors, setErrors] = useState({});
+  const formatUrl = (url) => {
+    if (!url) return "";
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      return url;
+    }
+    return `https://${url}`;
+  };
   async function deleteApplication({id}) {
     const res = await fetch(`/api/jobapplications/${id}`, {
       method: "DELETE",
@@ -59,15 +77,6 @@ export function ApplicationForm({ mode = "create", data = {} }) {
 
     deleteMutation.mutate({ id: formData.id, folders: data.folders || [] });
   }
-  const applicationStatuses = [
-    "Wishlist",
-    "Applied",
-    "Interviewing",
-    "OfferReceived",
-    "Rejected",
-    "Accepted",
-    "Withdrawn",
-  ];
   const [formData, setFormData] = useState({
     ...data,
     companyName: data.companyName || "",
@@ -137,8 +146,32 @@ export function ApplicationForm({ mode = "create", data = {} }) {
       console.error(error);
     },
   });
+  function validateForm(data) {
+  const newErrors = {};
+
+  if (!data.companyName.trim()) {
+    newErrors.companyName = "Company name is required.";
+  } else if (data.companyName.length > 100) {
+    newErrors.companyName = "Company name cannot exceed 100 characters.";
+  }
+
+  if (!data.position.trim()) {
+    newErrors.position = "Position is required.";
+  } else if (data.position.length > 100) {
+    newErrors.position = "Position cannot exceed 100 characters.";
+  }
+  return newErrors;
+}
   async function handleSubmit(e) {
     e.preventDefault();
+    const validationErrors = validateForm(formData);
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    toast.error(Object.values(validationErrors)[0]);
+    return;
+  }
+
+  setErrors({});
     const fullFolders = folders.filter((folder) =>
       formData.folders.includes(folder.id)
     );
@@ -152,30 +185,60 @@ export function ApplicationForm({ mode = "create", data = {} }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Label>Company Name</Label>
+      <div className="flex  items-center justify-between">
+        <Label>
+          <Building className="w-4 h-4 "/>
+
+          Company 
+        </Label>
         <InlineInput
-          header
           name="companyName"
           value={formData.companyName}
           onChange={handleChange}
+          placeholder="Empty"
+          className="w-3/4"
         />
+        
       </div>
-      <div>
-        <Label>Position</Label>
+      <div className="flex  items-center justify-between">
+        <Label>
+          <BriefcaseBusiness className="w-4 h-4 "/>
+          Position
+        </Label>
         <InlineInput
           name="position"
           value={formData.position}
           onChange={handleChange}
+          placeholder="Empty"
+          className="w-3/4"
         />
       </div>
-      <div>
-        <Label>Job Posting URL</Label>
+      <div className="flex items-center justify-between">
+        <Label>          
+        <Link2 className="w-4 h-4 "/>
+        Posting URL</Label>
+      <div className="flex w-3/4 items-center gap-2">
         <InlineInput
           name="jobPostingUrl"
           value={formData.jobPostingUrl}
           onChange={handleChange}
+          placeholder="Empty"
+
+          className="flex-grow"
         />
+        
+          {formData.jobPostingUrl && (
+            <a
+              href={formatUrl(formData.jobPostingUrl)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground underline hover:text-foreground"
+              title="Open link in new tab"
+            >
+              <Link2 className="h-5 w-5" />
+            </a>
+          )}
+        </div>
       </div>
       <div>
         <Label>Notes</Label>
@@ -183,6 +246,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
           name="notes"
           value={formData.notes}
           onChange={(value) => handleRichTextChange(value)}
+          placeholder="Start typing..."
         >
           <RichTextEditorToolbar />
           <RichTextEditorContent />

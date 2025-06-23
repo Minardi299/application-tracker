@@ -117,6 +117,15 @@
   body {
     @apply bg-background text-foreground;
   }
+  h1 {
+    @apply text-8xl font-bold;
+  }
+  h2 {
+    @apply text-6xl font-semibold;
+  }
+  h3 {
+    @apply text-4xl font-semibold;
+  }
 }
 
 @plugin "@tailwindcss/typography";

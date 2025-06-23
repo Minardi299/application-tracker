@@ -26,13 +26,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import  {  DataTableFilter  } from "@/components/data-table-filter/components/data-table-filter"
+import { Input } from "@/components/ui/input"
 import { useDataTableFilters } from '@/components/data-table-filter'
 import exportToCsv from "tanstack-table-export-to-csv";
 import { useGlobalSheet } from "@/context/sheet-provider";
 import { ApplicationForm } from "@/components/forms/application-form"
 export function DataTable({columnDef, filterColumnConfig, data, canExportToCSV}) {
-    const { openSheet } = useGlobalSheet();
-  
+  const { openSheet } = useGlobalSheet();
+  console.log(data);
   const { columns, filters, actions, strategy } = useDataTableFilters({
     strategy: 'client',       
     data: data ?? [], 
