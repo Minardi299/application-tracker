@@ -129,10 +129,10 @@ export function DataTable({columnDef, filterColumnConfig, data, canExportToCSV})
         </DropdownMenu>
         <Button
           onClick={() => openSheet({
-                                render: () => <ApplicationForm mode="create" />,
-                                title: "New Application",
-                                description: "Track a new job application.",
-                              })}>Add +</Button>
+            render: () => <ApplicationForm mode="create" />,
+            title: "New Application",
+            description: "Track a new job application.",
+          })}>Add +</Button>
         </div>
         <div  className="max-w-full overflow-x-auto">
           

@@ -61,7 +61,7 @@ namespace application_tracker.Server.Controllers
         public async Task<ActionResult<JobApplicationDTO>> GetJobApplication(Guid id)
         {
             var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            JobApplication jobApplication = await _context.JobApplications.FindAsync(id);
+            JobApplication? jobApplication = await _context.JobApplications.FindAsync(id);
             if (jobApplication == null)
             {
                 return NotFound();
@@ -95,7 +95,7 @@ namespace application_tracker.Server.Controllers
             jobApplication.JobPostingUrl = jobApplicationDTO.JobPostingUrl;
             jobApplication.Notes = jobApplicationDTO.Notes;
             jobApplication.Status = jobApplicationDTO.Status;
-                var folderIds = jobApplicationDTO.Folders.Select(f => f.Id).ToList();
+            var folderIds = jobApplicationDTO.Folders.Select(f => f.Id).ToList();
 
             List<ApplicationFolder> folders = await _context.ApplicationFolders
                 .Where(f => folderIds.Contains(f.Id) && f.OwnerId == ownerId)
@@ -134,7 +134,7 @@ namespace application_tracker.Server.Controllers
             var folders = await _context.ApplicationFolders
                 .Where(f => folderIds.Contains(f.Id) && f.OwnerId == ownerId)
                 .ToListAsync();
-            
+
             JobApplication jobApplication = new JobApplication
             {
                 Position = jobApplicationDTO.Position,
@@ -150,13 +150,17 @@ namespace application_tracker.Server.Controllers
             _context.JobApplications.Add(jobApplication);
             await _context.SaveChangesAsync();
 
-            return Ok(JobApplicationToDTO(jobApplication));
+            return CreatedAtAction(
+                    nameof(GetJobApplication),
+                    new { id = jobApplication.Id },
+                    JobApplicationToDTO(jobApplication)
+                );
         }
 
         // DELETE: api/JobApplications/5
         [Authorize]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteJobApplication(Guid id)
+        public async Task<ActionResult> DeleteJobApplication(Guid id)
         {
             var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -169,7 +173,7 @@ namespace application_tracker.Server.Controllers
             }
 
 
-            JobApplication jobApplication = await _context.JobApplications
+            JobApplication? jobApplication = await _context.JobApplications
                 .Include(j => j.Folders) 
                 .FirstOrDefaultAsync(j => j.Id == id);
             if (jobApplication == null) return NotFound();

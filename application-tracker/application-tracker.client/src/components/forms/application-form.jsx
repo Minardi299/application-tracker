@@ -80,9 +80,8 @@ export function ApplicationForm({ mode = "create", data = {} }) {
   }
   const [formData, setFormData] = useState({
     ...data,
-    companyName: data.companyName || "",
-    position: data.position || "",
-    location: data.location || "",
+    companyName: data.companyName?.trim() || "",
+    position: data.position?.trim() || "",
     jobPostingUrl: data.jobPostingUrl || "",
     notes: data.notes || "",
     status: data.status || "Applied",
@@ -190,7 +189,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
         <Label>
           <Building className="w-4 h-4 "/>
 
-          Company 
+          Company:
         </Label>
         <InlineInput
           name="companyName"
@@ -204,7 +203,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
       <div className="flex  items-center justify-between">
         <Label>
           <BriefcaseBusiness className="w-4 h-4 "/>
-          Position
+          Position:
         </Label>
         <InlineInput
           name="position"
@@ -217,7 +216,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
       <div className="flex items-center justify-between">
         <Label>          
         <Link2 className="w-4 h-4 "/>
-        Posting URL</Label>
+        Posting URL:</Label>
       <div className="flex w-3/4 items-center gap-2">
         <InlineInput
           name="jobPostingUrl"
