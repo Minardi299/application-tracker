@@ -37,7 +37,7 @@ namespace application_tracker.Server.Models
         Wishlist,
         Applied,
         Interviewing,
-        OfferReceived,
+        Offered,
         Rejected,
         Accepted,
         Withdrawn
