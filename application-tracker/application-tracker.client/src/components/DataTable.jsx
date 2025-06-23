@@ -158,7 +158,7 @@ export function DataTable({columnDef, filterColumnConfig, data, canExportToCSV})
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow className={`border-accent-foreground/50  data-[state=selected]:bg-accent-foreground/20 cursor-pointer hover:bg-accent/100`}
+                    <TableRow className={`border-accent-foreground/50  data-[state=selected]:bg-accent-foreground/20 cursor-pointer hover:bg-sidebar-accent`}
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
                       onClick={() => {

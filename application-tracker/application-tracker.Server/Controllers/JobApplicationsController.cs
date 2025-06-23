@@ -200,6 +200,7 @@ namespace application_tracker.Server.Controllers
                 Position = jobApplication.Position,
                 CompanyName = jobApplication.CompanyName,
                 JobPostingUrl = jobApplication.JobPostingUrl,
+                CreatedAt = jobApplication.CreatedAt,
                 Notes = jobApplication.Notes,
                 Status = jobApplication.Status,
                 Folders = jobApplication.Folders?.Select(f => new FolderDTO

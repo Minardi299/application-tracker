@@ -106,7 +106,7 @@ export function FolderForm({ mode = "create", data = {} }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
+      {/* <div>
         <Label htmlFor="folder-name">Folder Name</Label>
         <Input
           name="name"
@@ -114,10 +114,11 @@ export function FolderForm({ mode = "create", data = {} }) {
           onChange={handleChange}
           placeholder="e.g. Applications, Favorites"
         />
-      </div>
+      </div> */}
       <div className="flex  items-center justify-between">
         <Label>Name:</Label>
         <InlineInput
+        
           name="name"
           value={formData.name}
           onChange={handleChange}
