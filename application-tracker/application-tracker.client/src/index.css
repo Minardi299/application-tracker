@@ -126,6 +126,33 @@
   h3 {
     @apply text-4xl font-semibold;
   }
+
+* {
+  scrollbar-width: thin; 
+  scrollbar-color: transparent var(--sidebar);
+}
+
+*:hover {
+  scrollbar-color: var(--muted-foreground) var(--sidebar);
+}
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+    background-color: var(--sidebar);
+    
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: var(--radius-xl);
+  }
+
+  *:hover::-webkit-scrollbar-thumb {
+    background-color: var(--muted-foreground);
+  }
+
+  ::-webkit-scrollbar-corner {
+    background-color: var(--background);
+  }
 }
 
 @plugin "@tailwindcss/typography";

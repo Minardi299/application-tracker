@@ -20,15 +20,13 @@ export  function HomePage(){
     return(
         <>
         <div className="flex items-center justify-center ">
-        <div className="w-3/5 h-1/3  overflow-hidden">
-        
+        <div className="w-3/5 h-1/3  ">
+
             <CommandMenu />
+
         </div>
         
       </div>
-      <ScrollArea className="h-[300px] w-[400px] border rounded">
-  <div className="h-[1000px] ">YOOO THIS IS A TEST</div>
-</ScrollArea>
 
             
             <Button onClick={populateTodosData}>Click me</Button>

@@ -80,47 +80,7 @@ export function CommandMenu() {
                 <span>Preferences</span>
                 <CommandShortcut>⌘F3</CommandShortcut>
             </CommandItem>
-            <CommandItem onSelect={() => triggerShortcut("F3")}>
-                <Settings />
-                <span>Preferences</span>
-                <CommandShortcut>⌘F3</CommandShortcut>
-            </CommandItem><CommandItem onSelect={() => triggerShortcut("F3")}>
-                <Settings />
-                <span>Preferences</span>
-                <CommandShortcut>⌘F3</CommandShortcut>
-            </CommandItem><CommandItem onSelect={() => triggerShortcut("F3")}>
-                <Settings />
-                <span>Preferences</span>
-                <CommandShortcut>⌘F3</CommandShortcut>
-            </CommandItem><CommandItem onSelect={() => triggerShortcut("F3")}>
-                <Settings />
-                <span>Preferences</span>
-                <CommandShortcut>⌘F3</CommandShortcut>
-            </CommandItem><CommandItem onSelect={() => triggerShortcut("F3")}>
-                <Settings />
-                <span>Preferences</span>
-                <CommandShortcut>⌘F3</CommandShortcut>
-            </CommandItem><CommandItem onSelect={() => triggerShortcut("F3")}>
-                <Settings />
-                <span>Preferences</span>
-                <CommandShortcut>⌘F3</CommandShortcut>
-            </CommandItem><CommandItem onSelect={() => triggerShortcut("F3")}>
-                <Settings />
-                <span>Preferences</span>
-                <CommandShortcut>⌘F3</CommandShortcut>
-            </CommandItem><CommandItem onSelect={() => triggerShortcut("F3")}>
-                <Settings />
-                <span>Preferences</span>
-                <CommandShortcut>⌘F3</CommandShortcut>
-            </CommandItem><CommandItem onSelect={() => triggerShortcut("F3")}>
-                <Settings />
-                <span>Preferences</span>
-                <CommandShortcut>⌘F3</CommandShortcut>
-            </CommandItem><CommandItem onSelect={() => triggerShortcut("F3")}>
-                <Settings />
-                <span>Preferences</span>
-                <CommandShortcut>⌘F3</CommandShortcut>
-            </CommandItem>
+            
             </CommandGroup>
         </CommandList>
             </ScrollArea>
