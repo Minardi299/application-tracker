@@ -25,7 +25,7 @@ import {
   SidebarMenuBadge,
   SidebarGroupAction,
 } from "@/components/ui/sidebar";
-import { prefetchFolder,useFolders  } from "@/hooks/use-folder";
+import { prefetchApplications,useFolders  } from "@/hooks/use-folder";
 import { useGlobalSheet } from "@/context/sheet-provider";
 import { toast } from "sonner";
 import { 
@@ -162,7 +162,7 @@ export function AppSidebar() {
                 userFolders.map((folder) => (
                   <SidebarMenuItem
                     key={folder.id || folder.title}
-                    onMouseEnter={() => prefetchFolder(queryClient, folder.id)}
+                    onMouseEnter={() => prefetchApplications(queryClient, folder.id)}
                   >
                     <SidebarMenuButton asChild>
                       <Link to={folder.url}>

@@ -40,15 +40,35 @@ export const useFolder = (id) => {
   });
 };
 
-export const prefetchFolder = async (queryClient, id) => {
-    const existing = queryClient.getQueryData(["userFolder", id]);
-  if (!existing) {
-    await queryClient.prefetchQuery({
-        queryKey: ["userFolder", id],
+export const prefetchApplications = async (queryClient, id) => {
+  const folderKey = ["userFolder", id];
+  const applicationsKey = ["applications", id];
+
+  const existingFolder = queryClient.getQueryData(folderKey);
+  const existingApplications = queryClient.getQueryData(applicationsKey);
+    const promises = [];
+
+  if (!existingFolder) {
+    promises.push(
+      queryClient.prefetchQuery({
+        queryKey: folderKey,
         queryFn: () => fetchFolderById(id),
-    });
-}
+      })
+    );
+  }
+
+  if (!existingApplications) {
+    promises.push(
+      queryClient.prefetchQuery({
+        queryKey: applicationsKey,
+        queryFn: () => fetchApplicationByFolderId(id),
+      })
+    );
+  }
+
+  await Promise.all(promises);
 };
+
 
 export async function fetchFolderById(folderId) {
     const response = await fetch(`/api/folder/${folderId}`, {
@@ -60,6 +80,20 @@ export async function fetchFolderById(folderId) {
 
     if (!response.ok) {
         throw new Error('Failed to fetch folder data');
+    }
+
+    return response.json();
+}
+export async function fetchApplicationByFolderId(folderId) {
+    const response = await fetch(`/api/jobapplications/folder/${folderId}`, {
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch folder's application`);
     }
 
     return response.json();
