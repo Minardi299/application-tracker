@@ -1,7 +1,7 @@
 import {  useState } from 'react';
 import { Button } from "@/components/ui/button.jsx";
-import {ModeToggle} from "@/components/mode-toggle.jsx";
 import { CommandMenu } from '@/components/command-menu';
+import { ScrollArea } from '@/components/ui/scroll-area';
 export  function HomePage(){
     const [code, setCode] = useState("");
     
@@ -19,12 +19,19 @@ export  function HomePage(){
     }
     return(
         <>
-            <CommandMenu/>
+        <div className="flex items-center justify-center ">
+        <div className="w-3/5 h-1/3  overflow-hidden">
+        
+            <CommandMenu />
+        </div>
+        
+      </div>
+      <ScrollArea className="h-[300px] w-[400px] border rounded">
+  <div className="h-[1000px] ">YOOO THIS IS A TEST</div>
+</ScrollArea>
+
             
-            <div className="">
-                <ModeToggle/>
-                <Button onClick={populateTodosData}>Click me</Button>
-            </div>
+            <Button onClick={populateTodosData}>Click me</Button>
             <h1 id="tableLabel">The table</h1>
             <h2>what's up guys hi</h2>
             <p>This component demonstrates fetching data from the server.</p>

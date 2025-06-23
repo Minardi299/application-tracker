@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Outlet } from "react-router-dom";
 import { GlobalSheetProvider } from "@/context/sheet-provider";
 import { CommandDialogProvider } from "@/context/command-provider";
+import {ModeToggle} from "@/components/mode-toggle.jsx";
 import { GlobalCommandDialog } from "@/components/command-dialog";
 
 export function Layout() {
@@ -25,6 +26,8 @@ export function Layout() {
           <SidebarTrigger className="-ml-1" />
          
           <div className="flex items-center gap-4">
+            <ModeToggle/>
+            
             {isLogin && user ? (
               <>
                 {/* <Avatar className="h-8 w-8">

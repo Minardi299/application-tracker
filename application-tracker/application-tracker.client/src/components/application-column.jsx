@@ -86,7 +86,7 @@ export const ApplicationColumn = [
           href={formatUrl(url)}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center text-blue-500 hover:underline hover:text-blue-600"
+          className="inline-flex items-center justify-center text-blue-500 hover:underline hover:text-blue-600"
           title={url} 
         >
           <Link2 className="h-4 w-4 flex-shrink-0" />
