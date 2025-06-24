@@ -23,7 +23,7 @@ namespace application_tracker.Server.Helper
             rng.GetBytes(randomBytes);
             RefreshToken refreshToken = new RefreshToken
             {
-                UserId = user.Id,
+                OwnerId = user.Id,
                 Owner = user,
                 Token = Convert.ToBase64String(randomBytes),
                 ExpiresAt = DateTime.UtcNow.AddDays(Convert.ToDouble(_configuration["Jwt:RefreshTokenExpirationDays"])),

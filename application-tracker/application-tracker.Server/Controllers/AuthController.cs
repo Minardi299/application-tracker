@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿﻿using System.Linq;
 using application_tracker.Server.Helper;
 using application_tracker.Server.Models;
 using Google.Apis.Auth;
@@ -337,7 +337,7 @@ namespace application_tracker.Server.Controllers
             {
                 return Unauthorized("Invalid or expired refresh token.");
             }
-            var newAccessToken = _jwtTokenGenerator.GenerateToken(existingToken.UserId, existingToken.Owner.Email);
+            var newAccessToken = _jwtTokenGenerator.GenerateToken(existingToken.OwnerId, existingToken.Owner.Email);
             HttpContext.Response.Cookies.Append(
                 "accessToken",
                 newAccessToken,
@@ -366,9 +366,11 @@ namespace application_tracker.Server.Controllers
             }
             RefreshToken? existingToken = await _dbContext.RefreshTokens
                 .FirstOrDefaultAsync(rt => rt.Token == refreshToken);
-            //if (existingToken == null) return Unauthorized("Invalid or expired refresh token.");
-            _dbContext.RefreshTokens.Remove(existingToken);
-            await _dbContext.SaveChangesAsync();
+            if (existingToken != null)
+            {
+                _dbContext.RefreshTokens.Remove(existingToken);
+                await _dbContext.SaveChangesAsync();
+            }
             HttpContext.Response.Cookies.Delete(
                 "accessToken",
                 new CookieOptions
