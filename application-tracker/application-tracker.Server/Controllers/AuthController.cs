@@ -1,4 +1,5 @@
-﻿using application_tracker.Server.Helper;
+﻿using System.Linq;
+using application_tracker.Server.Helper;
 using application_tracker.Server.Models;
 using Google.Apis.Auth;
 using Google.Apis.Auth.OAuth2;
@@ -270,6 +271,17 @@ namespace application_tracker.Server.Controllers
                         Path = "/",
                     }
                 );
+                var refreshToken = _jwtTokenGenerator.GenerateRefreshToken(_dbContext,user);
+                await _userManager.UpdateAsync(user);
+
+                Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Path = "/",
+                    Expires = DateTime.UtcNow.AddDays(7)
+                });
                 ApplicationUserDTO UserDTO = new ApplicationUserDTO
                 {
                     Id = user.Id,

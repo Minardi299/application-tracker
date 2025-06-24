@@ -1,7 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using application_tracker.Server.Models;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.IdentityModel.Tokens;
 
 namespace application_tracker.Server.Helper
@@ -14,34 +16,51 @@ namespace application_tracker.Server.Helper
         {
             _configuration = configuration;
         }
-
-        public string GenerateToken(ApplicationUser user)
+        public async Task<RefreshToken> GenerateRefreshToken(ApplicationDbContext _dbContext,ApplicationUser user) 
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var claims = new List<Claim>
+            var randomBytes = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomBytes);
+            RefreshToken refreshToken = new RefreshToken
             {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                UserId = user.Id,
+                Owner = user,
+                Token = Convert.ToBase64String(randomBytes),
+                ExpiresAt = DateTime.UtcNow.AddDays(Convert.ToDouble(_configuration["Jwt:RefreshTokenExpirationDays"])),
+                CreatedAt = DateTime.UtcNow
             };
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(
-                    Convert.ToInt16(_configuration["Jwt:AccessTokenExpirationMinutes"])
-                ),
-                Issuer = _configuration["Jwt:Issuer"],
-                Audience = _configuration["Jwt:Audience"],
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
-                    SecurityAlgorithms.HmacSha256Signature
-                )
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
+            await _dbContext.RefreshTokens.AddAsync(refreshToken);
+            await _dbContext.SaveChangesAsync();
+            return refreshToken; 
         }
+
+        // public string GenerateToken(ApplicationUser user)
+        // {
+        //     var tokenHandler = new JwtSecurityTokenHandler();
+        //     var claims = new List<Claim>
+        //     {
+        //         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        //         new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+        //         new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        //     };
+        //     var tokenDescriptor = new SecurityTokenDescriptor
+        //     {
+        //         Subject = new ClaimsIdentity(claims),
+        //         Expires = DateTime.UtcNow.AddMinutes(
+        //             Convert.ToInt16(_configuration["Jwt:AccessTokenExpirationMinutes"])
+        //         ),
+        //         Issuer = _configuration["Jwt:Issuer"],
+        //         Audience = _configuration["Jwt:Audience"],
+        //         SigningCredentials = new SigningCredentials(
+        //             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
+        //             SecurityAlgorithms.HmacSha256Signature
+        //         )
+        //     };
+
+        //     SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+
+        //     return tokenHandler.WriteToken(token);
+        // }
 
         public string GenerateToken(string userId, string email)
         {
