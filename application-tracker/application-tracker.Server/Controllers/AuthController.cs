@@ -7,6 +7,7 @@ using Google.Apis.Auth.OAuth2.Flows;
 using Google.Apis.Auth.OAuth2.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace application_tracker.Server.Controllers
@@ -271,17 +272,21 @@ namespace application_tracker.Server.Controllers
                         Path = "/",
                     }
                 );
-                var refreshToken = _jwtTokenGenerator.GenerateRefreshToken(_dbContext,user);
+                RefreshToken refreshToken = await _jwtTokenGenerator.GenerateRefreshToken(_dbContext, user);
                 await _userManager.UpdateAsync(user);
 
-                Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict,
-                    Path = "/",
-                    Expires = DateTime.UtcNow.AddDays(7)
-                });
+                HttpContext.Response.Cookies.Append(
+                    "refreshToken",
+                    refreshToken.Token,
+                    new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Strict,
+                        Path = "/",
+                        Expires = refreshToken.ExpiresAt
+                    }
+                );
                 ApplicationUserDTO UserDTO = new ApplicationUserDTO
                 {
                     Id = user.Id,
@@ -318,12 +323,64 @@ namespace application_tracker.Server.Controllers
                 );
             }
         }
-
-        [HttpPost("logout")]
-        public IActionResult Logout()
+        [HttpPost("refresh")]
+        public async Task<ActionResult> RefreshToken()
         {
+            if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out string? refreshToken) || string.IsNullOrEmpty(refreshToken))
+            {
+                return Unauthorized("Missing refresh token cookie.");
+            }
+            RefreshToken? existingToken = await _dbContext.RefreshTokens
+                .Include(rt => rt.Owner)
+                .FirstOrDefaultAsync(rt => rt.Token == refreshToken);
+            if (existingToken == null || existingToken.ExpiresAt < DateTime.UtcNow)
+            {
+                return Unauthorized("Invalid or expired refresh token.");
+            }
+            var newAccessToken = _jwtTokenGenerator.GenerateToken(existingToken.UserId, existingToken.Owner.Email);
+            HttpContext.Response.Cookies.Append(
+                "accessToken",
+                newAccessToken,
+                new CookieOptions
+                {
+                    Expires = DateTime.UtcNow.AddMinutes(
+                        Convert.ToInt16(_configuration["Jwt:AccessTokenExpirationMinutes"])
+                    ),
+                    HttpOnly = true,
+                    Secure = true,
+                    IsEssential = true,
+                    SameSite = SameSiteMode.Strict,
+                    Path = "/",
+                }
+            );
+
+
+            return NoContent();
+        }
+        [HttpPost("logout")]
+        public async Task<ActionResult> Logout()
+        {
+            if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out string? refreshToken) || string.IsNullOrEmpty(refreshToken))
+            {
+                return Unauthorized("Missing refresh token cookie.");
+            }
+            RefreshToken? existingToken = await _dbContext.RefreshTokens
+                .FirstOrDefaultAsync(rt => rt.Token == refreshToken);
+            //if (existingToken == null) return Unauthorized("Invalid or expired refresh token.");
+            _dbContext.RefreshTokens.Remove(existingToken);
+            await _dbContext.SaveChangesAsync();
             HttpContext.Response.Cookies.Delete(
                 "accessToken",
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.Strict,
+                    Secure = true,
+                    Path = "/"
+                }
+            );
+            HttpContext.Response.Cookies.Delete(
+                "refreshToken",
                 new CookieOptions
                 {
                     HttpOnly = true,
