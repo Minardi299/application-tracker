@@ -11,7 +11,25 @@ export const useFolders = () => {
 
   });
 };
-
+async function fetchCount(){
+    const response = await fetchWithAuth('/api/jobapplications/count', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch application count');
+    }
+    return response.json();
+  }
+export const useApplicationCount = () => {
+  const { isLogin } = useAuth();
+  return useQuery({
+    queryKey: ["applicationCount"],
+    queryFn: fetchCount,
+    enabled: !!isLogin,
+  });
+}
 async function fetchFolders() {
   const response = await fetchWithAuth('/api/folder', {
     headers: {
@@ -67,7 +85,26 @@ export const prefetchApplications = async (queryClient, id) => {
 
   await Promise.all(promises);
 };
+export const prefetchAllApplications = async (queryClient) => {
+  const applicationsKey = ["applications", "all"];
+  const existingApplications = queryClient.getQueryData(applicationsKey);
 
+  if (!existingApplications) {
+    await queryClient.prefetchQuery({
+      queryKey: applicationsKey,
+      queryFn: () => fetchWithAuth(`/api/jobapplications`, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch applications');
+        }
+        return response.json();
+      }),
+    });
+  }
+}
 
 export async function fetchFolderById(folderId) {
     const response = await fetchWithAuth(`/api/folder/${folderId}`, {

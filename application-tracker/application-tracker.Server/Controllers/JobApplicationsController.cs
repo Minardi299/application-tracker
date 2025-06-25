@@ -30,14 +30,28 @@ namespace application_tracker.Server.Controllers
             var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (ownerId == null)
                 return Unauthorized();
-            JobApplication[] jobApplications = await _context
-                .JobApplications
+            JobApplication[] jobApplications = await _context.JobApplications
                 .Where(x => x.OwnerId == ownerId)
+                .Include(x => x.Folders)
                 .OrderByDescending(x => x.CreatedAt)
                 .ToArrayAsync();
             
 
             return Ok(jobApplications.Select(JobApplicationToDTO));
+        }
+        [Authorize]
+        [HttpGet("count")]
+        public async Task<ActionResult<int>> GetJobApplicationCount()
+        {
+            var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (ownerId == null)
+                return Unauthorized();
+            int count = await _context.JobApplications
+                .AsNoTracking()
+                .Where(x => x.OwnerId == ownerId)
+                .CountAsync();
+
+            return Ok(count);
         }
         [Authorize]
         [HttpGet("folder/{folderId}")]

@@ -6,6 +6,7 @@ import {
   Settings,
   CloudDownload,
   ChevronRight,
+  FolderLock
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -25,7 +26,7 @@ import {
   SidebarMenuBadge,
   SidebarGroupAction,
 } from "@/components/ui/sidebar";
-import { prefetchApplications,useFolders  } from "@/hooks/use-folder";
+import { prefetchApplications,useFolders, useApplicationCount,prefetchAllApplications  } from "@/hooks/use-folder";
 import { useGlobalSheet } from "@/context/sheet-provider";
 import { toast } from "sonner";
 import { 
@@ -34,6 +35,7 @@ import {
   CollapsibleContent,
  } from "@/components/ui/collapsible";
 import { useEffect } from "react";
+
 // Menu items.
 const data = {
   user: {
@@ -75,8 +77,9 @@ const resources = [
 
 export function AppSidebar() {
   const { openSheet } = useGlobalSheet();
-
+  
   const queryClient = useQueryClient();
+  const { data: applicationCount } = useApplicationCount();
   const { data: rawFolders = [], isLoading: isLoadingFolders, isError: isErrorFolders,error:foldersError } = useFolders();
   useEffect(() => {
     if (isErrorFolders) {
@@ -156,6 +159,19 @@ export function AppSidebar() {
           </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem onMouseEnter={() => prefetchAllApplications(queryClient)}> 
+                
+                <SidebarMenuButton asChild>
+                  <Link to="/folder/all">
+                    <FolderLock />
+                    <span>All Folders</span>
+                  </Link>
+                  
+                  </SidebarMenuButton>
+                  <SidebarMenuBadge>
+                     {applicationCount ? applicationCount : 0} 
+                  </SidebarMenuBadge>
+              </SidebarMenuItem>
               {!isLoadingFolders &&
                 !isErrorFolders &&
                 userFolders.length > 0 &&
@@ -166,7 +182,7 @@ export function AppSidebar() {
                   >
                     <SidebarMenuButton asChild>
                       <Link to={folder.url}>
-                        <folder.icon className="" />
+                        <folder.icon />
                         <span>{folder.title}</span>
                       </Link>
                     </SidebarMenuButton>

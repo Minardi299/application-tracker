@@ -7,6 +7,7 @@ import {HomePage} from "@/pages/HomePage.jsx"
 import {DashboardPage } from "@/pages/DashboardPage.jsx";
 import { AuthProvider } from '@/context/auth-provider'; 
 import { LoginPage } from '@/pages/LoginPage.jsx';
+import { FolderAllPage } from '@/pages/FolderAllPage.jsx';
 import { SignUpPage } from '@/pages/SignUpPage';
 import { FolderPage } from '@/pages/FolderPage';
 import { Toaster } from "@/components/ui/sonner"
@@ -31,6 +32,7 @@ function App() {
                         <Route path="dashboard" element={<DashboardPage />} />
                         <Route path="settings" element={<SettingPage />} />
                         <Route path="folder/:folderId" element={<FolderPage/>} />
+                        <Route path="folder/all" element={<FolderAllPage/>} />
                         <Route path="resume-templates" element={<ResumeTemplatePage/>} />
                     </Route>
                     <Route path="/login" element={<LoginPage />} /> 
