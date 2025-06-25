@@ -82,6 +82,9 @@ export function AuthProvider({ children }) {
   };
 
   async function logout  () {
+    setUser(GUEST_USER);
+    setIsLogin(false);
+    localStorage.removeItem('authUser');
     const res = await fetchWithAuth("/api/auth/logout", {
         method: "POST",
         headers: {
@@ -96,11 +99,7 @@ export function AuthProvider({ children }) {
           `Failed to connect - HTTP status ${res.status}. Response: ${errorData}`
         );
       }
-    setUser(GUEST_USER);
-    setIsLogin(false);
-    // Clear persisted state
-    localStorage.removeItem('authUser');
-    // Add any cleanup logic, like redirecting to login page
+    
   };
   const register = async (userData) => {
     try {
