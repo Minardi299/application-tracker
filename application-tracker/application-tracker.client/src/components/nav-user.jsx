@@ -6,6 +6,7 @@ import {
   LogOutIcon,
   MoreVerticalIcon,
   UserCircleIcon,
+  LogIn
 } from "lucide-react"
 
 import {
@@ -28,8 +29,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-
 export function NavUser() {
+  const {isLogin} = useAuth();
   const { isMobile } = useSidebar();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -95,7 +96,7 @@ export function NavUser() {
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCardIcon />
-                Billing
+                Pricing
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <BellIcon />
@@ -103,10 +104,19 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
+            { isLogin && (
+
             <DropdownMenuItem variant="destructive" onClick={handleLogout}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>
+            )}
+            { !isLogin && (
+              <DropdownMenuItem onClick={() => navigate('/login')}>
+                <LogIn/>
+                Log in
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
