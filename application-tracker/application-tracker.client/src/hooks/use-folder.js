@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/auth-provider"; 
-
+import { fetchWithAuth } from "@/lib/interceptor";
 export const useFolders = () => {
     const { isLogin } = useAuth();
     
@@ -13,11 +13,10 @@ export const useFolders = () => {
 };
 
 async function fetchFolders() {
-  const response = await fetch('/api/folder', {
+  const response = await fetchWithAuth('/api/folder', {
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -71,11 +70,10 @@ export const prefetchApplications = async (queryClient, id) => {
 
 
 export async function fetchFolderById(folderId) {
-    const response = await fetch(`/api/folder/${folderId}`, {
+    const response = await fetchWithAuth(`/api/folder/${folderId}`, {
         headers: {
         'Content-Type': 'application/json',
         },
-        credentials: 'include',
     });
 
     if (!response.ok) {
@@ -85,11 +83,10 @@ export async function fetchFolderById(folderId) {
     return response.json();
 }
 export async function fetchApplicationByFolderId(folderId) {
-    const response = await fetch(`/api/jobapplications/folder/${folderId}`, {
+    const response = await fetchWithAuth(`/api/jobapplications/folder/${folderId}`, {
         headers: {
         'Content-Type': 'application/json',
         },
-        credentials: 'include',
     });
 
     if (!response.ok) {

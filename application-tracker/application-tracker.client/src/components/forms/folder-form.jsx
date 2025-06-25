@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { fetchWithAuth } from "@/lib/interceptor";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useGlobalSheet } from "@/context/sheet-provider";
@@ -31,9 +31,8 @@ export function FolderForm({ mode = "create", data = {} }) {
   }
 
   async function deleteFolder({ id }) {
-    const res = await fetch(`/api/folder/${id}`, {
+    const res = await fetchWithAuth(`/api/folder/${id}`, {
       method: "DELETE",
-      credentials: "include",
     });
     if (!res.ok) {
       throw new Error("Failed to delete folder");
@@ -62,13 +61,12 @@ export function FolderForm({ mode = "create", data = {} }) {
 
   async function saveFolder(payload) {
     const url = mode === "edit" ? `/api/folder/${payload.id}` : "/api/folder";
-    const res = await fetch(url, {
+    const res = await fetchWithAuth(url, {
       method: mode === "edit" ? "PUT" : "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
-      credentials: "include",
     });
     if (!res.ok) throw new Error("Failed to save folder");
     return res.json();

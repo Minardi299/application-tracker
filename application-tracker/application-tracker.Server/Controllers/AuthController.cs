@@ -360,10 +360,10 @@ namespace application_tracker.Server.Controllers
         [HttpPost("logout")]
         public async Task<ActionResult> Logout()
         {
-            if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out string? refreshToken) || string.IsNullOrEmpty(refreshToken))
-            {
-                return Unauthorized("Missing refresh token cookie.");
-            }
+            HttpContext.Request.Cookies.TryGetValue("refreshToken", out string? refreshToken) ;
+            
+                //return Unauthorized("Missing refresh token cookie.");
+            
             RefreshToken? existingToken = await _dbContext.RefreshTokens
                 .FirstOrDefaultAsync(rt => rt.Token == refreshToken);
             if (existingToken != null)

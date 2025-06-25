@@ -7,6 +7,7 @@ import { useGlobalSheet } from "@/context/sheet-provider";
 import { useFolders } from "@/hooks/use-folder";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
+import { fetchWithAuth } from "@/lib/interceptor";
 import {
   Select,
   SelectContent,
@@ -44,9 +45,8 @@ export function ApplicationForm({ mode = "create", data = {} }) {
     return `https://${url}`;
   };
   async function deleteApplication({id}) {
-    const res = await fetch(`/api/jobapplications/${id}`, {
+    const res = await fetchWithAuth(`/api/jobapplications/${id}`, {
       method: "DELETE",
-      credentials: "include",
     });
     if (!res.ok) {
       throw new Error("Failed to delete application");
@@ -92,13 +92,12 @@ export function ApplicationForm({ mode = "create", data = {} }) {
       mode === "edit"
         ? `/api/jobapplications/${payload.id}`
         : "/api/jobapplications";
-    const res = await fetch(url, {
+    const res = await fetchWithAuth(url, {
       method: mode === "edit" ? "PUT" : "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
-      credentials: "include",
     });
     if (!res.ok) throw new Error("Failed to save application");
     return res.json();

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-
+import { toast } from 'sonner';
+import { fetchWithAuth } from '@/lib/interceptor';
 const AuthContext = createContext({
   isLogin: false,
   user: null,
@@ -56,9 +57,8 @@ export function AuthProvider({ children }) {
   };
 
   async function logout  () {
-    const res = await fetch("/api/auth/logout", {
+    const res = await fetchWithAuth("/api/auth/logout", {
         method: "POST",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -66,6 +66,7 @@ export function AuthProvider({ children }) {
 
       if (!res.ok) {
         const errorData = await res.text(); 
+        toast.error(`Logout failed: ${errorData}`);
         throw new Error(
           `Failed to connect - HTTP status ${res.status}. Response: ${errorData}`
         );
