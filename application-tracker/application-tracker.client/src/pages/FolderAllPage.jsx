@@ -1,13 +1,8 @@
 import { DataTable } from "@/components/DataTable";
 import { useQuery } from "@tanstack/react-query";
-import { FolderForm } from "@/components/forms/folder-form";
-import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
 import{ fetchAllApplications} from "@/hooks/use-folder";
 import {ApplicationColumn, ApplicationColumnConfig } from "@/components/application-column";
 export function FolderAllPage() {
-    
-    
     const {
         data: applications,
         isLoading: isApplicationsLoading,

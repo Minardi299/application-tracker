@@ -45,15 +45,13 @@ export function LoginForm({
           navigate("/"); 
         } else {
           toast.error("Login failed: Response did not include user data.", data);
-          console.error("Login failed: Response did not include user data.", data);
-          alert("Login failed. Please try again. " + (data.message || ""));
+          
         }
       } catch (e) {
-        console.error("Failed to login " + e);
         toast.error("Login failed: " + e);
       }
     } else {
-      console.log("No authorization code received from Google");
+      console.error("No authorization code received from Google");
       toast.error("Login failed: No authorization code received from Google.");
     }
   };
@@ -74,7 +72,7 @@ export function LoginForm({
   
   const handleError = (error) => {
     console.error("Login error in handleError:", error);
-    alert("Error logging in: " + error);
+    toast.error("Error logging in: " + error);
   };
 
   return (
