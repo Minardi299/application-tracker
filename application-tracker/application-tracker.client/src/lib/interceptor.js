@@ -10,6 +10,7 @@ function retryPendingRequests() {
 export async function fetchWithAuth(input, init,retryAttempted = false) {
   const originalRequest = { ...init, credentials: 'include' };
   const doFetch = () => fetch(input, originalRequest);
+
   let response = await doFetch();
   if (response.status !== 401 || retryAttempted) return response;
 
@@ -24,11 +25,10 @@ export async function fetchWithAuth(input, init,retryAttempted = false) {
 
 
       if (!refreshResponse.ok) throw new Error('Refresh failed');
-      isRefreshing = false;
+
       retryPendingRequests();
     } catch (err) {
-      retryPendingRequests(); 
-      isRefreshing = false;
+      pendingRequests = [];
       throw err;
     }
     finally {
@@ -37,9 +37,11 @@ export async function fetchWithAuth(input, init,retryAttempted = false) {
   }
 
   // Wait for the refresh to complete before retrying
-  await new Promise(resolve => {
-    pendingRequests.push(resolve);
-  });
+  else {
+    await new Promise(resolve => {
+      pendingRequests.push(resolve);
+    });
+  }
 
   return fetchWithAuth(input, init, true);
 }
