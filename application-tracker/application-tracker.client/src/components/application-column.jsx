@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Link as Link2,CalendarDays, CircleCheck } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 
+
 const Statuses = [
     { value: 'Wishlist', label: 'Wishlist', icon: CircleCheck },
     { value: 'Applied', label: "Applied", icon: CircleCheck },
