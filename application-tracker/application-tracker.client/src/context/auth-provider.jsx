@@ -19,6 +19,31 @@ const GUEST_USER = {
 
 
 export function AuthProvider({ children }) {
+  useEffect(() => {
+    async function attemptSessionRefresh  ()  {
+        const hasReloaded = sessionStorage.getItem('hasReloadedAfterRefreshFail');
+
+        const res = await fetch('/api/auth/refresh', {
+          method: 'POST',
+          credentials: 'include',
+        });
+
+        if (!res.ok) {
+          await logout(); 
+          if (!hasReloaded) {
+            sessionStorage.setItem('hasReloadedAfterRefreshFail', 'true');
+            window.location.reload();
+          } else {
+            sessionStorage.removeItem('hasReloadedAfterRefreshFail');
+          }
+        
+        };
+
+      
+    };
+
+    attemptSessionRefresh();
+  }, []);
   const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState(GUEST_USER);
   //check from local storagge if the user is already logged in before

@@ -7,12 +7,11 @@ function retryPendingRequests() {
   pendingRequests = [];
 }
 
-export async function fetchWithAuth(input, init) {
-  const doFetch = () => fetch(input, { ...init, credentials: 'include' });
-
+export async function fetchWithAuth(input, init,retryAttempted = false) {
+  const originalRequest = { ...init, credentials: 'include' };
+  const doFetch = () => fetch(input, originalRequest);
   let response = await doFetch();
-
-  if (response.status !== 401) return response;
+  if (response.status !== 401 || retryAttempted) return response;
 
   // Handle 401: try refresh
   if (!isRefreshing) {
@@ -23,13 +22,17 @@ export async function fetchWithAuth(input, init) {
         credentials: 'include',
       });
 
+
       if (!refreshResponse.ok) throw new Error('Refresh failed');
       isRefreshing = false;
       retryPendingRequests();
     } catch (err) {
+      retryPendingRequests(); 
       isRefreshing = false;
-      window.location.href = '/login'; 
       throw err;
+    }
+    finally {
+      isRefreshing = false;
     }
   }
 
@@ -38,6 +41,5 @@ export async function fetchWithAuth(input, init) {
     pendingRequests.push(resolve);
   });
 
-  // Retry the original request
-  return doFetch();
+  return fetchWithAuth(input, init, true);
 }
