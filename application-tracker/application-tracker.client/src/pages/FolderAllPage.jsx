@@ -3,22 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { FolderForm } from "@/components/forms/folder-form";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
-import { fetchWithAuth } from "@/lib/interceptor";
+import{ fetchAllApplications} from "@/hooks/use-folder";
 import {ApplicationColumn, ApplicationColumnConfig } from "@/components/application-column";
 export function FolderAllPage() {
     
-    async function fetchApplications() {
-        return fetchWithAuth(`/api/jobapplications`, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }).then((response) => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch applications');
-            }
-            return response.json();
-        });
-    }
+    
     const {
         data: applications,
         isLoading: isApplicationsLoading,
@@ -26,7 +15,7 @@ export function FolderAllPage() {
         error: applicationsError,
     } = useQuery({
         queryKey: ["applications", "all"],
-        queryFn: () => fetchApplications(),
+        queryFn: () => fetchAllApplications(),
     });
 
   return (

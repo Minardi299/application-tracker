@@ -92,19 +92,22 @@ export const prefetchAllApplications = async (queryClient) => {
   if (!existingApplications) {
     await queryClient.prefetchQuery({
       queryKey: applicationsKey,
-      queryFn: () => fetchWithAuth(`/api/jobapplications`, {
-        headers: {
-            'Content-Type': 'application/json',
-        },
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch applications');
-        }
-        return response.json();
-      }),
+      queryFn: fetchAllApplications,
     });
   }
 }
+export async function fetchAllApplications() {
+        return fetchWithAuth(`/api/jobapplications`, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch applications');
+            }
+            return response.json();
+        });
+    }
 
 export async function fetchFolderById(folderId) {
     const response = await fetchWithAuth(`/api/folder/${folderId}`, {

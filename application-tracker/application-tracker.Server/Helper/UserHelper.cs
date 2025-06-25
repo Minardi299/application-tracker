@@ -14,7 +14,7 @@ public static class UserHelper
         }
         ApplicationFolder defaultFolder = new ApplicationFolder
         {
-            Name = "All",
+            Name = "Favorites",
             Owner = user,
             OwnerId = user.Id,
         };
