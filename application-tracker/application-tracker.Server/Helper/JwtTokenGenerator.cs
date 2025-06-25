@@ -26,8 +26,8 @@ namespace application_tracker.Server.Helper
                 OwnerId = user.Id,
                 Owner = user,
                 Token = Convert.ToBase64String(randomBytes),
-                ExpiresAt = DateTime.UtcNow.AddDays(Convert.ToDouble(_configuration["Jwt:RefreshTokenExpirationDays"])),
-                CreatedAt = DateTime.UtcNow
+                ExpiresAt = DateTimeOffset.UtcNow.AddDays(Convert.ToDouble(_configuration["Jwt:RefreshTokenExpirationDays"])),
+                CreatedAt = DateTimeOffset.UtcNow
             };
             await _dbContext.RefreshTokens.AddAsync(refreshToken);
             await _dbContext.SaveChangesAsync();
@@ -46,7 +46,7 @@ namespace application_tracker.Server.Helper
         //     var tokenDescriptor = new SecurityTokenDescriptor
         //     {
         //         Subject = new ClaimsIdentity(claims),
-        //         Expires = DateTime.UtcNow.AddMinutes(
+        //         Expires = DateTimeOffset.UtcNow.AddMinutes(
         //             Convert.ToInt16(_configuration["Jwt:AccessTokenExpirationMinutes"])
         //         ),
         //         Issuer = _configuration["Jwt:Issuer"],

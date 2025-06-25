@@ -262,7 +262,7 @@ namespace application_tracker.Server.Controllers
                     accessToken,
                     new CookieOptions
                     {
-                        Expires = DateTime.UtcNow.AddMinutes(
+                        Expires = DateTimeOffset.UtcNow.AddMinutes(
                             Convert.ToInt16(_configuration["Jwt:AccessTokenExpirationMinutes"])
                         ),
                         HttpOnly = true,
@@ -333,7 +333,7 @@ namespace application_tracker.Server.Controllers
             RefreshToken? existingToken = await _dbContext.RefreshTokens
                 .Include(rt => rt.Owner)
                 .FirstOrDefaultAsync(rt => rt.Token == refreshToken);
-            if (existingToken == null || existingToken.ExpiresAt < DateTime.UtcNow)
+            if (existingToken == null || existingToken.ExpiresAt < DateTimeOffset.UtcNow)
             {
                 return Unauthorized("Invalid or expired refresh token.");
             }
@@ -343,7 +343,7 @@ namespace application_tracker.Server.Controllers
                 newAccessToken,
                 new CookieOptions
                 {
-                    Expires = DateTime.UtcNow.AddMinutes(
+                    Expires = DateTimeOffset.UtcNow.AddMinutes(
                         Convert.ToInt16(_configuration["Jwt:AccessTokenExpirationMinutes"])
                     ),
                     HttpOnly = true,
