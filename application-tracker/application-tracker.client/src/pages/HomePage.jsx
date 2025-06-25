@@ -1,7 +1,6 @@
 import {  useState } from 'react';
 import { Button } from "@/components/ui/button.jsx";
 import { CommandMenu } from '@/components/command-menu';
-import { ScrollArea } from '@/components/ui/scroll-area';
 export  function HomePage(){
     const [code, setCode] = useState("");
     

@@ -152,7 +152,7 @@ export function AppSidebar() {
                       title: "New Folder",
                       description: "Create a new folder for your applications.",
                     })}>
-            <Plus /> <span className="sr-only">Add Project</span>
+            <Plus className="cursor-pointer" /> <span className="sr-only">Add Project</span>
           </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
