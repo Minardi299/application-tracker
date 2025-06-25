@@ -1,18 +1,17 @@
 import {  useState } from 'react';
 import { Button } from "@/components/ui/button.jsx";
 import { CommandMenu } from '@/components/command-menu';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { fetchWithAuth } from '@/lib/interceptor.js';
 export  function HomePage(){
     const [code, setCode] = useState("");
     
     async function populateTodosData() {
         
-        const response = await fetch('/api/test', {
+        const response = await fetchWithAuth('/api/test', {
             method: "GET",
             headers: {
                 "Content-Type": "text/html",
             },
-            credentials: "include",
         });
         setCode(response.status);
         

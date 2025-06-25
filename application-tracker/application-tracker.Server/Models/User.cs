@@ -23,5 +23,7 @@ namespace application_tracker.Server.Models
         public ICollection<JobApplication> Applications { get; set; } = new List<JobApplication>();
 
         public ICollection<ApplicationFolder> Folders { get; set; } = new List<ApplicationFolder>();
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+
     }
 }

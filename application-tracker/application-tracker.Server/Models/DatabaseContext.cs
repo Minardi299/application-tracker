@@ -14,6 +14,7 @@ namespace application_tracker.Server.Models
             : base(options) { }
 
         public DbSet<TodoItem> TodoItems { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<JobApplication> JobApplications { get; set; }
         public DbSet<ApplicationFolder> ApplicationFolders { get; set; }
 

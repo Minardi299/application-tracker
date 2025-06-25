@@ -9,7 +9,6 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command"
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 import {
   Calculator,
@@ -35,31 +34,28 @@ export function CommandMenu() {
   return ( 
         <Command className="rounded-lg border shadow-md md:min-w-[450px]">
         <CommandInput placeholder="Type a command or search..." />
-            <ScrollArea className="max-h-[300px] overflow-auto">
         <CommandList>
-
-            
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Actions">
                 <CommandItem onSelect={() => triggerShortcut("k")}>
                     <FileUser />
                     <span>Open Command Menu</span>
-                    <CommandShortcut>Ctrl/⌘K</CommandShortcut>
+                    <CommandShortcut>Ctrl/⌘+K</CommandShortcut>
                 </CommandItem>
                 <CommandItem onSelect={() => triggerShortcut("f")}>
                     <Folder />
                     <span>Create a folder</span>
-                    <CommandShortcut>⌘F</CommandShortcut>
+                    <CommandShortcut>⌘+F</CommandShortcut>
                 </CommandItem>
                 <CommandItem onSelect={() => triggerShortcut("j")}>
                     <FileUser />
                     <span>Create an application</span>
-                    <CommandShortcut>⌘J</CommandShortcut>
+                    <CommandShortcut>⌘+J</CommandShortcut>
                 </CommandItem>
                 <CommandItem onSelect={() => triggerShortcut("b")}>
                     <FileUser />
                     <span>Close sidebar</span>
-                    <CommandShortcut>⌘B</CommandShortcut>
+                    <CommandShortcut>⌘+B</CommandShortcut>
                 </CommandItem>
                 
             </CommandGroup>
@@ -68,22 +64,21 @@ export function CommandMenu() {
             <CommandItem onSelect={() => triggerShortcut("F1")}>
                 <Home />
                 <span>Home</span>
-                <CommandShortcut>⌘F1</CommandShortcut>
+                <CommandShortcut>⌘+F1</CommandShortcut>
             </CommandItem>
             <CommandItem onSelect={() => triggerShortcut("F2")}>
                 <LayoutDashboard />
                 <span>Dashboard</span>
-                <CommandShortcut>⌘F2</CommandShortcut>
+                <CommandShortcut>⌘+F2</CommandShortcut>
             </CommandItem>
             <CommandItem onSelect={() => triggerShortcut("F3")}>
                 <Settings />
                 <span>Preferences</span>
-                <CommandShortcut>⌘F3</CommandShortcut>
+                <CommandShortcut>⌘+F3</CommandShortcut>
             </CommandItem>
             
             </CommandGroup>
         </CommandList>
-            </ScrollArea>
         </Command>
     )
 };

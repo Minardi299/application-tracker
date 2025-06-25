@@ -6,6 +6,7 @@ import { useGlobalSheet} from "@/context/sheet-provider";
 import { FolderForm } from "@/components/forms/folder-form";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
+import { fetchWithAuth } from "@/lib/interceptor";
 import {ApplicationColumn, ApplicationColumnConfig } from "@/components/application-column";
 export function FolderPage() {
     const { openSheet } = useGlobalSheet();
@@ -13,11 +14,10 @@ export function FolderPage() {
     const { folderId } = useParams();
     const {data: folder} = useFolder(folderId);
     async function fetchApplications(folderId) {
-        return fetch(`/api/jobapplications/folder/${folderId}`, {
+        return fetchWithAuth(`/api/jobapplications/folder/${folderId}`, {
             headers: {
                 'Content-Type': 'application/json',
             },
-            credentials: 'include',
         }).then((response) => {
             if (!response.ok) {
                 throw new Error('Failed to fetch applications');

@@ -14,8 +14,8 @@ import { NavigationShortcuts } from '@/components/navigation-shortcuts';
 import { ResumeTemplatePage } from '@/pages/ResumeTemplatePage.jsx';
 
 
+
 function App() {
-    
 
     
     return (

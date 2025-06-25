@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-
+import { toast } from 'sonner';
+import { fetchWithAuth } from '@/lib/interceptor';
 const AuthContext = createContext({
   isLogin: false,
   user: null,
@@ -18,6 +19,31 @@ const GUEST_USER = {
 
 
 export function AuthProvider({ children }) {
+  useEffect(() => {
+    async function attemptSessionRefresh  ()  {
+        const hasReloaded = sessionStorage.getItem('hasReloadedAfterRefreshFail');
+
+        const res = await fetch('/api/auth/refresh', {
+          method: 'POST',
+          credentials: 'include',
+        });
+
+        if (!res.ok) {
+          await logout(); 
+          if (!hasReloaded) {
+            sessionStorage.setItem('hasReloadedAfterRefreshFail', 'true');
+            window.location.reload();
+          } else {
+            sessionStorage.removeItem('hasReloadedAfterRefreshFail');
+          }
+        
+        };
+
+      
+    };
+
+    attemptSessionRefresh();
+  }, []);
   const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState(GUEST_USER);
   //check from local storagge if the user is already logged in before
@@ -56,9 +82,11 @@ export function AuthProvider({ children }) {
   };
 
   async function logout  () {
-    const res = await fetch("/api/auth/logout", {
+    setUser(GUEST_USER);
+    setIsLogin(false);
+    localStorage.removeItem('authUser');
+    const res = await fetchWithAuth("/api/auth/logout", {
         method: "POST",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -66,15 +94,12 @@ export function AuthProvider({ children }) {
 
       if (!res.ok) {
         const errorData = await res.text(); 
+        toast.error(`Logout failed: ${errorData}`);
         throw new Error(
           `Failed to connect - HTTP status ${res.status}. Response: ${errorData}`
         );
       }
-    setUser(GUEST_USER);
-    setIsLogin(false);
-    // Clear persisted state
-    localStorage.removeItem('authUser');
-    // Add any cleanup logic, like redirecting to login page
+    
   };
   const register = async (userData) => {
     try {
