@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 
 const Statuses = [
-  { value: "Wishlist", label: "Wishlist", icon: CircleCheck },
+  { value: "Accepted", label: "Accepted", icon: CircleCheck },
   { value: "Applied", label: "Applied", icon: CircleCheck },
   { value: "Interviewing", label: "Interviewing", icon: CircleCheck },
-  { value: "Accepted", label: "Accepted", icon: CircleCheck },
-  { value: "Rejected", label: "Rejected", icon: CircleCheck },
   { value: "Offered", label: "Offered", icon: CircleCheck },
+  { value: "Rejected", label: "Rejected", icon: CircleCheck },
+  { value: "Wishlist", label: "Wishlist", icon: CircleCheck },
   { value: "Withdrawn", label: "Withdrawn", icon: CircleCheck },
 ];
 
@@ -109,11 +109,11 @@ export const ApplicationColumn = [
     header: ({ column }) => (
       <Button
         variant="ghost"
-        className="cursor-pointer   hover:text-muted-foreground"
+        className="cursor-pointer hover:text-muted-foreground"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         <p className="text-center">Date Added</p>
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        <ArrowUpDown />
       </Button>
     ),
     size: 110,

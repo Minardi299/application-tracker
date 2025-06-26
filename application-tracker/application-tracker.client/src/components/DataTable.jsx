@@ -18,7 +18,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
 } from "@tanstack/react-table"
-import { ColumnsIcon, ChevronDownIcon } from  "lucide-react"
+import { Settings2, ChevronDownIcon } from  "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -26,7 +26,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import  {  DataTableFilter  } from "@/components/data-table-filter/components/data-table-filter"
-import { Input } from "@/components/ui/input"
 import { useDataTableFilters } from '@/components/data-table-filter'
 import exportToCsv from "tanstack-table-export-to-csv";
 import { useGlobalSheet } from "@/context/sheet-provider";
@@ -101,8 +100,8 @@ export function DataTable({columnDef, filterColumnConfig, data, canExportToCSV})
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button  className="ml-auto">
-              <ColumnsIcon />
-              <span className=" lg:inline">Customize Columns</span>
+              <Settings2 />
+              <p className=" lg:inline">View</p>
               <ChevronDownIcon />
               </Button>
             </DropdownMenuTrigger>
