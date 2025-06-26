@@ -83,6 +83,7 @@ export function DataTable({columnDef, filterColumnConfig, data, canExportToCSV})
   };
   return (
     <div>      
+
         <div className="flex items-center py-4 px-4 gap-4">
         
           <DataTableFilter
@@ -135,14 +136,14 @@ export function DataTable({columnDef, filterColumnConfig, data, canExportToCSV})
           })}>Add +</Button>
         </div>
         <div  className="max-w-full overflow-x-auto">
-          
+                <div className="rounded-md border">
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow  key={headerGroup.id} className="bg-background hover:bg-transparent cursor-default">
+                  <TableRow  key={headerGroup.id} className=" bg-background hover:bg-transparent cursor-default">
                     {headerGroup.headers.map((header) => {
                       return (
-                        <TableHead key={header.id} className="px-4 py-2 text-center">
+                        <TableHead key={header.id} className="px-4 py-2 text-center bg-accent">
                           {header.isPlaceholder
                             ? null
                             : flexRender(
@@ -158,7 +159,7 @@ export function DataTable({columnDef, filterColumnConfig, data, canExportToCSV})
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow className={`border-accent-foreground/50  data-[state=selected]:bg-accent-foreground/20 cursor-pointer hover:bg-sidebar-accent`}
+                    <TableRow className=" rounded-md border-muted data-[state=selected]:bg-accent-foreground/20 cursor-pointer hover:bg-sidebar-accent"
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
                       onClick={() => {
@@ -170,7 +171,7 @@ export function DataTable({columnDef, filterColumnConfig, data, canExportToCSV})
                       }}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}  className="px-4 py-2 text-center">
+                        <TableCell key={cell.id}  className="px-4 py-4 text-center">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}
@@ -186,6 +187,7 @@ export function DataTable({columnDef, filterColumnConfig, data, canExportToCSV})
               </TableBody>
             </Table>
           
+      </div>
         </div>
  
       
