@@ -17,7 +17,7 @@ function getTrendBadge(current, previous) {
   const change = previous === 0 ? 100 : ((current - previous) / previous) * 100;
   const isUp = change >= 0;
   const Icon = isUp ? TrendingUp : TrendingDown;
-  const colorClass = isUp ? " bg-green-600 " : " bg-red-600";
+  const colorClass = isUp ? " bg-green-400 dark:bg-green-600" : " bg-red-400 dark:bg-red-600";
 
   return (
     <Badge variant="outline" className={`gap-2 px-3 py-1.5 text-base   ${colorClass}`}>

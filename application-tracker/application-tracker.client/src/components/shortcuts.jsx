@@ -7,7 +7,7 @@ import { useCommandDialog } from "@/context/command-provider";
 
 export function AppShortcuts() {
   const { openSheet } = useGlobalSheet();
-  const { setOpen } = useCommandDialog();
+  const {  setOpen } = useCommandDialog();
   
     
   
@@ -23,7 +23,7 @@ export function AppShortcuts() {
             description: "Track a new job application.",
           });
         }
-        if (e.key.toLowerCase() === "f") {
+        if (e.key.toLowerCase() === "g") {
           e.preventDefault();
           openSheet({
             render: () => <FolderForm mode="create" />,
@@ -31,11 +31,11 @@ export function AppShortcuts() {
             description: "Create a new folder for your applications.",
           });
         }
-        if (e.key.toLowerCase() === "k") {
-          e.preventDefault();
-          setOpen(true);
-        }
-       
+        
+      }
+      if (e.key === "/") {
+        e.preventDefault();
+        setOpen(true);
       }
     };
     window.addEventListener("keydown", handler);

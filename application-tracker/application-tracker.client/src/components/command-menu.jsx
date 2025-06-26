@@ -11,14 +11,14 @@ import {
 } from "@/components/ui/command"
 
 import {
-  Calculator,
+  SquareMenu,
   FileUser,
   LayoutDashboard,
   Settings,
   Home,
   User,
   Folder,
-  Scroll,
+  ChevronsRight,
 } from "lucide-react"
 export function CommandMenu() {
     function triggerShortcut(key, withMeta = true) {
@@ -37,25 +37,25 @@ export function CommandMenu() {
         <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Actions">
-                <CommandItem onSelect={() => triggerShortcut("k")}>
-                    <FileUser />
+                <CommandItem onSelect={() => triggerShortcut("Escape")}>
+                    <SquareMenu />
                     <span>Open Command Menu</span>
-                    <CommandShortcut>Ctrl/⌘+K</CommandShortcut>
+                    <CommandShortcut>/</CommandShortcut>
                 </CommandItem>
-                <CommandItem onSelect={() => triggerShortcut("f")}>
+                <CommandItem onSelect={() => triggerShortcut("g")}>
                     <Folder />
                     <span>Create a folder</span>
-                    <CommandShortcut>⌘+F</CommandShortcut>
+                    <CommandShortcut>Ctrl/⌘+G</CommandShortcut>
                 </CommandItem>
                 <CommandItem onSelect={() => triggerShortcut("j")}>
                     <FileUser />
                     <span>Create an application</span>
-                    <CommandShortcut>⌘+J</CommandShortcut>
+                    <CommandShortcut>Ctrl/⌘+J</CommandShortcut>
                 </CommandItem>
                 <CommandItem onSelect={() => triggerShortcut("b")}>
-                    <FileUser />
+                    <ChevronsRight />
                     <span>Close sidebar</span>
-                    <CommandShortcut>⌘+B</CommandShortcut>
+                    <CommandShortcut>Ctrl/⌘+B</CommandShortcut>
                 </CommandItem>
                 
             </CommandGroup>
@@ -64,17 +64,17 @@ export function CommandMenu() {
             <CommandItem onSelect={() => triggerShortcut("F1")}>
                 <Home />
                 <span>Home</span>
-                <CommandShortcut>⌘+F1</CommandShortcut>
+                <CommandShortcut>Ctrl/⌘+F1</CommandShortcut>
             </CommandItem>
             <CommandItem onSelect={() => triggerShortcut("F2")}>
                 <LayoutDashboard />
                 <span>Dashboard</span>
-                <CommandShortcut>⌘+F2</CommandShortcut>
+                <CommandShortcut>Ctrl/⌘+F2</CommandShortcut>
             </CommandItem>
             <CommandItem onSelect={() => triggerShortcut("F3")}>
                 <Settings />
                 <span>Preferences</span>
-                <CommandShortcut>⌘+F3</CommandShortcut>
+                <CommandShortcut>Ctrl/⌘+F3</CommandShortcut>
             </CommandItem>
             
             </CommandGroup>

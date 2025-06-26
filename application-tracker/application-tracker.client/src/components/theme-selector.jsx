@@ -33,6 +33,7 @@ export function ThemeSelector() {
               <span className="h-4 w-4 rounded-sm" style={{ backgroundColor: lightTheme.primary }} />
               <span className="h-4 w-4 rounded-sm" style={{ backgroundColor: lightTheme.accent }} />
               <span className="h-4 w-4 rounded-sm" style={{ backgroundColor: lightTheme.background }} />
+              <span className="h-4 w-4 rounded-sm" style={{ backgroundColor: lightTheme.secondary }} />
             </div>
           </Button>
         );
