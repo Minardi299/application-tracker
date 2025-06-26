@@ -69,16 +69,16 @@ export function AuthProvider({ children }) {
 
 
 
-  // TODO: replace these with your actual API calls or authentication logic
   const login = (userData) => {
-    // Example: Assume userData is the user object
     if (!userData) {
         console.error("Login called without proper user data");
         return;
     }
+    
     setUser(userData);
     setIsLogin(true);
     localStorage.setItem('authUser', JSON.stringify(userData));
+    localStorage.setItem('pfpURL', userData.profilePictureUrl);
   };
 
   async function logout  () {
@@ -103,7 +103,7 @@ export function AuthProvider({ children }) {
   };
   const register = async (userData) => {
     try {
-      const response = await fetch("/api/users/register", {
+      const response = await fetch("/api/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),

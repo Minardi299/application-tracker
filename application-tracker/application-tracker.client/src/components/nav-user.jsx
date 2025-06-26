@@ -29,6 +29,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useEffect, useState } from "react";
 export function NavUser() {
   const {isLogin} = useAuth();
   const { isMobile } = useSidebar();
@@ -45,7 +46,14 @@ export function NavUser() {
         console.error("Error during logout process:", error);
     }
     };
+  const [userProfilePicture, setUserProfilePicture] = useState("");
 
+  useEffect(() => {
+    const storedUrl = localStorage.getItem("pfpURL");
+    if (storedUrl) {
+      setUserProfilePicture(JSON.parse(storedUrl));
+    }
+  }, []);
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -56,7 +64,7 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
             >
               <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.profilePictureUrl || "/default-avatar.png"} alt={user.firstName} />
+                  <AvatarImage src={userProfilePicture} alt={user.firstName} />
                   <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -77,7 +85,7 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.profilePictureUrl || "/default-avatar.png"} alt={user.firstName} />
+                  <AvatarImage src={userProfilePicture} alt={user.firstName} />
                   <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">

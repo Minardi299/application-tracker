@@ -3,12 +3,12 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Link, useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {  Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth-provider"
 import { toast } from "sonner"
-
+import { LoginSkeleton } from "@/components/login-skeleton"
 import { useGoogleLogin } from '@react-oauth/google';
-
 "You have created a new client application that uses libraries for user authentication or authorization that are deprecated. New clients must use the new libraries instead. See the [Migration Guide](https://developers.google.com/identity/gsi/web/guides/gis-migration) for more information."
 
 export function LoginForm({
@@ -17,49 +17,67 @@ export function LoginForm({
 }) {
   const {login} = useAuth();
   const navigate = useNavigate(); 
-  const handleLogin = async (tokenResponse) => { 
-
-    if (tokenResponse.code) { 
-      try {
-        const res = await fetch("/api/auth/google", {
-          method: "POST",
-          body: JSON.stringify({
-            code: tokenResponse.code, 
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!res.ok) {
-          const errorData = await res.text(); 
-          throw new Error(
-            `Failed to connect - HTTP status ${res.status}. Response: ${errorData}`
-          );
-        }
-
-        const data = await res.json();
-
-        if (data && data.user) {
-          login(data.user); 
-          navigate("/"); 
-        } else {
-          toast.error("Login failed: Response did not include user data.", data);
-          
-        }
-      } catch (e) {
-        toast.error("Login failed: " + e);
+  const queryClient = useQueryClient();
+  const loginMutation = useMutation({
+    mutationFn: async (tokenResponse) => {const user = await handleLogin(tokenResponse);
+  return user;
+},
+    onSuccess: (user) => {
+      if (user) {
+        queryClient.setQueryData(["user"], user);
+        login(user); 
+        navigate("/"); 
+        toast.success("Login successful!");
+      } else {
+        toast.error("Login failed: User data not found in response.");
       }
-    } else {
-      console.error("No authorization code received from Google");
+    },
+    onError: (error) => {
+      console.error("Login error:", error);
+      toast.error("Login failed: " + error.message);
+    },
+  });
+  async function handleLogin  (tokenResponse) { 
+    if (!tokenResponse.code) {
       toast.error("Login failed: No authorization code received from Google.");
+      return null;
     }
+    try {
+      const res = await fetch("/api/auth/google", {
+        method: "POST",
+        body: JSON.stringify({
+          code: tokenResponse.code, 
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.text(); 
+        throw new Error(
+          `Failed to connect - HTTP status ${res.status}. Response: ${errorData}`
+        );
+      }
+
+      const data = await res.json();
+
+      if (data?.user) {
+        return data.user;
+      }
+      toast.error("Login failed: Response did not include user data.");
+      return null;
+    } catch (e) {
+      toast.error("Login failed: " + e);
+      return null;
+    }
+    
   };
 
   const GoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        handleLogin(tokenResponse);
+        loginMutation.mutate(tokenResponse);
       } catch (error) {
         handleError(error);
       }
@@ -74,7 +92,9 @@ export function LoginForm({
     console.error("Login error in handleError:", error);
     toast.error("Error logging in: " + error);
   };
-
+  if (loginMutation.isPending) {
+    return <LoginSkeleton />;
+  }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <form>
