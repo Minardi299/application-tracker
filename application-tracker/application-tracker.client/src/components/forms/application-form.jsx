@@ -8,6 +8,7 @@ import { useFolders } from "@/hooks/use-folder";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { fetchWithAuth } from "@/lib/interceptor";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -17,7 +18,6 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link as Link2 ,BriefcaseBusiness ,Building} from 'lucide-react';
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   RichTextEditor,
   RichTextEditorContent,
@@ -183,7 +183,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="flex flex-col h-[80vh] space-y-4">
       <div className="flex  items-center justify-between">
         <Label>
           <Building className="w-4 h-4 "/>
@@ -266,8 +266,11 @@ export function ApplicationForm({ mode = "create", data = {} }) {
           </SelectContent>
         </Select>
       </div>
-      <div>
+      <div className="flex flex-col flex-1 min-h-0">
         <Label>Folders</Label>
+        <ScrollArea className="flex- min-h-0  overflow-hidden">
+
+
         {folders.map((folder) => (
           <div
             key={folder.id}
@@ -286,6 +289,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
             </label>
           </div>
         ))}
+        </ScrollArea>
       </div>
       <div className="flex justify-end gap-2 pt-4">
         {mode === "edit" && (
