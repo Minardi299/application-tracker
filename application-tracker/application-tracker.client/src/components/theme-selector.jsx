@@ -5,6 +5,17 @@ import { useTheme } from "@/context/theme-provider"
 
 export function ThemeSelector() {
   const { setPreset } = useTheme();
+  const resetTheme = () => {
+    const root = document.documentElement;
+    // Remove all inline custom properties
+    [...root.style].forEach((key) => {
+      if (key.startsWith("--")) {
+        root.style.removeProperty(key);
+      }
+    });
+    // Set preset to null if you're tracking it
+    setPreset(null);
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -26,6 +37,13 @@ export function ThemeSelector() {
           </Button>
         );
       })}
+      <Button
+        variant="destructive"
+        className="w-fit self-start"
+        onClick={resetTheme}
+      >
+        Reset to Default Theme
+      </Button>
     </div>
   );
 }
