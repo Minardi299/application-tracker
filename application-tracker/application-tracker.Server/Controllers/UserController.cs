@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using application_tracker.Server.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,24 +11,32 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace application_tracker.Server.Controllers
 {
-    [Route("api/users")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public UsersController(UserManager<ApplicationUser> userManager)
+        public UserController(UserManager<ApplicationUser> userManager,ApplicationDbContext context )
         {
             _userManager = userManager;
+            _context = context;
         }
 
-        
+
 
         // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ApplicationUserDTO>> GetUser(string id)
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<ApplicationUserDTO>> GetUser()
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+            ApplicationUser? user = await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user == null)
                 return NotFound();
@@ -93,6 +103,7 @@ namespace application_tracker.Server.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
+                TotalApplicationCount = user.TotalApplicationCount,
                 CreatedAt = user.CreatedAt
             };
 

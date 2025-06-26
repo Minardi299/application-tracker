@@ -33,7 +33,7 @@ namespace application_tracker.Server.Controllers
             _jwtTokenGenerator = jwtTokenGenerator;
             _dbContext = dbContext;
         }
-        
+
         private async Task<(ApplicationUser? User, IActionResult? ErrorResult)> GetUserFromExternalLoginAsync(
             ApplicationUser user,
             string loginProvider,
@@ -128,8 +128,8 @@ namespace application_tracker.Server.Controllers
             try
             {
                 //await Helper.PopulateNewUserAsync(user, _dbContext);
-                    await UserHelper.PopulateNewUserAsync(user, _dbContext);
-                }
+                await UserHelper.PopulateNewUserAsync(user, _dbContext);
+            }
             catch (Exception ex)
             {
                 // Log the error but don't fail user creation
@@ -202,9 +202,10 @@ namespace application_tracker.Server.Controllers
                 string loginProvider = "Google";
                 string providerKey = googleUserPayload.Subject;
                 string providerDisplayName = "Google";
-                ApplicationUser? existingUser  = await _userManager.FindByEmailAsync(
-                    googleUserPayload.Email
-                );
+                ApplicationUser? existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == googleUserPayload.Email);
+                // ApplicationUser? existingUser  = await _userManager.FindByEmailAsync(
+                //     googleUserPayload.Email
+                // );
                 (ApplicationUser? user, IActionResult? error) = existingUser == null
                     ? await CreateUserFromExternalLoginAsync(
                         googleUserPayload.Email,
@@ -222,8 +223,8 @@ namespace application_tracker.Server.Controllers
                 // user should only be null if error is not null, but check both to be safe
                 if (error != null || user == null)
                     return error ?? StatusCode(500, new { error = "Unknown error." });
-                
-                
+
+
                 // _logger?.LogInformation("Successfully linked Google account to existing user {Email}.", user.Email);
 
                 bool updated = false;
@@ -287,6 +288,7 @@ namespace application_tracker.Server.Controllers
                         Expires = refreshToken.ExpiresAt
                     }
                 );
+                
                 ApplicationUserDTO UserDTO = new ApplicationUserDTO
                 {
                     Id = user.Id,
@@ -294,6 +296,7 @@ namespace application_tracker.Server.Controllers
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     ProfilePictureUrl = googleUserPayload.Picture,
+                    TotalApplicationCount = user.TotalApplicationCount,
                     CreatedAt = user.CreatedAt
                 };
                 return Ok(new { user = UserDTO });
@@ -360,10 +363,10 @@ namespace application_tracker.Server.Controllers
         [HttpPost("logout")]
         public async Task<ActionResult> Logout()
         {
-            HttpContext.Request.Cookies.TryGetValue("refreshToken", out string? refreshToken) ;
-            
-                //return Unauthorized("Missing refresh token cookie.");
-            
+            HttpContext.Request.Cookies.TryGetValue("refreshToken", out string? refreshToken);
+
+            //return Unauthorized("Missing refresh token cookie.");
+
             RefreshToken? existingToken = await _dbContext.RefreshTokens
                 .FirstOrDefaultAsync(rt => rt.Token == refreshToken);
             if (existingToken != null)
@@ -394,5 +397,15 @@ namespace application_tracker.Server.Controllers
 
             return Ok(new { message = "Logout successful" });
         }
+    private static ApplicationUserDTO UserToDTO(ApplicationUser user) =>
+            new ApplicationUserDTO
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                TotalApplicationCount = user.TotalApplicationCount,
+                CreatedAt = user.CreatedAt
+            };
     }
 }

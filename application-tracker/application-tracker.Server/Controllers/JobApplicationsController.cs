@@ -160,7 +160,8 @@ namespace application_tracker.Server.Controllers
                 JobPostingUrl = jobApplicationDTO.JobPostingUrl,
                 Folders = folders
             };
-
+            user.TotalApplicationCount++;
+            _context.Users.Update(user);
             _context.JobApplications.Add(jobApplication);
             await _context.SaveChangesAsync();
 
