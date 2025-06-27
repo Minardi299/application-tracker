@@ -24,12 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useQuery } from "@tanstack/react-query"
-import{ fetchAllApplications} from "@/hooks/use-folder";
+
 
 export const description = "An interactive area chart"
 
-const x=0;
 const chartData = [
   { date: "2024-04-01", applied: 222, rejected: 150 },
   { date: "2024-04-02", applied: 97, rejected: 180 },
@@ -141,33 +139,6 @@ const chartConfig = {
 } 
 
 export function ChartAreaInteractive() {
-  // const {
-  //       data: data,
-  //   } = useQuery({
-  //       queryKey: ["applications", "all"],
-  //       queryFn: () => fetchAllApplications(),
-  //   });
-
-  // const dates = data?.reduce((acc, item) => {
-  //   const date = new Date(item.createdAt).toISOString().split("T")[0]; 
-  //   if (!acc[date]) {
-  //     acc[date] = [];
-  //   }
-  //   acc[date].push(item);
-  //   return acc;
-  // }, {});
-  // const result = Object?.entries(dates).map(([date, items]) => {
-  // const counts = items.reduce(
-  //   (acc, item) => {
-  //     if (item.status === 'Applied' || item.status === 'Offered' || item.status === 'Interviewing') acc.applied++;
-  //     else if (item.status === 'Rejected') acc.rejected++;
-  //     return acc;
-  //   },
-  //   { applied: 0, rejected: 0 }
-  // );
-
-  // return { date, ...counts };
-//});
 
   const [timeRange, setTimeRange] = React.useState("90d")
 
