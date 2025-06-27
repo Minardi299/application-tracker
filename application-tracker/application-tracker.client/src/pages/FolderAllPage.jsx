@@ -20,6 +20,7 @@ export function FolderAllPage() {
         </div>
      
       <DataTable
+        canExportToCSV={true}
         data={applications || []}
         isLoading={isApplicationsLoading}
         isError={isApplicationsError}

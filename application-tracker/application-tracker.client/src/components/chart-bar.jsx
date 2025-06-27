@@ -1,4 +1,4 @@
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
   Card,
   CardContent,
@@ -28,17 +28,20 @@ const chartConfig = {
   offered: { label: "Offered", color: "var(--ring)" },
   withdrawn: { label: "Withdrawn", color: "var(--popover-foreground)" },
 }
-export function ApplicationsStackedChart({data}) {
+export function ApplicationsStackedChart({data, startMonth, endMonth}) {
+  const currentYear = new Date().getFullYear();
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>The last 6 months</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>The last 12 months</CardTitle>
+        <CardDescription>{startMonth} - {endMonth} {currentYear}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart accessibilityLayer data={data}>
             <CartesianGrid vertical={false} />
+            <YAxis />
             <XAxis
               dataKey="month"
               tickLine={false}
@@ -61,9 +64,9 @@ export function ApplicationsStackedChart({data}) {
         {/* <div className="flex gap-2 leading-none font-medium">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div> */}
-        <div className="text-muted-foreground leading-none">
+        {/* <div className="text-muted-foreground leading-none">
           Showing total applications for the last 6 months
-        </div>
+        </div> */}
       </CardFooter>
     </Card>
   )

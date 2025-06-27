@@ -93,7 +93,7 @@ export function DataTable({columnDef, filterColumnConfig, data, canExportToCSV})
           /> 
           {canExportToCSV && <Button 
             onClick={handleExportToCSV}
-            className="bg-green-600 hover:bg-green-800 "
+            className="bg-green-400 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-800"
           >
             Export to CSV
           </Button>}

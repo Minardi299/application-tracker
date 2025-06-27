@@ -55,6 +55,7 @@ export function FolderPage() {
         </div>
       <p>Folder ID: {folderId}</p>
       <DataTable
+        canExportToCSV={true}
         data={applications || []}
         isLoading={isApplicationsLoading}
         isError={isApplicationsError}

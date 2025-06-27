@@ -36,7 +36,7 @@ const applicationStatuses = [
 export function ApplicationForm({ mode = "create", data = {} }) {
   const queryClient = useQueryClient();
   const { closeSheet } = useGlobalSheet();
-  const [errors, setErrors] = useState({});
+  const [_, setErrors] = useState({});
   const formatUrl = (url) => {
     if (!url) return "";
     if (url.startsWith("http://") || url.startsWith("https://")) {

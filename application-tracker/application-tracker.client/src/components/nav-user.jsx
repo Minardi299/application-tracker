@@ -51,7 +51,7 @@ export function NavUser() {
   useEffect(() => {
     const storedUrl = localStorage.getItem("pfpURL");
     if (storedUrl) {
-      setUserProfilePicture(JSON.parse(storedUrl));
+      setUserProfilePicture(storedUrl);
     }
   }, []);
   return (

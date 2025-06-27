@@ -153,6 +153,10 @@
   ::-webkit-scrollbar-corner {
     background-color: var(--background);
   }
+  input::-webkit-search-cancel-button {
+    display: none;
+  }
+
 }
 
 @plugin "@tailwindcss/typography";

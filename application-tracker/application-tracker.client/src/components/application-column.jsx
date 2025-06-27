@@ -140,7 +140,7 @@ export const ApplicationColumn = [
   {
     id: "notes",
     accessorKey: "notes",
-    header: () => <div className="w-0 h-0"></div>,
+    header: () => <div className="w-0 h-0 hidden">Notes</div>,
     cell: () => <div className="w-0 h-0"></div>,
   },
 ];
