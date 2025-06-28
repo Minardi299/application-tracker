@@ -26,7 +26,7 @@ namespace application_tracker.Server.Controllers
 
             var folders = await _context.ApplicationFolders
                 .Where(f => f.OwnerId == ownerId)
-                .OrderByDescending(f => f.CreatedAt)
+                .OrderBy(f => f.CreatedAt)
                 .Select(f => new FolderDTO
                 {
                     Id = f.Id,

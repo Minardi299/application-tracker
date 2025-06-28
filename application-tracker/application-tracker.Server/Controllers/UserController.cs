@@ -43,6 +43,25 @@ namespace application_tracker.Server.Controllers
 
             return Ok(UserToDTO(user));
         }
+        [Authorize]
+        [HttpGet("rank")]
+        public async Task<ActionResult<int>> GetUserRankAsync()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+            ApplicationUser? user = await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                return NotFound();
+
+            int count = await _context.Users
+                .CountAsync(u => u.TotalApplicationCount > user.TotalApplicationCount);
+
+            return Ok(count + 1);
+        }
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationDTO userRegistration)

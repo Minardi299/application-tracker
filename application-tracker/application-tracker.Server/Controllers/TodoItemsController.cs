@@ -21,7 +21,6 @@ namespace application_tracker.Server.Controllers
             _context = context;
         }
         // GET: api/TodoItems
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItems()
         {
@@ -72,41 +71,40 @@ namespace application_tracker.Server.Controllers
 
         // POST: api/TodoItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<TodoItemDTO>> PostTodoItem(TodoItemDTO todoDTO)
-        {
-            var todoItem = new TodoItem
-            {
-                IsComplete = todoDTO.IsComplete,
-                Name = todoDTO.Name,
-                Secret = "secret set on the server side, could be password hash?"
-            };
+        //[HttpPost]
+        //public async Task<ActionResult<TodoItemDTO>> PostTodoItem(TodoItemDTO todoDTO)
+        //{
+        //    var todoItem = new TodoItem
+        //    {
+        //        IsComplete = todoDTO.IsComplete,
+        //        Name = todoDTO.Name,
+        //    };
 
-            _context.TodoItems.Add(todoItem);
-            await _context.SaveChangesAsync();
+        //    _context.TodoItems.Add(todoItem);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction(
-                nameof(GetTodoItem),
-                new { id = todoItem.Id },
-                ItemToDTO(todoItem)
-            );
-        }
+        //    return CreatedAtAction(
+        //        nameof(GetTodoItem),
+        //        new { id = todoItem.Id },
+        //        ItemToDTO(todoItem)
+        //    );
+        //}
 
         // DELETE: api/TodoItems/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTodoItem(long id)
-        {
-            var todoItem = await _context.TodoItems.FindAsync(id);
-            if (todoItem == null)
-            {
-                return NotFound();
-            }
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteTodoItem(long id)
+        //{
+        //    var todoItem = await _context.TodoItems.FindAsync(id);
+        //    if (todoItem == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.TodoItems.Remove(todoItem);
-            await _context.SaveChangesAsync();
+        //    _context.TodoItems.Remove(todoItem);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         private bool TodoItemExists(long id)
         {
@@ -118,7 +116,8 @@ namespace application_tracker.Server.Controllers
             {
                 Id = todoItem.Id,
                 Name = todoItem.Name,
-                IsComplete = todoItem.IsComplete
+                IsComplete = todoItem.IsComplete,
+                Description = todoItem.Description 
             };
     }
 }

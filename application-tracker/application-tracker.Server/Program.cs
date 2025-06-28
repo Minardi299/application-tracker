@@ -20,7 +20,10 @@ var connectionString = builder.Configuration["ConnectionStrings:DefaultConnectio
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString)
 );
-
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+});
 builder
     .Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -104,6 +107,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<JwtTokenGenerator>();
 var app = builder.Build();
 
+app.UseResponseCompression();
 
 // Access the environment variables
 app.UseCors("AllowFrontend");

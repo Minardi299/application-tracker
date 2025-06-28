@@ -20,7 +20,7 @@ namespace application_tracker.Server.Models
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.UtcNow;
-        public int TotalApplicationCount { get; set; } = 0;
+        public int TotalApplicationCount { get; set; } = 3;
         public ICollection<JobApplication> Applications { get; set; } = new List<JobApplication>();
 
         public ICollection<ApplicationFolder> Folders { get; set; } = new List<ApplicationFolder>();

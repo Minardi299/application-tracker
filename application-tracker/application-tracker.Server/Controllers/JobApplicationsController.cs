@@ -40,6 +40,37 @@ namespace application_tracker.Server.Controllers
             return Ok(jobApplications.Select(JobApplicationToDTO));
         }
         [Authorize]
+        [HttpGet("stats")]
+        public async Task<ActionResult<object>> GetMonthlyStats([FromQuery] string month)
+        {
+            var ownerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (ownerId == null)
+                return Unauthorized();
+
+            if (!DateTime.TryParse($"{month}-01", out var startOfMonth))
+                return BadRequest("Invalid month format. Use YYYY-MM.");
+
+            var endOfMonth = startOfMonth.AddMonths(1);
+
+            var applications = await _context.JobApplications
+                .AsNoTracking()
+                .Where(x => x.OwnerId == ownerId && x.CreatedAt >= startOfMonth && x.CreatedAt < endOfMonth)
+                .ToListAsync();
+
+            var stats = new
+            {
+                wishlist = applications.Count(a => a.Status == ApplicationStatus.Wishlist),
+                applied = applications.Count(a => a.Status == ApplicationStatus.Applied),
+                interviewing = applications.Count(a => a.Status == ApplicationStatus.Interviewing),
+                offered = applications.Count(a => a.Status == ApplicationStatus.Offered),
+                accepted = applications.Count(a => a.Status == ApplicationStatus.Accepted),
+                rejected = applications.Count(a => a.Status == ApplicationStatus.Rejected),
+                withdrawn = applications.Count(a => a.Status == ApplicationStatus.Withdrawn),
+            };
+
+            return Ok(stats);
+        }
+        [Authorize]
         [HttpGet("count")]
         public async Task<ActionResult<int>> GetJobApplicationCount()
         {
