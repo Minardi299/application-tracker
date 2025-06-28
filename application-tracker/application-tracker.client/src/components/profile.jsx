@@ -1,10 +1,34 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardTitle } from "@/components/ui/card"
 import { format } from "date-fns"
-import { Separator } from "@/components/ui/separator"
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from "react"
+import { fetchWithAuth } from "@/lib/interceptor";
 
+async function fetchUserRank() {
+  const response = await fetchWithAuth('/api/user/rank', {
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user rank');
+  }
+
+  return response.json();
+}
 export function Profile({ user }) {
+  const {data: rank} = useQuery({
+    queryKey: ["userRank"],
+    queryFn: () => fetchUserRank(),
+  });
+  function formatOrdinal(n) {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
   const fullName = `${user.firstName} ${user.lastName}`
   const joinedDate = format(new Date(user.createdAt), "MMMM d, yyyy")
   const [userProfilePicture, setUserProfilePicture] = useState("");
@@ -15,6 +39,7 @@ export function Profile({ user }) {
       setUserProfilePicture(storedUrl);
     }
   }, []);
+  
 
   const estimatedTimeSpent = user.totalApplicationCount * 105;
   const date = new Date(0);
@@ -22,7 +47,7 @@ export function Profile({ user }) {
   const timeString = date.toISOString().substring(11, 19);
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full ">
       
       <CardContent className="flex flex-row items-center justify-between p-4">
        
@@ -46,10 +71,9 @@ export function Profile({ user }) {
 
 
 
-        <div className="flex flex-row items-start text-sm">
-          <p className="font-medium">Total applications: {user.totalApplicationCount}</p>
-          <p className="text-muted-foreground">Time applying: {timeString}</p>
-        </div>
+          <p >Total applications: <b>{user.totalApplicationCount}</b></p>
+          <p >All time leaderboard: <b>{formatOrdinal(rank)}</b></p>
+          <p >Time applying: <b>{timeString}</b></p>
       </CardContent>
     </Card>
   )

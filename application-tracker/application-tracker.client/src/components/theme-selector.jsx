@@ -18,22 +18,24 @@ export function ThemeSelector() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {Object.entries(defaultPresets).map(([key, preset]) => {
         const lightTheme = preset.styles.light;
         return (
           <Button
             key={key}
             onClick={() => setPreset(preset)}
-            className="flex flex-col items-start gap-2 p-4 border border-muted hover:border-primary transition-colors"
+            className="flex items-center justify-start w-full p-4 transition-colors"
             variant="outline"
           >
-            <div className="font-medium text-base">{preset.label}</div>
-            <div className="flex gap-1">
-              <span className="h-4 w-4 rounded-sm" style={{ backgroundColor: lightTheme.primary }} />
-              <span className="h-4 w-4 rounded-sm" style={{ backgroundColor: lightTheme.accent }} />
-              <span className="h-4 w-4 rounded-sm" style={{ backgroundColor: lightTheme.background }} />
-              <span className="h-4 w-4 rounded-sm" style={{ backgroundColor: lightTheme.secondary }} />
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1">
+                <span className="h-4 w-4 rounded-sm shrink-0" style={{ backgroundColor: lightTheme.primary }} />
+                <span className="h-4 w-4 rounded-sm shrink-0" style={{ backgroundColor: lightTheme.accent }} />
+                <span className="h-4 w-4 rounded-sm shrink-0" style={{ backgroundColor: lightTheme.background }} />
+                <span className="h-4 w-4 rounded-sm shrink-0" style={{ backgroundColor: lightTheme.secondary }} />
+              </div>
+              <span className="font-medium text-base whitespace-nowrap">{preset.label}</span>
             </div>
           </Button>
         );

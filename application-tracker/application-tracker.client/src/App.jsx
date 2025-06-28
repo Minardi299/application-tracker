@@ -36,7 +36,7 @@ function App() {
                         <Route path="folder/all" element={<FolderAllPage/>} />
                         <Route path="resume-templates" element={<ResumeTemplatePage/>} />
                         <Route path="resources" element={<ResourcePage/>} />
-                        <Route path="/pricing" element={<PricingPage/>} />
+                        <Route path="pricing" element={<PricingPage/>} />
                     </Route>
                     <Route path="/login" element={<LoginPage />} /> 
                     <Route path="/signup" element={<SignUpPage />} />

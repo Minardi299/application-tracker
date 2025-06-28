@@ -165,7 +165,7 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild>
                   <Link to="/folder/all">
                     <FolderLock />
-                    <span>All Folders</span>
+                    <span>All</span>
                   </Link>
                   
                   </SidebarMenuButton>

@@ -55,8 +55,10 @@ export  function DashboardPage(){
 
     return (
     <div className="flex flex-col  justify-center w-full h-full gap-4 p-4">
+        <div className="w-full">
 
             <Profile user={user} />
+        </div>
         
         <SectionCards
         submittedThisMonth={submittedThisMonth}

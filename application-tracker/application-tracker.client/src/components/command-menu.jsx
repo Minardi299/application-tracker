@@ -13,6 +13,7 @@ import {
 import {
   SquareMenu,
   FileUser,
+  CloudDownload,
   LayoutDashboard,
   Settings,
   Home,
@@ -21,12 +22,13 @@ import {
   ChevronsRight,
 } from "lucide-react"
 export function CommandMenu() {
-    function triggerShortcut(key, withMeta = true) {
+function triggerShortcut(key, { withMeta = true, withShift = false } = {}) {
   const event = new KeyboardEvent("keydown", {
     key: key,
     bubbles: true,
     ctrlKey: !navigator.platform.includes("Mac") && withMeta,
     metaKey: navigator.platform.includes("Mac") && withMeta,
+    shiftKey: withShift,
   });
 
   window.dispatchEvent(event);
@@ -61,20 +63,25 @@ export function CommandMenu() {
             </CommandGroup>
             <CommandSeparator />
             <CommandGroup heading="Navigation">
-            <CommandItem onSelect={() => triggerShortcut("F1")}>
+            <CommandItem onSelect={() => triggerShortcut("F1", { withShift: true })}>
                 <Home />
                 <span>Home</span>
-                <CommandShortcut>Ctrl/⌘+F1</CommandShortcut>
+                <CommandShortcut>Ctrl/⌘ + Shift + F1</CommandShortcut>
             </CommandItem>
-            <CommandItem onSelect={() => triggerShortcut("F2")}>
+            <CommandItem onSelect={() => triggerShortcut("F2", { withShift: true })}>
                 <LayoutDashboard />
                 <span>Dashboard</span>
-                <CommandShortcut>Ctrl/⌘+F2</CommandShortcut>
+                <CommandShortcut>Ctrl/⌘ + Shift + F2</CommandShortcut>
             </CommandItem>
-            <CommandItem onSelect={() => triggerShortcut("F3")}>
+            <CommandItem onSelect={() => triggerShortcut("F3", { withShift: true })}>
                 <Settings />
                 <span>Preferences</span>
-                <CommandShortcut>Ctrl/⌘+F3</CommandShortcut>
+                <CommandShortcut>Ctrl/⌘ + Shift + F3</CommandShortcut>
+            </CommandItem>
+            <CommandItem onSelect={() => triggerShortcut("F4", { withShift: true })}>
+                <CloudDownload />
+                <span>Templates</span>
+                <CommandShortcut>Ctrl/⌘ + Shift + F4</CommandShortcut>
             </CommandItem>
             
             </CommandGroup>

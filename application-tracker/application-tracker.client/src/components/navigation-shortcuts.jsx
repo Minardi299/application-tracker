@@ -11,19 +11,26 @@ export function NavigationShortcuts() {
 
   useEffect(() => {
     const handler = (e) => {
-      if (e.ctrlKey || e.metaKey) {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
         
-        if ((e.metaKey || e.ctrlKey) && e.key === "F1") {
+        if ( e.key === "F1") {
           e.preventDefault();
           navigate("/");
         }
-        if ((e.metaKey || e.ctrlKey) && e.key === "F2") {
+        if ( e.key === "F2") {
           e.preventDefault();
           navigate("/dashboard");
         }
-        if ((e.metaKey || e.ctrlKey) && e.key === "F3") {
+        if ( e.key === "F3") {
           e.preventDefault();
           navigate("/settings");
+        }
+        if ( e.key === "F4") {
+          e.preventDefault();
+        }
+        if ( e.key === "F4") {
+          e.preventDefault();
+          navigate("/resume-templates");
         }
       }
     };
