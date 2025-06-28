@@ -15,6 +15,7 @@ import { NavigationShortcuts } from '@/components/navigation-shortcuts';
 import { ResumeTemplatePage } from '@/pages/ResumeTemplatePage.jsx';
 import { ResourcePage } from '@/pages/ResourcePage.jsx';
 import { PricingPage } from '@/pages/PricingPage';
+import { FeaturesPage } from '@/pages/FeaturesPage';
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
                         <Route path="resume-templates" element={<ResumeTemplatePage/>} />
                         <Route path="resources" element={<ResourcePage/>} />
                         <Route path="pricing" element={<PricingPage/>} />
+                        <Route path="features" element={<FeaturesPage/>} />
                     </Route>
                     <Route path="/login" element={<LoginPage />} /> 
                     <Route path="/signup" element={<SignUpPage />} />

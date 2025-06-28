@@ -17,7 +17,7 @@ import {
   LayoutDashboard,
   Settings,
   Home,
-  User,
+  ServerCog,
   Folder,
   ChevronsRight,
 } from "lucide-react"
@@ -82,6 +82,11 @@ function triggerShortcut(key, { withMeta = true, withShift = false } = {}) {
                 <CloudDownload />
                 <span>Templates</span>
                 <CommandShortcut>Ctrl/⌘ + Shift + F4</CommandShortcut>
+            </CommandItem>
+            <CommandItem onSelect={() => triggerShortcut("F5", { withShift: true })}>
+                <ServerCog />
+                <span>Road map</span>
+                <CommandShortcut>Ctrl/⌘ + Shift + F5</CommandShortcut>
             </CommandItem>
             
             </CommandGroup>

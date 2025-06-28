@@ -32,6 +32,10 @@ export function NavigationShortcuts() {
           e.preventDefault();
           navigate("/resume-templates");
         }
+        if ( e.key === "F5") {
+          e.preventDefault();
+          navigate("/features");
+        }
       }
     };
     window.addEventListener("keydown", handler);
