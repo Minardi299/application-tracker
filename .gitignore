@@ -55,4 +55,4 @@ nunit-*.xml
 .vs
 
 .env
-*/Production.json
+*/appsettings.Production.json
