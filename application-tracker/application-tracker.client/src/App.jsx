@@ -13,7 +13,8 @@ import { FolderPage } from '@/pages/FolderPage';
 import { Toaster } from "@/components/ui/sonner"
 import { NavigationShortcuts } from '@/components/navigation-shortcuts';
 import { ResumeTemplatePage } from '@/pages/ResumeTemplatePage.jsx';
-
+import { ResourcePage } from '@/pages/ResourcePage.jsx';
+import { PricingPage } from '@/pages/PricingPage';
 
 
 function App() {
@@ -34,6 +35,8 @@ function App() {
                         <Route path="folder/:folderId" element={<FolderPage/>} />
                         <Route path="folder/all" element={<FolderAllPage/>} />
                         <Route path="resume-templates" element={<ResumeTemplatePage/>} />
+                        <Route path="resources" element={<ResourcePage/>} />
+                        <Route path="/pricing" element={<PricingPage/>} />
                     </Route>
                     <Route path="/login" element={<LoginPage />} /> 
                     <Route path="/signup" element={<SignUpPage />} />

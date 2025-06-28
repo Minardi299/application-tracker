@@ -30,6 +30,17 @@ export  function DashboardPage(){
 
     const {data:applicationData} = useApplicationStatsLast12Months();
     const lastMonthData = applicationData[applicationData.length - 1];
+    const prevMonthData = applicationData[applicationData.length - 2];
+
+    // Extracted sums for SectionCards props
+    const submittedThisMonth = (lastMonthData?.interviewing ?? 0) + (lastMonthData?.offered ?? 0) + (lastMonthData?.accepted ?? 0) + (lastMonthData?.rejected ?? 0) + (lastMonthData?.applied ?? 0);
+    const submittedLastMonth = (prevMonthData?.interviewing ?? 0) + (prevMonthData?.offered ?? 0) + (prevMonthData?.accepted ?? 0) + (prevMonthData?.rejected ?? 0) + (prevMonthData?.applied ?? 0);
+    const interviewingThisMonth = (lastMonthData?.interviewing ?? 0) + (lastMonthData?.offered ?? 0) + (lastMonthData?.accepted ?? 0);
+    const interviewingLastMonth = (prevMonthData?.interviewing ?? 0) + (prevMonthData?.offered ?? 0) + (prevMonthData?.accepted ?? 0);
+    const rejectedThisMonth = lastMonthData?.rejected ?? 0;
+    const rejectedLastMonth = prevMonthData?.rejected ?? 0;
+    const acceptedThisMonth = lastMonthData?.accepted ?? 0;
+    const acceptedLastMonth = prevMonthData?.accepted ?? 0;
 
     const radarData = [
         //{ category: "Wishlist", value: lastMonthData?.wishlist},
@@ -48,14 +59,14 @@ export  function DashboardPage(){
             <Profile user={user} />
         
         <SectionCards
-        submittedThisMonth={applicationData[applicationData.length - 1]?.interviewing + applicationData[applicationData.length - 1]?.offered + applicationData[applicationData.length - 1]?.accepted + applicationData[applicationData.length - 1]?.rejected + applicationData[applicationData.length - 1]?.applied}
-        submittedLastMonth={applicationData[applicationData.length - 2]?.interviewing + applicationData[applicationData.length - 2]?.offered + applicationData[applicationData.length - 2]?.accepted + applicationData[applicationData.length - 2]?.rejected + applicationData[applicationData.length - 2]?.applied}
-        interviewingThisMonth={applicationData[applicationData.length - 1]?.interviewing + applicationData[applicationData.length - 1]?.offered + applicationData[applicationData.length - 1]?.accepted}
-        interviewingLastMonth={applicationData[applicationData.length - 2]?.interviewing + applicationData[applicationData.length - 2]?.offered + applicationData[applicationData.length - 2]?.accepted}
-        rejectedThisMonth={applicationData[applicationData.length - 1]?.rejected}
-        rejectedLastMonth={applicationData[applicationData.length - 2]?.rejected}
-        acceptedThisMonth={applicationData[applicationData.length - 1]?.accepted}
-        acceptedLastMonth={applicationData[applicationData.length - 2]?.accepted}/>
+        submittedThisMonth={submittedThisMonth}
+        submittedLastMonth={submittedLastMonth}
+        interviewingThisMonth={interviewingThisMonth}
+        interviewingLastMonth={interviewingLastMonth}
+        rejectedThisMonth={rejectedThisMonth}
+        rejectedLastMonth={rejectedLastMonth}
+        acceptedThisMonth={acceptedThisMonth}
+        acceptedLastMonth={acceptedLastMonth}/>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2  ">
 
 

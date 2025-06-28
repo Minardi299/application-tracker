@@ -61,6 +61,7 @@ const items = [
     icon: Settings,
   },
   
+  
 ];
 const resources = [
   {
@@ -68,11 +69,11 @@ const resources = [
     url: "/resume-templates",
     icon: CloudDownload,
   },
-  {
-    title: "Resources",
-    url: "/resources",
-    icon: CloudDownload,
-  },
+  // {
+  //   title: "Resources",
+  //   url: "/resources",
+  //   icon: CloudDownload,
+  // },
 ];
 
 export function AppSidebar() {

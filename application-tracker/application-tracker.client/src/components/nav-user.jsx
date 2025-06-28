@@ -102,7 +102,7 @@ export function NavUser() {
                 <UserCircleIcon />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/pricing')}>
                 <CreditCardIcon />
                 Pricing
               </DropdownMenuItem>

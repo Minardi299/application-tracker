@@ -2,16 +2,16 @@ import { Button } from "@/components/ui/button";
 export function ResumeTemplatePage() {
      const files = [
     {
-      name: "Developer Resume",
+      name: "I use this one",
       file: "/files/Template1.docx.pdf",
     },
     {
-      name: "Marketing Resume",
-      file: "/files/resume_marketing.pdf",
+      name: "Data Scientist Resume",
+      file: "/files/Template2.pdf",
     },
     {
-      name: "Cover Letter",
-      file: "/files/cover_letter.pdf",
+      name: "Generic Resume",
+      file: "/files/Template3.pdf",
     },
   ];
     return (
