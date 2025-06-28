@@ -1,18 +1,14 @@
 using System.Text;
 using application_tracker.Server.Models;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using DotNetEnv;
 using application_tracker.Server.Helper;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
-Env.Load();
+// Env.Load();
 
 // Add services to the container.
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"]
@@ -124,7 +120,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //TODO add this back when have certificate
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

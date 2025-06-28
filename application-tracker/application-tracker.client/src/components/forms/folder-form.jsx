@@ -35,6 +35,9 @@ export function FolderForm({ mode = "create", data = {} }) {
       method: "DELETE",
     });
     if (!res.ok) {
+      if(res.status ==="401"){
+        throw new Error("You've got to log in first");
+      }
       throw new Error("Failed to delete folder");
     }
     return true;

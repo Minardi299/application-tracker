@@ -3,7 +3,7 @@
 <Project>
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <History>True|2025-06-28T03:37:24.8920142Z||;False|2025-06-27T23:36:56.4918737-04:00||;</History>
+    <History>True|2025-06-28T20:19:13.8731792Z||;True|2025-06-28T14:59:14.0403311-04:00||;True|2025-06-28T14:56:45.2239552-04:00||;True|2025-06-28T13:50:17.1106639-04:00||;True|2025-06-28T13:46:34.1728466-04:00||;True|2025-06-28T13:43:46.3624168-04:00||;True|2025-06-28T13:39:47.9455440-04:00||;True|2025-06-28T13:39:00.5534382-04:00||;True|2025-06-28T13:32:56.9347671-04:00||;False|2025-06-28T13:32:12.5814861-04:00||;True|2025-06-28T01:46:29.3066667-04:00||;True|2025-06-28T01:23:29.7853269-04:00||;True|2025-06-28T01:21:22.4183540-04:00||;True|2025-06-28T00:21:56.4519062-04:00||;True|2025-06-28T00:13:47.2975924-04:00||;True|2025-06-27T23:37:24.8920142-04:00||;False|2025-06-27T23:36:56.4918737-04:00||;</History>
     <LastFailureDetails />
     <_PublishTargetUrl>C:\Users\phung\Desktop\application-tracker\application-tracker\application-tracker.Server\bin\Release\net8.0\publish\</_PublishTargetUrl>
   </PropertyGroup>

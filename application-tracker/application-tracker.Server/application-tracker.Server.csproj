@@ -8,7 +8,7 @@
     <SpaRoot>..\application-tracker.client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
     <SpaProxyServerUrl>https://localhost:49600</SpaProxyServerUrl>
-    <UserSecretsId>530029a5-0bfd-405d-8e59-f077ceef6977</UserSecretsId>
+    
   </PropertyGroup>
 
   <ItemGroup>

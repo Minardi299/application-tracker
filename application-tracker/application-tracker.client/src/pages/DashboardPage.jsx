@@ -6,7 +6,10 @@ import { fetchWithAuth } from "@/lib/interceptor";
 import { ChartRadarDefault } from "@/components/chart-radar";
 import {useApplicationStatsLast12Months} from "@/hooks/use-folder";
 import { ChartAreaInteractive } from "@/components/chart-area";
+import { useAuth } from "@/context/auth-provider";
+import { Navigate } from "react-router-dom";
 export  function DashboardPage(){
+    const {isLogin} = useAuth();
     const queryClient = useQueryClient();
     const {data:user} = useQuery({
         queryKey: ["user"],
@@ -14,7 +17,8 @@ export  function DashboardPage(){
         initialData: () => {
             const userData = queryClient.getQueryData(["user"]);
             return userData || JSON.parse(localStorage.getItem("authUser")) || {};
-        }
+        },
+        enabled:!!isLogin,
     });
     async function fetchUser() {
         const response = await fetchWithAuth("/api/user",{
@@ -51,42 +55,50 @@ export  function DashboardPage(){
         { category: "Rejected", value: lastMonthData?.rejected},
         //{ category: "Withdrawn", value: lastMonthData?.withdrawn},
     ];
-
+    if (!isLogin) {
+    return <Navigate to="/login" />;
+    }
 
     return (
-    <div className="flex flex-col  justify-center w-full h-full gap-4 p-4">
-        <div className="w-full">
-
-            <Profile user={user} />
-        </div>
+        <>
         
-        <SectionCards
-        submittedThisMonth={submittedThisMonth}
-        submittedLastMonth={submittedLastMonth}
-        interviewingThisMonth={interviewingThisMonth}
-        interviewingLastMonth={interviewingLastMonth}
-        rejectedThisMonth={rejectedThisMonth}
-        rejectedLastMonth={rejectedLastMonth}
-        acceptedThisMonth={acceptedThisMonth}
-        acceptedLastMonth={acceptedLastMonth}/>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2  ">
+        {isLogin && (
 
+        <div className="flex flex-col  justify-center w-full h-full gap-4 p-4">
+            <div className="w-full">
 
-           
-                <ApplicationsStackedChart 
-                    data={applicationData} 
-                    startMonth={applicationData[0]?.month}
-                    endMonth={applicationData[applicationData.length - 1]?.month}
-                />
+                <Profile user={user} />
+            </div>
             
-            
-                <ChartRadarDefault 
-                    data={radarData}
-                    endMonth={applicationData[applicationData.length - 1]?.month}
-                />
+            <SectionCards
+            submittedThisMonth={submittedThisMonth}
+            submittedLastMonth={submittedLastMonth}
+            interviewingThisMonth={interviewingThisMonth}
+            interviewingLastMonth={interviewingLastMonth}
+            rejectedThisMonth={rejectedThisMonth}
+            rejectedLastMonth={rejectedLastMonth}
+            acceptedThisMonth={acceptedThisMonth}
+            acceptedLastMonth={acceptedLastMonth}/>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2  ">
 
-        </div>
-        {/* <ChartAreaInteractive/> */}
-    </div>
+
+            
+                    <ApplicationsStackedChart 
+                        data={applicationData} 
+                        startMonth={applicationData[0]?.month}
+                        endMonth={applicationData[applicationData.length - 1]?.month}
+                    />
+                
+                
+                    <ChartRadarDefault 
+                        data={radarData}
+                        endMonth={applicationData[applicationData.length - 1]?.month}
+                    />
+
+            </div>
+            {/* <ChartAreaInteractive/> */}
+        </div> )
+        }
+        </>
     )
 }

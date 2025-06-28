@@ -10,4 +10,14 @@
   "webRoot": "C:\\Users\\phung\\Desktop\\application-tracker\\application-tracker\\application-tracker.client"
 }</LaunchJsonTarget>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebuggerFlavor>LaunchJsonDebugger</DebuggerFlavor>
+    <LaunchJsonTarget>{
+  "name": "localhost (Chrome)",
+  "type": "chrome",
+  "request": "launch",
+  "url": "https://localhost:49600",
+  "webRoot": "C:\\Users\\phung\\Desktop\\application-tracker\\application-tracker\\application-tracker.client"
+}</LaunchJsonTarget>
+  </PropertyGroup>
 </Project>
