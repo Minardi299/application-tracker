@@ -7,10 +7,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Spinner } from "@/components/ui/spinner";
 import { Label } from "@/components/ui/label";
 import { InlineInput } from "@/components/ui/inline-input";
-
+import { useNavigate } from "react-router-dom";
 
 export function FolderForm({ mode = "create", data = {} }) {
   const queryClient = useQueryClient();
+  const navigate=useNavigate();
   const { closeSheet } = useGlobalSheet();
 
   const [formData, setFormData] = useState({
@@ -18,7 +19,7 @@ export function FolderForm({ mode = "create", data = {} }) {
     name: data.name?.trim() || "",
   });
 
-  const [errors, setErrors] = useState({});
+  const [_, setErrors] = useState({});
 
   function validateForm(data) {
     const newErrors = {};
@@ -60,6 +61,7 @@ export function FolderForm({ mode = "create", data = {} }) {
     e.preventDefault();
     if (!formData.id) return;
     deleteMutation.mutate({ id: formData.id });
+    navigate("/folder/all");
   }
 
   async function saveFolder(payload) {

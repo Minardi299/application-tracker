@@ -141,7 +141,7 @@ export function ApplicationForm({ mode = "create", data = {} }) {
       closeSheet();
     },
     onError: (error) => {
-      toast.error("Something went wrong");
+      toast.error("Failed to save application");
       console.error(error);
     },
   });
