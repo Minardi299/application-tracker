@@ -596,8 +596,6 @@ export const defaultPresets = {
         "sidebar-accent-foreground": "#111827",
         "sidebar-border": "#1f2937",
         "sidebar-ring": "#e1b2bc",
-        "font-sans": "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
-        "font-serif": "ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif",
         "font-mono": "'Libre Baskerville', serif",
         "radius": "1.125rem",
         "shadow-2xs": "0 4 10 0 hsl(0 0% 0% / 0.15)",
