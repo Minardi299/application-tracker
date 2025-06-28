@@ -78,14 +78,16 @@ builder
             }
         };
     });
+var allowedOrigins = builder.Configuration
+.GetSection("Cors:AllowedOrigins")
+.Get<string[]>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         "AllowFrontend",
         policy =>
         {
-            policy
-                .WithOrigins("https://localhost:49600") 
+            policy.WithOrigins(allowedOrigins)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();

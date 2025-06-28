@@ -85,6 +85,7 @@ export function AuthProvider({ children }) {
     setUser(GUEST_USER);
     setIsLogin(false);
     localStorage.removeItem('authUser');
+    localStorage.removeItem('pfpURL');
     const res = await fetchWithAuth("/api/auth/logout", {
         method: "POST",
         headers: {
