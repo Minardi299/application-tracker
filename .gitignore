@@ -56,4 +56,4 @@ nunit-*.xml
 
 .env
 **/appsettings.*.json
-**/Properties/PublishProfiles
+**/Properties/PublishProfiles/*
