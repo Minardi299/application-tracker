@@ -8,7 +8,7 @@ using application_tracker.Server.Helper;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
-// Env.Load();
+var env = builder.Environment.EnvironmentName;
 
 // Add services to the container.
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"]
