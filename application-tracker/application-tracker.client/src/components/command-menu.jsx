@@ -39,10 +39,10 @@ function triggerShortcut(key, { withMeta = true, withShift = false } = {}) {
         <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Actions">
-                <CommandItem onSelect={() => triggerShortcut("Escape")}>
+                <CommandItem onSelect={() => triggerShortcut("k")}>
                     <SquareMenu />
                     <span>Open Command Menu</span>
-                    <CommandShortcut>/</CommandShortcut>
+                    <CommandShortcut>Ctrl/⌘+K</CommandShortcut>
                 </CommandItem>
                 <CommandItem onSelect={() => triggerShortcut("g")}>
                     <Folder />

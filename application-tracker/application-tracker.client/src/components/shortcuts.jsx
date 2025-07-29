@@ -32,10 +32,10 @@ export function AppShortcuts() {
           });
         }
         
-      }
-      if (e.key === "/") {
-        e.preventDefault();
-        setOpen(true);
+        if (e.key.toLowerCase() === "k") {
+          e.preventDefault();
+          setOpen(true);
+        }
       }
     };
     window.addEventListener("keydown", handler);
