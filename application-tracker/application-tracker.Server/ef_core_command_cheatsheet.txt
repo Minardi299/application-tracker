@@ -2,3 +2,5 @@
 dotnet ef migrations remove to remove a migration
 dotnet ef database update
 dotnet ef migrations add {name}
+
+scp -r bin/Release/net8.0/publish/* {destination}:/var/www/tracker/publish/
