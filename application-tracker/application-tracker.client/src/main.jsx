@@ -4,8 +4,6 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App.jsx";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import { toast } from "sonner";
 import {
   QueryClient,
   QueryClientProvider,
@@ -14,22 +12,15 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
-      onError: (error) => {
-        if (error.message.includes('Refresh failed')) {
-          toast.error("Can't get your credentials. Please log in again.");
-        }
-      },
     },
   },
 });
 
 createRoot(document.getElementById("root")).render(
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
-    </GoogleOAuthProvider>
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+    <ReactQueryDevtools initialIsOpen={false} />
+  </QueryClientProvider>
 );
