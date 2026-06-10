@@ -1,143 +1,67 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { fetchWithAuth } from '@/lib/interceptor';
-const AuthContext = createContext({
-  isLogin: false,
-  user: null,
-  login: () => {throw new Error("login() called without AuthProvider!");},  
-  logout: () => {throw new Error("logout() called without AuthProvider!");},     
-  register:async()=> {throw new Error("register() called without AuthProvider!");}  
-});
+import { authClient, useSession } from '@/lib/auth-client';
+
 const GUEST_USER = {
   id: null,
   email: 'guest@example.com',
   firstName: 'Guest',
   lastName: '',
   picture: null,
-  
+  profilePictureUrl: null,
 };
 
+const AuthContext = createContext({
+  isLogin: false,
+  user: GUEST_USER,
+  isLoading: true,
+  login: () => { throw new Error('login() called without AuthProvider!'); },
+  logout: () => { throw new Error('logout() called without AuthProvider!'); },
+});
 
-export function AuthProvider({ children }) {
-  useEffect(() => {
-    async function attemptSessionRefresh  ()  {
-        const hasReloaded = sessionStorage.getItem('hasReloadedAfterRefreshFail');
-
-        const res = await fetch('/api/auth/refresh', {
-          method: 'POST',
-          credentials: 'include',
-        });
-
-        if (!res.ok) {
-          await logout(); 
-          if (!hasReloaded) {
-            sessionStorage.setItem('hasReloadedAfterRefreshFail', 'true');
-            window.location.reload();
-          } else {
-            sessionStorage.removeItem('hasReloadedAfterRefreshFail');
-          }
-        
-        };
-
-      
-    };
-
-    attemptSessionRefresh();
-  }, []);
-  const [isLogin, setIsLogin] = useState(false);
-  const [user, setUser] = useState(GUEST_USER);
-  //check from local storagge if the user is already logged in before
-  useEffect(() => {
-    const storedUser = localStorage.getItem('authUser');
-    if (storedUser ) {
-      try {
-        setUser(JSON.parse(storedUser));
-        setIsLogin(true);
-      } catch (e) {
-        console.error("Failed to parse stored user", e);
-        // Clear invalid stored data in case of error
-        localStorage.removeItem('authUser');
-        setUser(GUEST_USER);
-        setIsLogin(false);
-      }
-    }else {
-      setUser(GUEST_USER); 
-      setIsLogin(false);
-      if (!storedUser) localStorage.removeItem('authUser');
-    }
-  }, []);
-
-
-
-  const login = (userData) => {
-    if (!userData) {
-        console.error("Login called without proper user data");
-        return;
-    }
-    
-    setUser(userData);
-    setIsLogin(true);
-    localStorage.setItem('authUser', JSON.stringify(userData));
-    localStorage.setItem('pfpURL', userData.profilePictureUrl);
+function toAppUser(sessionUser) {
+  if (!sessionUser) return GUEST_USER;
+  return {
+    id: sessionUser.id,
+    email: sessionUser.email,
+    firstName: sessionUser.firstName ?? sessionUser.name?.split(' ')[0] ?? '',
+    lastName: sessionUser.lastName ?? sessionUser.name?.split(' ').slice(1).join(' ') ?? '',
+    name: sessionUser.name,
+    picture: sessionUser.image,
+    profilePictureUrl: sessionUser.image,
+    totalApplicationCount: sessionUser.totalApplicationCount,
+    createdAt: sessionUser.createdAt,
   };
-
-  async function logout  () {
-    setUser(GUEST_USER);
-    setIsLogin(false);
-    localStorage.removeItem('authUser');
-    localStorage.removeItem('pfpURL');
-    const res = await fetchWithAuth("/api/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!res.ok) {
-        const errorData = await res.text(); 
-        toast.error(`Logout failed: ${errorData}`);
-        throw new Error(
-          `Failed to connect - HTTP status ${res.status}. Response: ${errorData}`
-        );
-      }
-    
-  };
-  const register = async (userData) => {
-    try {
-      const response = await fetch("/api/user/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Registration failed");
-      }
-
-      const data = await response.json();
-      login(data.user);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // context value
-  const value = {
-    isLogin,
-    user, 
-    login,
-    logout,
-    register,
-  };
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
 }
 
-// a custom hook for easy consumption
+export function AuthProvider({ children }) {
+  const navigate = useNavigate();
+  const { data: session, isPending } = useSession();
+
+  const user = toAppUser(session?.user);
+  const isLogin = !!session?.user;
+
+  const value = useMemo(
+    () => ({
+      isLogin,
+      user,
+      isLoading: isPending,
+      login: () => {
+        authClient.signIn.social({ provider: 'google', callbackURL: '/' });
+      },
+      logout: async () => {
+        await authClient.signOut();
+        navigate('/login');
+        toast.success('Logged out');
+      },
+    }),
+    [isLogin, user, isPending, navigate],
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
